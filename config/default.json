@@ -1,7 +1,7 @@
 {
   "host": "localhost",
   "port": 3030,
-  "nedb": "../data/",
+  "mongodb": "mongodb://localhost:27017/airtable-clone",
   "public": "../app/",
   "auth": {
     "token": {
