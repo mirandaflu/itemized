@@ -11,3 +11,11 @@ insert_final_newline = true
 
 [*.md]
 trim_trailing_whitespace = false
+
+[src/**.*]
+indent_style = tab
+indent_size = 4
+
+[app/**.*]
+indent_style = tab
+indent_size = 4
