@@ -1,0 +1,12 @@
+{
+  "host": "airtable-clone-app.feathersjs.com",
+  "port": 80,
+  "nedb": "NEDB_BASE_PATH",
+  "public": "../app/",
+  "auth": {
+    "token": {
+      "secret": "FEATHERS_AUTH_SECRET"
+    },
+    "local": {}
+  }
+}
