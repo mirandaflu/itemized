@@ -1,5 +1,6 @@
 'use strict';
 
+const path = require('path');
 const handler = require('feathers-errors/handler');
 const notFound = require('./not-found-handler');
 const logger = require('./logger');
@@ -9,6 +10,11 @@ module.exports = function() {
 	// just like Express the order matters, so error
 	// handling middleware should go last.
 	const app = this;
+
+	// account for using react-router with browserHistory
+	app.get('*', function (request, response){
+		response.sendFile(path.resolve(__dirname, '../../dist', 'index.html'));
+	});
 
 	app.use(notFound());
 	app.use(logger(app));

@@ -21,7 +21,8 @@ const compiler = webpack(config);
 
 app.use(require('webpack-dev-middleware')(compiler, {
 	noInfo: true,
-	publicPath: config.output.publicPath
+	publicPath: config.output.publicPath,
+	hisoryApiFallback: true
 }));
 
 app.use(require('webpack-hot-middleware')(compiler));
@@ -32,6 +33,7 @@ app.use(compress())
 	.options('*', cors())
 	.use(cors())
 	.use(favicon( path.join(app.get('public'), 'favicon.ico') ))
+	.use('/', serveStatic( __dirname + '../dist/' ))
 	.use('/', serveStatic( app.get('public') ))
 	.use(bodyParser.json())
 	.use(bodyParser.urlencoded({ extended: true }))
