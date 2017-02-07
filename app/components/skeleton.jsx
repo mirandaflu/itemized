@@ -9,9 +9,9 @@ export default class Skeleton extends React.Component {
 	}
 	render() { return (
 		<div>
-			<div>nav</div>
+			<div></div>
 			{this.props.children}
-			<div>footer</div>
+			<div></div>
 		</div>
 	); }
 }

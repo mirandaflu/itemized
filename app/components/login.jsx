@@ -37,12 +37,20 @@ class Login extends React.Component {
 		<div>
 			<MessageBanner ref="messageBanner" />
 
-			<form className="pure-form pure-form-stacked" onSubmit={this.handleSubmit.bind(this)}>
+			<form className="pure-form pure-form-aligned" onSubmit={this.handleSubmit.bind(this)}>
 				<fieldset>
 					<legend>Log in</legend>
-					<input id="email" type="email" placeholder="Email Address" onChange={this.handleChange.bind(this)} />
-					<input id="password" type="password" placeholder="Password" onChange={this.handleChange.bind(this)} />
-					<button type="submit">Log in</button>
+					<div className="pure-control-group">
+						<label htmlFor="email">Email Address</label>
+						<input id="email" type="email" placeholder="Email Address" onChange={this.handleChange.bind(this)} />
+					</div>
+					<div className="pure-control-group">
+						<label htmlFor="password">Password</label>
+						<input id="password" type="password" placeholder="Password" onChange={this.handleChange.bind(this)} />
+					</div>
+					<div className="pure-controls">
+						<button className="pure-button" type="submit">Log in</button>
+					</div>
 				</fieldset>
 			</form>
 			<Link to="/signup">Sign up</Link>

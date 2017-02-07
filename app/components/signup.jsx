@@ -42,11 +42,25 @@ class Signup extends React.Component {
 		<div>
 			<MessageBanner ref="messageBanner" />
 
-			<form onSubmit={this.handleSubmit.bind(this)}>
-				<input id="email" type="email" placeholder="Email Address" onChange={this.handleChange.bind(this)} />
-				<input id="password1" type="password" placeholder="Password" onChange={this.handleChange.bind(this)} />
-				<input id="password2" type="password" placeholder="Password" onChange={this.handleChange.bind(this)} />
-				<button type="submit">Sign up</button>
+			<form className="pure-form pure-form-aligned" onSubmit={this.handleSubmit.bind(this)}>
+				<fieldset>
+					<legend>Sign up</legend>
+					<div className="pure-control-group">
+						<label htmlFor="email">Email Address</label>
+						<input id="email" type="email" placeholder="Email Address" onChange={this.handleChange.bind(this)} />
+					</div>
+					<div className="pure-control-group">
+						<label htmlFor="password1">Password</label>
+						<input id="password1" type="password" placeholder="Password" onChange={this.handleChange.bind(this)} />
+					</div>
+					<div className="pure-control-group">
+						<label htmlFor="password2">Password (again)</label>
+						<input id="password2" type="password" placeholder="Password" onChange={this.handleChange.bind(this)} />
+					</div>
+					<div className="pure-controls">
+						<button className="pure-button" type="submit">Sign up</button>
+					</div>
+				</fieldset>
 			</form>
 			<Link to="/login">Log in</Link>
 		</div>
