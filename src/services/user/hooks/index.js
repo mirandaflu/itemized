@@ -9,12 +9,12 @@ exports.before = {
 	find: [
 		auth.verifyToken(),
 		auth.populateUser(),
-		auth.requireAuth()
+		auth.restrictToAuthenticated()
 	],
 	get: [
 		auth.verifyToken(),
 		auth.populateUser(),
-		auth.requireAuth()
+		auth.restrictToAuthenticated()
 	],
 	create: [
 		auth.hashPassword()
@@ -22,17 +22,17 @@ exports.before = {
 	update: [
 		auth.verifyToken(),
 		auth.populateUser(),
-		auth.requireAuth()
+		auth.restrictToAuthenticated()
 	],
 	patch: [
 		auth.verifyToken(),
 		auth.populateUser(),
-		auth.requireAuth()
+		auth.restrictToAuthenticated()
 	],
 	remove: [
 		auth.verifyToken(),
 		auth.populateUser(),
-		auth.requireAuth()
+		auth.restrictToAuthenticated()
 	]
 };
 
