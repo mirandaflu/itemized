@@ -1,7 +1,6 @@
 import React from 'react';
 
-// import Navbar from './navbar';
-// import Footer from './footer';
+import Footer from '../components/footer.jsx';
 
 export default class Skeleton extends React.Component {
 	componentWillUpdate() {
@@ -11,7 +10,7 @@ export default class Skeleton extends React.Component {
 		<div>
 			<div></div>
 			{this.props.children}
-			<div></div>
+			<Footer />
 		</div>
 	); }
 }

@@ -12,7 +12,9 @@ exports.before = {
 	],
 	find: [],
 	get: [],
-	create: [],
+	create: [
+		auth.associateCurrentUser({as: 'owner'})
+	],
 	update: [],
 	patch: [],
 	remove: []
