@@ -13,9 +13,6 @@ class WorkspaceList extends React.Component {
 			workspaces: []
 		};
 	}
-	componentDidMount() {
-		this.loadWorkspaces();
-	}
 	loadWorkspaces() {
 		feathers_app.service('workspaces').find().then(result => {
 			this.setState({
@@ -45,10 +42,30 @@ class WorkspaceList extends React.Component {
 			});
 		});
 	}
+	deleteWorkspace(e, data) {
+		if (!confirm('Are you sure?')) return;
+		feathers_app.service('workspaces').remove(data.deleteID).then(result => {
+			for (let i in this.state.workspaces) {
+				if (this.state.workspaces[i]._id == data.deleteID) {
+					let newWorkspaces = this.state.workspaces;
+					newWorkspaces.splice(i, 1)
+					this.setState({ workspaces: newWorkspaces });
+					break;
+				}
+			}
+		});
+	}
+	componentDidMount() {
+		this.loadWorkspaces();
+	}
 	render() {
+		let that = this;
 		let workspaceNodes = this.state.workspaces.map(function(workspace) {
 			return (
-				<WorkspaceItem key={workspace._id} data={workspace} />
+				<WorkspaceItem
+					key={workspace._id}
+					data={workspace}
+					onDelete={that.deleteWorkspace.bind(that)} />
 			);
 		});
 		return (

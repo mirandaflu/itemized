@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router';
+import { ContextMenu, MenuItem, ContextMenuTrigger } from "react-contextmenu";
 
 import StatusText from '../components/statustext.jsx';
 
@@ -23,12 +24,38 @@ class Collection extends React.Component {
 			this.setState({fields: this.state.fields.concat(result)});
 		});
 	}
+	removeField(e, data) {
+		if (!confirm('Are you sure?')) return;
+		feathers_app.service('fields').remove(data.deleteID).then(result => {
+			for (let i in this.state.fields) {
+				if (this.state.fields[i]._id == data.deleteID) {
+					let newFields = this.state.fields;
+					newFields.splice(i, 1)
+					this.setState({ fields: newFields });
+					break;
+				}
+			}
+		});
+	}
 	addThing() {
 		let thing = {
 			coll: this.state.id
 		};
 		feathers_app.service('things').create(thing).then(result => {
 			this.setState({things: this.state.things.concat(result)});
+		});
+	}
+	removeThing(e, data) {
+		if (!confirm('Are you sure?')) return;
+		feathers_app.service('things').remove(data.deleteID).then(result => {
+			for (let i in this.state.things) {
+				if (this.state.things[i]._id == data.deleteID) {
+					let newThings = this.state.things;
+					newThings.splice(i, 1)
+					this.setState({ things: newThings });
+					break;
+				}
+			}
 		});
 	}
 	modifyValue(thingID, fieldID, attribute) {
@@ -88,8 +115,20 @@ class Collection extends React.Component {
 				<table className="pure-table">
 					<thead>
 						<tr>
+							<th>=</th>
 							{this.state.fields.map(function(field){
-								return(<th key={field._id}>{field.name}</th>);
+								return(
+									<th key={field._id}>
+										<ContextMenuTrigger id={'field'+field._id}>
+											{field.name}
+										</ContextMenuTrigger>
+										<ContextMenu id={'field'+field._id}>
+											<MenuItem data={{deleteID: field._id}} onClick={that.removeField.bind(that)}>
+												Delete Field
+											</MenuItem>
+										</ContextMenu>
+									</th>
+								);
 							})}
 							<th>
 								<button className="pure-button" onClick={this.addField.bind(this)}>Add Field</button>
@@ -100,6 +139,16 @@ class Collection extends React.Component {
 						{this.state.things.map(function(thing){
 							return(
 								<tr key={thing._id}>
+									<td>
+										<ContextMenuTrigger id={'thing'+thing._id}>
+											[thing]
+										</ContextMenuTrigger>
+										<ContextMenu id={'thing'+thing._id}>
+											<MenuItem data={{deleteID: thing._id}} onClick={that.removeThing.bind(that)}>
+												Delete Thing
+											</MenuItem>
+										</ContextMenu>
+									</td>
 									{that.state.fields.map(function(field){
 										let value = '', attribute = null;
 										if (attributesObject[thing._id + field._id]) {
