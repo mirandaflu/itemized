@@ -10,6 +10,7 @@ const Schema = mongoose.Schema;
 
 const attributeSchema = new Schema({
 
+	coll: { type: Schema.ObjectId, ref: 'collection', required: true },
 	thing: { type: Schema.ObjectId, ref: 'thing', required: true },
 	field: { type: Schema.ObjectId, ref: 'field', required: true },
 

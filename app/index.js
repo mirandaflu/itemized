@@ -11,7 +11,10 @@ import Signup from './components/signup.jsx';
 import Login from './components/login.jsx';
 import Logout from './components/logout.jsx';
 
+import Collection from './components/collection.jsx';
+
 import Home from './pages/home.jsx';
+import Workspace from './pages/workspace.jsx';
 import Error from './pages/error.jsx';
 
 if (module.hot) {
@@ -36,7 +39,7 @@ function requireAuth(nextState, replace, callback) {
 		callback();
 	}
 
-	// if logged in and redirect is stored, go there
+	// if just logged in and redirect is stored, go there
 	else {
 		feathers_app.service('localdata').get('redirectAfterLogin').then(result => {
 			replace(result.data.location.pathname + result.data.location.search);
@@ -57,6 +60,9 @@ class Root extends React.Component {
 			<Router history={browserHistory}>
 				<Route path="/" component={Skeleton}>
 					<IndexRoute component={Home} onEnter={requireAuth}></IndexRoute>
+					<Route path="workspace/:workspace" onEnter={requireAuth} component={Workspace}>
+						<Route path="collection/:collection" component={Collection} />
+					</Route>
 					<Route path="login" component={Login}></Route>
 					<Route path="signup" component={Signup}></Route>
 					<Route path="logout" component={Logout} onEnter={feathers_app.logout}></Route>

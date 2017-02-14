@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router';
 
-import Workspace from './workspace.jsx';
+import WorkspaceItem from './workspaceitem.jsx';
+import StatusText from './statustext.jsx';
 
 class WorkspaceList extends React.Component {
 	constructor(props) {
@@ -43,29 +44,27 @@ class WorkspaceList extends React.Component {
 				workspacesError: true
 			});
 		});
-		console.log(name);
 	}
 	render() {
 		let workspaceNodes = this.state.workspaces.map(function(workspace) {
 			return (
-				<Workspace key={workspace._id} data={workspace} />
+				<WorkspaceItem key={workspace._id} data={workspace} />
 			);
 		});
 		return (
 			<div>
 
-				{!this.state.workspacesLoaded && !this.state.workspacesError &&
-					'Loading...'}
-				{this.state.workspacesLoaded && this.state.workspaces.length == 0 &&
-					'No workspaces'}
-				{this.state.workspacesError &&
-					'Error'}
+				<StatusText
+					loaded={this.state.workspacesLoaded}
+					error={this.state.workspacesError}
+					data={this.state.workspaces}
+					nodatamessage='No Workspaces' />
 
 				<div className="pure-g">
 					{workspaceNodes}
 				</div>
 
-				<button onClick={this.createWorkspace.bind(this)}>Create</button>
+				<button onClick={this.createWorkspace.bind(this)}>Create Workspace</button>
 
 			</div>
 		);

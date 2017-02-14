@@ -5,8 +5,6 @@ class Logout extends React.Component {
 	render() { return (
 		<div>
 			Logged out
-			<br />
-			<Link to="/login">Log in</Link>
 		</div>
 	); }
 }

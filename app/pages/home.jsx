@@ -7,6 +7,7 @@ class Home extends React.Component {
 	render() { return (
 		<div>
 			<WorkspaceList />
+			<Link to="/logout">Log out</Link>
 		</div>
 	); }
 }
