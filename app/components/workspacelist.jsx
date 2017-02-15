@@ -43,6 +43,20 @@ class WorkspaceList extends React.Component {
 			});
 		});
 	}
+	renameWorkspace(e, data) {
+		let name = prompt('Name?');
+		if (!name) return;
+		feathers_app.service('workspaces').patch(data.workspace._id, {name:name}).then(result => {
+			for (let i in this.state.workspaces) {
+				if (this.state.workspaces[i]._id == data.workspace._id) {
+					let newWorkspaces = this.state.workspaces;
+					newWorkspaces[i].name = name;
+					this.setState({ workspaces: newWorkspaces });
+					break;
+				}
+			}
+		}).catch(console.error);
+	}
 	deleteWorkspace(e, data) {
 		if (!confirm('Are you sure?')) return;
 		feathers_app.service('workspaces').remove(data.workspace._id).then(result => {
@@ -66,6 +80,7 @@ class WorkspaceList extends React.Component {
 				<WorkspaceItem
 					key={workspace._id}
 					data={workspace}
+					onRename={that.renameWorkspace.bind(that)}
 					onDelete={that.deleteWorkspace.bind(that)} />
 			);
 		});

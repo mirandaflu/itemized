@@ -50,6 +50,20 @@ class Workspace extends React.Component {
 			}).catch(console.error);
 		}).catch(console.error);
 	}
+	renameCollection(e, data) {
+		let name = prompt('Name?');
+		if (!name) return;
+		feathers_app.service('collections').patch(data.collection._id, {name: name}).then(result => {
+			for (let i in this.state.collections) {
+				if (this.state.collections[i]._id == data.collection._id) {
+					let newCollections = this.state.collections;
+					newCollections[i].name = name;
+					this.setState({ collections: newCollections });
+					break;
+				}
+			}
+		}).catch(console.error);
+	}
 	removeCollection(e, data) {
 		if (!confirm('Are you sure?')) return;
 		feathers_app.service('collections').remove(data.collection._id).then(result => {
@@ -101,6 +115,9 @@ class Workspace extends React.Component {
 								Move Left
 							</MenuItem>
 						}
+						<MenuItem data={{collection: collection}} onClick={that.renameCollection.bind(that)}>
+							Rename Collection
+						</MenuItem>
 						<MenuItem data={{collection: collection}} onClick={that.removeCollection.bind(that)}>
 							Delete Collection
 						</MenuItem>

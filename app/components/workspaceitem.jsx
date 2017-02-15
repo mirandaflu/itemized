@@ -14,6 +14,9 @@ class Workspace extends React.Component {
 					</Link>
 				</ContextMenuTrigger>
 				<ContextMenu id={'workspace'+this.props.data._id}>
+					<MenuItem data={{workspace: this.props.data}} onClick={this.props.onRename}>
+						Rename Workspace
+					</MenuItem>
 					<MenuItem data={{workspace: this.props.data}} onClick={this.props.onDelete}>
 						Delete Workspace
 					</MenuItem>

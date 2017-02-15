@@ -39,13 +39,27 @@ class Collection extends React.Component {
 			}).catch(console.error);
 		}).catch(console.error);
 	}
+	renameField(e, data) {
+		let name = prompt('Name?');
+		if (!name) return;
+		feathers_app.service('fields').patch(data.field._id, {name: name}).then(result => {
+			for (let i in this.state.fields) {
+				if (this.state.fields[i]._id == data.field._id) {
+					let newFields = this.state.fields;
+					newFields[i].name = name;
+					this.setState({ fields: newFields });
+					break;
+				}
+			}
+		}).catch(console.error);
+	}
 	removeField(e, data) {
 		if (!confirm('Are you sure?')) return;
 		feathers_app.service('fields').remove(data.field._id).then(result => {
 			this.setState({
 				fields: arrayWithElementRemoved(this.state.fields, data.field._id)
 			});
-		});
+		}).catch(console.error);
 	}
 	addThing() {
 		feathers_app.service('things').create({coll: this.state.id}).then(result => {
@@ -139,6 +153,9 @@ class Collection extends React.Component {
 													Move Left
 												</MenuItem>
 											}
+											<MenuItem data={{field: field}} onClick={that.renameField.bind(that)}>
+												Rename Field
+											</MenuItem>
 											<MenuItem data={{field: field}} onClick={that.removeField.bind(that)}>
 												Delete Field
 											</MenuItem>
