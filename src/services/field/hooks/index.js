@@ -29,5 +29,7 @@ exports.after = {
 	create: [],
 	update: [],
 	patch: [],
-	remove: []
+	remove: [
+		localHooks.updateFieldPositions()
+	]
 };

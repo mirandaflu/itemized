@@ -9,3 +9,17 @@ exports.removeAssociated = function(options) {
 		});
 	};
 };
+
+exports.updateCollectionPositions = function(options) {
+	return function(hook) {
+		return new Promise((resolve, reject) => {
+			if (hook.id == null) return resolve(hook);
+			hook.app.service('collections').patch(null, {$inc: {position: -1}}, {query: {
+				workspace: hook.result.workspace,
+				position: {$gte: hook.result.position}
+			}}).then(result => {
+				resolve(hook);
+			}).catch(reject);
+		});
+	};
+};

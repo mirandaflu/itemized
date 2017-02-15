@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, withRouter } from 'react-router';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from "react-contextmenu";
 
+import { arrayWithElementsSwapped, arrayWithElementRemoved } from '../functions/arrayutilities.js';
 import StatusText from '../components/statustext.jsx';
 
 class Collection extends React.Component {
@@ -16,40 +17,45 @@ class Collection extends React.Component {
 	}
 	addField() {
 		let name = prompt('Name?');
-		let field = {
+		feathers_app.service('fields').create({
 			name: name,
-			coll: this.state.id
-		};
-		feathers_app.service('fields').create(field).then(result => {
+			coll: this.state.id,
+			position: this.state.fields.length
+		}).then(result => {
 			this.setState({fields: this.state.fields.concat(result)});
-		});
+		}).catch(console.error);
+	}
+	moveField(e, data) {
+		let move = (data.move == 'right')? 1: -1;
+		feathers_app.service('fields').patch(null, {$inc: {position: -move}}, {query: {
+			coll: this.state.id,
+			position: data.field.position + move
+		}}).then(result => {
+			feathers_app.service('fields').patch(data.field._id, {$inc: {position: move}}).then(result => {
+				this.setState({
+					fields: arrayWithElementsSwapped(this.state.fields, data.field.position, data.field.position + move)
+				});
+			}).catch(console.error);
+		}).catch(console.error);
 	}
 	removeField(e, data) {
 		if (!confirm('Are you sure?')) return;
-		feathers_app.service('fields').remove(data.deleteID).then(result => {
-			for (let i in this.state.fields) {
-				if (this.state.fields[i]._id == data.deleteID) {
-					let newFields = this.state.fields;
-					newFields.splice(i, 1)
-					this.setState({ fields: newFields });
-					break;
-				}
-			}
+		feathers_app.service('fields').remove(data.field._id).then(result => {
+			this.setState({
+				fields: arrayWithElementRemoved(this.state.fields, data.field._id)
+			});
 		});
 	}
 	addThing() {
-		let thing = {
-			coll: this.state.id
-		};
-		feathers_app.service('things').create(thing).then(result => {
+		feathers_app.service('things').create({coll: this.state.id}).then(result => {
 			this.setState({things: this.state.things.concat(result)});
 		});
 	}
 	removeThing(e, data) {
 		if (!confirm('Are you sure?')) return;
-		feathers_app.service('things').remove(data.deleteID).then(result => {
+		feathers_app.service('things').remove(data.thing._id).then(result => {
 			for (let i in this.state.things) {
-				if (this.state.things[i]._id == data.deleteID) {
+				if (this.state.things[i]._id == data.thing._id) {
 					let newThings = this.state.things;
 					newThings.splice(i, 1)
 					this.setState({ things: newThings });
@@ -91,7 +97,7 @@ class Collection extends React.Component {
 		if (typeof collection == 'undefined') {
 			collection = this.state.id;
 		}
-		feathers_app.service('fields').find({query: {coll: collection}})
+		feathers_app.service('fields').find({query: {coll: collection, $sort: {position: 1}}})
 			.then(result => { this.setState({fields: result}); });
 		feathers_app.service('things').find({query: {coll: collection}})
 			.then(result => { this.setState({things: result.data}); });
@@ -123,7 +129,17 @@ class Collection extends React.Component {
 											{field.name}
 										</ContextMenuTrigger>
 										<ContextMenu id={'field'+field._id}>
-											<MenuItem data={{deleteID: field._id}} onClick={that.removeField.bind(that)}>
+											{field.position != that.state.fields.length-1 &&
+												<MenuItem data={{move:'right', field: field}} onClick={that.moveField.bind(that)}>
+													Move Right
+												</MenuItem>
+											}
+											{field.position != 0 &&
+												<MenuItem data={{move:'left', field: field}} onClick={that.moveField.bind(that)}>
+													Move Left
+												</MenuItem>
+											}
+											<MenuItem data={{field: field}} onClick={that.removeField.bind(that)}>
 												Delete Field
 											</MenuItem>
 										</ContextMenu>
@@ -144,7 +160,7 @@ class Collection extends React.Component {
 											[thing]
 										</ContextMenuTrigger>
 										<ContextMenu id={'thing'+thing._id}>
-											<MenuItem data={{deleteID: thing._id}} onClick={that.removeThing.bind(that)}>
+											<MenuItem data={{thing: thing}} onClick={that.removeThing.bind(that)}>
 												Delete Thing
 											</MenuItem>
 										</ContextMenu>
