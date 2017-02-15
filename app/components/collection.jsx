@@ -17,6 +17,7 @@ class Collection extends React.Component {
 	}
 	addField() {
 		let name = prompt('Name?');
+		if (!name) return;
 		feathers_app.service('fields').create({
 			name: name,
 			coll: this.state.id,
@@ -116,12 +117,11 @@ class Collection extends React.Component {
 			attributesObject[attr.thing + attr.field] = attr;
 		}
 		return (
-			<div>
-				<h3>Collection {this.state.id}</h3>
+			<div className="workspace">
 				<table className="pure-table">
 					<thead>
 						<tr>
-							<th>=</th>
+							<th></th>
 							{this.state.fields.map(function(field){
 								return(
 									<th key={field._id}>
@@ -157,7 +157,7 @@ class Collection extends React.Component {
 								<tr key={thing._id}>
 									<td>
 										<ContextMenuTrigger id={'thing'+thing._id}>
-											[thing]
+											=
 										</ContextMenuTrigger>
 										<ContextMenu id={'thing'+thing._id}>
 											<MenuItem data={{thing: thing}} onClick={that.removeThing.bind(that)}>
@@ -178,11 +178,10 @@ class Collection extends React.Component {
 								</tr>
 							);
 						})}
-						<tr><td>
-							<button className="pure-button" onClick={this.addThing.bind(this)}>Add Thing</button>
-						</td></tr>
 					</tbody>
 				</table>
+				<br />
+				<button className="pure-button" onClick={this.addThing.bind(this)}>Add Thing</button>
 			</div>
 		);
 	}

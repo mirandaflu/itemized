@@ -19,6 +19,7 @@ class Workspace extends React.Component {
 	}
 	addCollection() {
 		let name = prompt('Name?');
+		if (!name) return;
 		let collection = {
 			workspace: this.state.id,
 			name: name,
@@ -83,9 +84,9 @@ class Workspace extends React.Component {
 		let that = this;
 		let collectionTabs = this.state.collections.map(function(collection) {
 			return (
-				<li key={collection._id} className="pure-menu-item" style={{height:that.state.itemHeight}}>
+				<li key={collection._id} className={(collection._id == that.props.params.collection)?'pure-menu-item pure-menu-selected':'pure-menu-item'} style={{height:that.state.itemHeight}}>
 					<ContextMenuTrigger id={'collection'+collection._id}>
-						<Link to={'/workspace/'+that.state.id+'/collection/'+collection._id} className="pure-menu-link">
+						<Link to={'/workspace/'+that.state.id+'/collection/'+collection._id} className="pure-menu-link tab" title={collection._id}>
 							{collection.name}
 						</Link>
 					</ContextMenuTrigger>
@@ -109,23 +110,35 @@ class Workspace extends React.Component {
 		});
 		return (
 			<div>
-				<Link to="/">Home</Link>
-				<h2>{this.state.name}</h2>
-				<h4>workspace {this.state.id}</h4>
 
-					<StatusText
-						loaded={this.state.collectionsLoaded}
-						error={this.state.collectionsError}
-						data={this.state.collections}
-						nodatamessage='No Collections' />
-
-				<div className="pure-menu pure-menu-horizontal pure-menu-scrollable">
-					<div className="pure-menu-link pure-menu-heading">Collections:</div>
+				<div className="pure-menu pure-menu-horizontal">
 					<ul className="pure-menu-list">
+						<li className="pure-menu-item">
+							<Link to="/" className="pure-menu-link">&laquo; Home</Link>
+						</li>
+						<li className="pure-menu-item">
+							<div className="pure-menu-heading">
+								Workspace: <span style={{textTransform:'none'}} title={this.state.id}>{this.state.name}</span>
+							</div>
+						</li>
+					</ul>
+				</div>
+
+				<StatusText
+					loaded={this.state.collectionsLoaded}
+					error={this.state.collectionsError}
+					data={this.state.collections}
+					nodatamessage='No Collections' />
+
+				<div className="pure-menu pure-menu-horizontal pure-menu-scrollable nobottompadding">
+					<div className="pure-menu-heading">Collections:</div>
+					<ul className="pure-menu-list tabs">
 
 						{collectionTabs}
 
-						<li className="pure-menu-item" style={{height:this.state.itemHeight}}>
+					</ul>
+					<ul className="pure-menu-list">
+						<li className="pure-menu-item" style={{paddingLeft:'15px', height:this.state.itemHeight}}>
 							<button className="pure-button" onClick={this.addCollection.bind(this)}>
 								Add Collection
 							</button>

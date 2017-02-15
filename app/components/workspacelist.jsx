@@ -31,6 +31,7 @@ class WorkspaceList extends React.Component {
 	}
 	createWorkspace() {
 		let name = prompt('Name?');
+		if (!name) return;
 		feathers_app.service('workspaces').create({name:name}).then(result => {
 			this.setState({
 				workspaces: this.state.workspaces.concat(result)
@@ -44,16 +45,16 @@ class WorkspaceList extends React.Component {
 	}
 	deleteWorkspace(e, data) {
 		if (!confirm('Are you sure?')) return;
-		feathers_app.service('workspaces').remove(data.deleteID).then(result => {
+		feathers_app.service('workspaces').remove(data.workspace._id).then(result => {
 			for (let i in this.state.workspaces) {
-				if (this.state.workspaces[i]._id == data.deleteID) {
+				if (this.state.workspaces[i]._id == data.workspace._id) {
 					let newWorkspaces = this.state.workspaces;
 					newWorkspaces.splice(i, 1)
 					this.setState({ workspaces: newWorkspaces });
 					break;
 				}
 			}
-		});
+		}).catch(console.error);
 	}
 	componentDidMount() {
 		this.loadWorkspaces();
@@ -79,9 +80,13 @@ class WorkspaceList extends React.Component {
 
 				<div className="pure-g">
 					{workspaceNodes}
+					<div className="pure-u-1 pure-u-sm-1-3 pure-u-lg-1-4">
+						<br />
+						<button className="pure-button" onClick={this.createWorkspace.bind(this)}>
+							Create Workspace
+						</button>
+					</div>
 				</div>
-
-				<button onClick={this.createWorkspace.bind(this)}>Create Workspace</button>
 
 			</div>
 		);
