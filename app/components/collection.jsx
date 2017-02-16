@@ -12,7 +12,8 @@ class Collection extends React.Component {
 			id: this.props.routeParams.collection,
 			fields: [],
 			things: [],
-			attributes: []
+			attributes: [],
+			activeAttribute: {}
 		};
 	}
 	addField() {
@@ -79,33 +80,51 @@ class Collection extends React.Component {
 			}
 		});
 	}
-	modifyValue(thingID, fieldID, attribute) {
-		let value = prompt('Value?');
+	handleValueFocus(thing, field, attribute) {
+		this.setState({
+			activeAttribute: {
+				thing: thing,
+				field: field,
+				oldAttribute: attribute
+			}
+		});
+	}
+	handleKeyDown(e) {
+		switch(e.keyCode) {
+			case 13: //enter
+				this.commitValueChange(e);
+				e.target.blur();
+				break;
+		}
+	}
+	commitValueChange(e) {
 		let newAttribute = {
 			coll: this.state.id,
-			thing: thingID,
-			field: fieldID,
-			value: value
+			thing: this.state.activeAttribute.thing,
+			field: this.state.activeAttribute.field,
+			value: e.target.value
 		};
-		if (attribute && attribute._id) {
-			feathers_app.service('attributes').patch(attribute._id, {value: value}).then(result => {
+		if (!this.state.activeAttribute) return;
+		if (this.state.activeAttribute.oldAttribute == null) {
+			feathers_app.service('attributes').create(newAttribute).then(result => {
+				this.setState({
+					attributes: this.state.attributes.concat(result),
+				});
+			}).catch(console.error);
+		}
+		else if (newAttribute.value != this.state.activeAttribute.oldAttribute.value) {
+			feathers_app.service('attributes').patch(this.state.activeAttribute.oldAttribute._id, {value: e.target.value}).then(result => {
 				let newAttributes = this.state.attributes;
 				for (let attr of newAttributes) {
 					if (attr._id == result._id) {
 						attr.value = result.value;
+						break;
 					}
 				}
 				this.setState({
-					attributes: newAttributes
+					attributes: newAttributes,
 				});
-			});
-		}
-		else {
-			feathers_app.service('attributes').create(newAttribute).then(result => {
-				this.setState({
-					attributes: this.state.attributes.concat(result)
-				});
-			});
+			}).catch(console.error);
 		}
 	}
 	loadData(collection) {
@@ -189,7 +208,13 @@ class Collection extends React.Component {
 											value = attribute.value;
 										}
 										return (
-											<td key={thing._id + field._id} onClick={that.modifyValue.bind(that, thing._id, field._id, attribute)}>{value}</td>
+											<td key={thing._id + field._id}>
+												<input type="text"
+													defaultValue={value}
+													onFocus={that.handleValueFocus.bind(that, thing._id, field._id, attribute)}
+													onKeyDown={that.handleKeyDown.bind(that)}
+													onBlur={that.commitValueChange.bind(that)} />
+											</td>
 										);
 									})}
 								</tr>
