@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default class Cell extends React.Component {
+export default class TextInput extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -16,9 +16,8 @@ export default class Cell extends React.Component {
 	render() { return (
 		<input type="text"
 			value={this.state.value}
+			onFocus={this.props.onEditStart}
 			onChange={this.handleChange.bind(this)}
-			onFocus={this.props.onFocus}
-			onKeyDown={this.props.onKeyDown}
-			onBlur={this.props.onBlur} />
+			onBlur={this.props.onCommitChange} />
 	);}
 }

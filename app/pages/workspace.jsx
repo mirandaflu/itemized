@@ -2,7 +2,6 @@ import React from 'react';
 import { Link, withRouter } from 'react-router';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from "react-contextmenu";
 
-import { arrayWithElementsSwapped, arrayWithElementRemoved } from '../functions/arrayutilities.js';
 import StatusText from '../components/statustext.jsx';
 
 class Workspace extends React.Component {
@@ -62,11 +61,7 @@ class Workspace extends React.Component {
 	}
 	removeCollection(e, data) {
 		if (!confirm('Are you sure?')) return;
-		feathers_app.service('collections').remove(data.collection._id).then(result => {
-			this.setState({
-				collections: arrayWithElementRemoved(this.state.collections, data.collection._id)
-			});
-		}).catch(console.error);
+		feathers_app.service('collections').remove(data.collection._id).catch(console.error);
 	}
 	handleCreatedCollection(collection) {
 		if (collection.workspace != this.state.id) return;

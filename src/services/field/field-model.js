@@ -13,7 +13,8 @@ const fieldSchema = new Schema({
 	coll: { type: Schema.ObjectId, ref: 'collection', required: true },
 
 	name: { type: String, required: true },
-	type: { type: String },
+	type: { type: String, default: 'Text' },
+	options: { type: Array, default: [] },
 	position: { type: Number, required: true },
 
 	createdAt: { type: Date, 'default': Date.now },

@@ -2,9 +2,8 @@ import React from 'react';
 import { Link, withRouter } from 'react-router';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from "react-contextmenu";
 
-import { arrayWithElementsSwapped, arrayWithElementRemoved } from '../functions/arrayutilities.js';
+import fieldTypes from './attributes/index.js';
 import StatusText from '../components/statustext.jsx';
-import Cell from './cell.jsx';
 
 class Collection extends React.Component {
 	constructor(props) {
@@ -40,6 +39,16 @@ class Collection extends React.Component {
 		if (!name) return;
 		feathers_app.service('fields').patch(data.field._id, {name: name}).catch(console.error);
 	}
+	changeFieldType(e, data) {
+		let type = prompt('Type?');
+		if (!fieldTypes[type]) { alert('invalid'); return; }
+		feathers_app.service('fields').patch(data.field._id, {type: type}).catch(console.error);
+	}
+	addFieldOption(e, data) {
+		let option = prompt('Option?');
+		if (!option) return;
+		feathers_app.service('fields').patch(data.field._id, {$push: {options: option}}).catch(console.error);
+	}
 	removeField(e, data) {
 		if (!confirm('Are you sure?')) return;
 		feathers_app.service('fields').remove(data.field._id).catch(console.error);
@@ -52,7 +61,7 @@ class Collection extends React.Component {
 		for (let i in this.state.fields) {
 			if (this.state.fields[i]._id == field._id) {
 				let newFields = this.state.fields;
-				newFields[i].name = Object.assign({}, field);
+				newFields[i] = Object.assign({}, field);
 				newFields.sort((a,b) => { return a.position - b.position; });
 				this.setState({ fields: newFields });
 				break;
@@ -90,37 +99,19 @@ class Collection extends React.Component {
 			}
 		}
 	}
-	handleValueFocus(thing, field, attribute) {
-		this.setState({
-			activeAttribute: {
-				thing: thing,
-				field: field,
-				oldAttribute: attribute
-			}
-		});
-	}
-	handleKeyDown(e) {
-		switch(e.keyCode) {
-			case 13: //enter
-				this.commitValueChange(e);
-				e.target.blur();
-				break;
-		}
-	}
-	commitValueChange(e) {
-		console.log('commit', e.target.value);
+	commitValueChange(thing, field, attribute, e) {
+		console.log('commit', thing, field, attribute, e);
 		let newAttribute = {
 			coll: this.state.id,
-			thing: this.state.activeAttribute.thing,
-			field: this.state.activeAttribute.field,
+			thing: thing,
+			field: field,
 			value: e.target.value
 		};
-		if (!this.state.activeAttribute) return;
-		if (this.state.activeAttribute.oldAttribute == null) {
+		if (attribute == null) {
 			feathers_app.service('attributes').create(newAttribute).catch(console.error);
 		}
-		else if (newAttribute.value != this.state.activeAttribute.oldAttribute.value) {
-			feathers_app.service('attributes').patch(this.state.activeAttribute.oldAttribute._id, {value: e.target.value}).catch(console.error);
+		else if (newAttribute.value != attribute.value) {
+			feathers_app.service('attributes').patch(attribute._id, {value: newAttribute.value}).catch(console.error);
 		}
 	}
 	handleCreatedAttribute(attribute) {
@@ -214,6 +205,14 @@ class Collection extends React.Component {
 											{field.name}
 										</ContextMenuTrigger>
 										<ContextMenu id={'field'+field._id}>
+											<MenuItem data={{field: field}} onClick={that.changeFieldType.bind(that)}>
+												Change Type
+											</MenuItem>
+											{field.type == 'Single Select' &&
+												<MenuItem data={{field: field}} onClick={that.addFieldOption.bind(that)}>
+													Add Option
+												</MenuItem>
+											}
 											{field.position != that.state.fields.length-1 &&
 												<MenuItem data={{move:'right', field: field}} onClick={that.moveField.bind(that)}>
 													Move Right
@@ -259,12 +258,13 @@ class Collection extends React.Component {
 											attribute = attributesObject[thing._id + field._id];
 											value = attribute.value;
 										}
+										let FieldComponent = fieldTypes[field.type].component;
 										return (
 											<td className="cell" key={thing._id + field._id}>
-												<Cell value={value}
-													onFocus={that.handleValueFocus.bind(that, thing._id, field._id, attribute)}
-													onKeyDown={that.handleKeyDown.bind(that)}
-													onBlur={that.commitValueChange.bind(that)} />
+												<FieldComponent
+													value={value}
+													options={field.options}
+													onCommitChange={that.commitValueChange.bind(that, thing._id, field._id, attribute)} />
 											</td>
 										);
 									})}
