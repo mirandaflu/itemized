@@ -4,6 +4,7 @@ import { ContextMenu, MenuItem, ContextMenuTrigger } from "react-contextmenu";
 
 import { arrayWithElementsSwapped, arrayWithElementRemoved } from '../functions/arrayutilities.js';
 import StatusText from '../components/statustext.jsx';
+import Cell from './cell.jsx';
 
 class Collection extends React.Component {
 	constructor(props) {
@@ -16,15 +17,13 @@ class Collection extends React.Component {
 			activeAttribute: {}
 		};
 	}
-	addField() {
+	createField() {
 		let name = prompt('Name?');
 		if (!name) return;
 		feathers_app.service('fields').create({
 			name: name,
 			coll: this.state.id,
 			position: this.state.fields.length
-		}).then(result => {
-			this.setState({fields: this.state.fields.concat(result)});
 		}).catch(console.error);
 	}
 	moveField(e, data) {
@@ -33,52 +32,63 @@ class Collection extends React.Component {
 			coll: this.state.id,
 			position: data.field.position + move
 		}}).then(result => {
-			feathers_app.service('fields').patch(data.field._id, {$inc: {position: move}}).then(result => {
-				this.setState({
-					fields: arrayWithElementsSwapped(this.state.fields, data.field.position, data.field.position + move)
-				});
-			}).catch(console.error);
+			feathers_app.service('fields').patch(data.field._id, {$inc: {position: move}}).catch(console.error);
 		}).catch(console.error);
 	}
 	renameField(e, data) {
 		let name = prompt('Name?');
 		if (!name) return;
-		feathers_app.service('fields').patch(data.field._id, {name: name}).then(result => {
-			for (let i in this.state.fields) {
-				if (this.state.fields[i]._id == data.field._id) {
-					let newFields = this.state.fields;
-					newFields[i].name = name;
-					this.setState({ fields: newFields });
-					break;
-				}
-			}
-		}).catch(console.error);
+		feathers_app.service('fields').patch(data.field._id, {name: name}).catch(console.error);
 	}
 	removeField(e, data) {
 		if (!confirm('Are you sure?')) return;
-		feathers_app.service('fields').remove(data.field._id).then(result => {
-			this.setState({
-				fields: arrayWithElementRemoved(this.state.fields, data.field._id)
-			});
-		}).catch(console.error);
+		feathers_app.service('fields').remove(data.field._id).catch(console.error);
+	}
+	handleCreatedField(field) {
+		if (field.coll != this.state.id) return;
+		this.setState({ fields: this.state.fields.concat(field) });
+	}
+	handlePatchedField(field) {
+		for (let i in this.state.fields) {
+			if (this.state.fields[i]._id == field._id) {
+				let newFields = this.state.fields;
+				newFields[i].name = Object.assign({}, field);
+				newFields.sort((a,b) => { return a.position - b.position; });
+				this.setState({ fields: newFields });
+				break;
+			}
+		}
+	}
+	handleRemovedField(field) {
+		for (let i in this.state.fields) {
+			if (this.state.fields[i]._id == field._id) {
+				let newFields = this.state.fields;
+				newFields.splice(i, 1);
+				this.setState({ fields: newFields });
+				break;
+			}
+		}
 	}
 	addThing() {
-		feathers_app.service('things').create({coll: this.state.id}).then(result => {
-			this.setState({things: this.state.things.concat(result)});
-		});
+		feathers_app.service('things').create({coll: this.state.id}).catch(console.error);
 	}
 	removeThing(e, data) {
 		if (!confirm('Are you sure?')) return;
-		feathers_app.service('things').remove(data.thing._id).then(result => {
-			for (let i in this.state.things) {
-				if (this.state.things[i]._id == data.thing._id) {
-					let newThings = this.state.things;
-					newThings.splice(i, 1)
-					this.setState({ things: newThings });
-					break;
-				}
+		feathers_app.service('things').remove(data.thing._id).catch(console.error);
+	}
+	handleCreatedThing(thing) {
+		if (thing.coll != this.state.id) return;
+		this.setState({things: this.state.things.concat(thing)});
+	}
+	handleRemovedThing(thing) {
+		for (let i in this.state.things) {
+			if (this.state.things[i]._id == thing._id) {
+				let newThings = this.state.things;
+				newThings.splice(i, 1)
+				this.setState({ things: newThings });
+				break;
 			}
-		});
+		}
 	}
 	handleValueFocus(thing, field, attribute) {
 		this.setState({
@@ -98,6 +108,7 @@ class Collection extends React.Component {
 		}
 	}
 	commitValueChange(e) {
+		console.log('commit', e.target.value);
 		let newAttribute = {
 			coll: this.state.id,
 			thing: this.state.activeAttribute.thing,
@@ -106,25 +117,34 @@ class Collection extends React.Component {
 		};
 		if (!this.state.activeAttribute) return;
 		if (this.state.activeAttribute.oldAttribute == null) {
-			feathers_app.service('attributes').create(newAttribute).then(result => {
-				this.setState({
-					attributes: this.state.attributes.concat(result),
-				});
-			}).catch(console.error);
+			feathers_app.service('attributes').create(newAttribute).catch(console.error);
 		}
 		else if (newAttribute.value != this.state.activeAttribute.oldAttribute.value) {
-			feathers_app.service('attributes').patch(this.state.activeAttribute.oldAttribute._id, {value: e.target.value}).then(result => {
+			feathers_app.service('attributes').patch(this.state.activeAttribute.oldAttribute._id, {value: e.target.value}).catch(console.error);
+		}
+	}
+	handleCreatedAttribute(attribute) {
+		if (attribute.coll != this.state.id) return;
+		this.setState({ attributes: this.state.attributes.concat(attribute) });
+	}
+	handlePatchedAttribute(attribute) {
+		for (let i in this.state.attributes) {
+			if (this.state.attributes[i]._id == attribute._id) {
 				let newAttributes = this.state.attributes;
-				for (let attr of newAttributes) {
-					if (attr._id == result._id) {
-						attr.value = result.value;
-						break;
-					}
-				}
-				this.setState({
-					attributes: newAttributes,
-				});
-			}).catch(console.error);
+				newAttributes[i] = Object.assign({}, attribute);
+				this.setState({ attributes: newAttributes });
+				break;
+			}
+		}
+	}
+	handleRemovedAttribute(attribute) {
+		for (let i in this.state.attributes) {
+			if (this.state.attributes[i]._id == attribute._id) {
+				let newAttributes = this.state.attributes;
+				newAttributes.splice(i, 1);
+				this.setState({ attributes: newAttributes });
+				break;
+			}
 		}
 	}
 	loadData(collection) {
@@ -138,11 +158,43 @@ class Collection extends React.Component {
 		feathers_app.service('attributes').find({query: {coll: collection}})
 			.then(result => { this.setState({attributes: result}); });
 	}
+	bindEventListeners() {
+		this.fieldCreatedListener = this.handleCreatedField.bind(this);
+		this.fieldPatchedListener = this.handlePatchedField.bind(this);
+		this.fieldRemovedListener = this.handleRemovedField.bind(this);
+		feathers_app.service('fields').on('created', this.fieldCreatedListener);
+		feathers_app.service('fields').on('patched', this.fieldPatchedListener);
+		feathers_app.service('fields').on('removed', this.fieldRemovedListener);
+		this.thingCreatedListener = this.handleCreatedThing.bind(this);
+		this.thingRemovedListener = this.handleRemovedThing.bind(this);
+		feathers_app.service('things').on('created', this.thingCreatedListener);
+		feathers_app.service('things').on('removed', this.thingRemovedListener);
+		this.attributeCreatedListener = this.handleCreatedAttribute.bind(this);
+		this.attributePatchedListener = this.handlePatchedAttribute.bind(this);
+		this.attributeRemovedListener = this.handleRemovedAttribute.bind(this);
+		feathers_app.service('attributes').on('created', this.attributeCreatedListener);
+		feathers_app.service('attributes').on('patched', this.attributePatchedListener);
+		feathers_app.service('attributes').on('removed', this.attributeRemovedListener);
+
+	}
 	componentWillReceiveProps(nextProps) {
 		this.setState({id: nextProps.routeParams.collection});
 		this.loadData(nextProps.routeParams.collection);
 	}
-	componentDidMount() { this.loadData(); }
+	componentDidMount() {
+		this.loadData();
+		this.bindEventListeners();
+	}
+	componentWillUnmount() {
+		feathers_app.service('fields').removeListener('created', this.fieldCreatedListener);
+		feathers_app.service('fields').removeListener('patched', this.fieldPatchedListener);
+		feathers_app.service('fields').removeListener('removed', this.fieldRemovedListener);
+		feathers_app.service('things').removeListener('created', this.thingCreatedListener);
+		feathers_app.service('things').removeListener('removed', this.thingRemovedListener);
+		feathers_app.service('attributes').removeListener('created', this.attributeCreatedListener);
+		feathers_app.service('attributes').removeListener('patched', this.attributePatchedListener);
+		feathers_app.service('attributes').removeListener('removed', this.attributeRemovedListener);
+	}
 	render() {
 		let that = this;
 		let attributesObject = {};
@@ -183,7 +235,7 @@ class Collection extends React.Component {
 								);
 							})}
 							<th>
-								<button className="pure-button" onClick={this.addField.bind(this)}>Add Field</button>
+								<button className="pure-button" onClick={this.createField.bind(this)}>Add Field</button>
 							</th>
 						</tr>
 					</thead>
@@ -209,8 +261,7 @@ class Collection extends React.Component {
 										}
 										return (
 											<td key={thing._id + field._id}>
-												<input type="text"
-													defaultValue={value}
+												<Cell value={value}
 													onFocus={that.handleValueFocus.bind(that, thing._id, field._id, attribute)}
 													onKeyDown={that.handleKeyDown.bind(that)}
 													onBlur={that.commitValueChange.bind(that)} />
