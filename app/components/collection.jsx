@@ -260,7 +260,7 @@ class Collection extends React.Component {
 											value = attribute.value;
 										}
 										return (
-											<td key={thing._id + field._id}>
+											<td className="cell" key={thing._id + field._id}>
 												<Cell value={value}
 													onFocus={that.handleValueFocus.bind(that, thing._id, field._id, attribute)}
 													onKeyDown={that.handleKeyDown.bind(that)}

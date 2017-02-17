@@ -1,3 +1,5 @@
+* { box-sizing: border-box }
+
 body { background-color: honeydew; }
 
 a { text-decoration: none; }
@@ -43,4 +45,16 @@ a { text-decoration: none; }
 .workspace {
 	background-color: white;
 	padding: 10px;
+}
+
+.cell {
+	padding: 0 !important;
+	height: 0;
+}
+.cell input {
+	padding-left: 6px;
+	padding-right: 6px;
+	border: none;
+	height: 100%;
+	width: 100%;
 }
