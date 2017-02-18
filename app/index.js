@@ -6,8 +6,9 @@ import feathers from 'feathers-client';
 import io from 'socket.io-client';
 import localstorage from 'feathers-localstorage';
 
-import menuCSS from './css/react-contextmenu.css';
-import css from './css/custom.css';
+import './css/react-contextmenu.css';
+import 'react-select/dist/react-select.css';
+import './css/custom.css';
 
 import Skeleton from './components/skeleton.jsx';
 import Signup from './components/signup.jsx';

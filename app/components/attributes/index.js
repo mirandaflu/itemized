@@ -15,6 +15,9 @@ module.exports = {
 	},
 	"Single Select": {
 		component: SelectInput
+	},
+	"Multiple Select": {
+		component: SelectInput
 	}
 };
 

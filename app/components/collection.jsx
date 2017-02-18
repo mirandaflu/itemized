@@ -12,8 +12,7 @@ class Collection extends React.Component {
 			id: this.props.routeParams.collection,
 			fields: [],
 			things: [],
-			attributes: [],
-			activeAttribute: {}
+			attributes: []
 		};
 	}
 	createField() {
@@ -42,12 +41,15 @@ class Collection extends React.Component {
 	changeFieldType(e, data) {
 		let type = prompt('Type?');
 		if (!fieldTypes[type]) { alert('invalid'); return; }
-		feathers_app.service('fields').patch(data.field._id, {type: type}).catch(console.error);
+		feathers_app.service('fields').patch(data.field._id, {type: type, options: []}).catch(console.error);
 	}
 	addFieldOption(e, data) {
 		let option = prompt('Option?');
 		if (!option) return;
 		feathers_app.service('fields').patch(data.field._id, {$push: {options: option}}).catch(console.error);
+	}
+	handleCreateOption(field, option) {
+		feathers_app.service('fields').patch(field, {$push: {options: option}}).catch(console.error);
 	}
 	removeField(e, data) {
 		if (!confirm('Are you sure?')) return;
@@ -100,7 +102,6 @@ class Collection extends React.Component {
 		}
 	}
 	commitValueChange(thing, field, attribute, e) {
-		console.log('commit', thing, field, attribute, e);
 		let newAttribute = {
 			coll: this.state.id,
 			thing: thing,
@@ -262,8 +263,11 @@ class Collection extends React.Component {
 										return (
 											<td className="cell" key={thing._id + field._id}>
 												<FieldComponent
+													fieldType={field.type}
+													attribute={attribute}
 													value={value}
 													options={field.options}
+													onCreateOption={that.handleCreateOption.bind(that, field._id)}
 													onCommitChange={that.commitValueChange.bind(that, thing._id, field._id, attribute)} />
 											</td>
 										);

@@ -13,11 +13,13 @@ export default class TextInput extends React.Component {
 	componentWillReceiveProps(nextProps) {
 		this.setState({ value: nextProps.value });
 	}
-	render() { return (
-		<input type="text"
-			value={this.state.value}
-			onFocus={this.props.onEditStart}
-			onChange={this.handleChange.bind(this)}
-			onBlur={this.props.onCommitChange} />
-	);}
+	render() {
+		return (
+			<input type="text"
+				value={this.state.value}
+				onFocus={this.props.onEditStart}
+				onChange={this.handleChange.bind(this)}
+				onBlur={this.props.onCommitChange} />
+		);
+	}
 }
