@@ -1,7 +1,7 @@
 {
-  "host": "airtable-clone-app.feathersjs.com",
-  "port": 80,
-  "mongodb": "MONGODB_BASE_PATH",
+  "host": "itemized-mirandaflu.herokuapp.com/",
+  "port": "PORT",
+  "mongodb": "MONGODB",
   "public": "../app/",
   "auth": {
     "token": {
