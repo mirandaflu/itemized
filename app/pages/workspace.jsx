@@ -11,7 +11,7 @@ class Workspace extends React.Component {
 		this.state = {
 			itemHeight: '35px',
 			id: this.props.routeParams.workspace,
-			name: '',
+			workspace: {},
 			collectionsLoaded: false,
 			collectionsError: false,
 			collections: []
@@ -19,8 +19,8 @@ class Workspace extends React.Component {
 	}
 	getData() {
 		feathers_app.service('workspaces').get(this.state.id).then(result => {
-			this.setState({name:result.name});
-		});
+			this.setState({workspace:result});
+		}).catch(console.error);
 		feathers_app.service('collections').find({query:{workspace:this.state.id, $sort:{position:1}}}).then(result => {
 			this.setState({
 				collectionsLoaded: true,
@@ -99,6 +99,11 @@ class Workspace extends React.Component {
 			}
 		}
 	}
+	handlePatchedWorkspace(workspace) {
+		if (workspace._id == this.state.id) {
+			this.setState({workspace:workspace});
+		}
+	}
 	bindEventListeners() {
 		this.collectionCreatedListener = this.handleCreatedCollection.bind(this);
 		this.collectionPatchedListener = this.handlePatchedCollection.bind(this);
@@ -106,6 +111,8 @@ class Workspace extends React.Component {
 		feathers_app.service('collections').on('created', this.collectionCreatedListener);
 		feathers_app.service('collections').on('patched', this.collectionPatchedListener);
 		feathers_app.service('collections').on('removed', this.collectionRemovedListener);
+		this.workspacePatchedListener = this.handlePatchedWorkspace.bind(this);
+		feathers_app.service('workspaces').on('patched', this.workspacePatchedListener);
 	}
 	componentDidMount() {
 		this.getData();
@@ -115,6 +122,7 @@ class Workspace extends React.Component {
 		feathers_app.service('collections').removeListener('created', this.collectionCreatedListener);
 		feathers_app.service('collections').removeListener('patched', this.collectionPatchedListener);
 		feathers_app.service('collections').removeListener('removed', this.collectionRemovedListener);
+		feathers_app.service('workspaces').removeListener('patched', this.workspacePatchedListener);
 	}
 	render() {
 		let that = this;
@@ -160,7 +168,7 @@ class Workspace extends React.Component {
 						</li>
 						<li className="pure-menu-item">
 							<div className="pure-menu-heading">
-								Workspace: <span style={{textTransform:'none'}} title={this.state.id}>{this.state.name}</span>
+								Workspace: <span style={{textTransform:'none'}} title={this.state.id}>{this.state.workspace.name}</span>
 							</div>
 						</li>
 					</ul>

@@ -28,6 +28,10 @@ a { text-decoration: none; }
 	margin: 5px;
 }
 
+.card button, .modalContent button {
+	float: right;
+}
+
 .tabs {
 	border-bottom: 1px solid grey;
 }

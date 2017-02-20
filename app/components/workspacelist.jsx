@@ -30,20 +30,15 @@ class WorkspaceList extends React.Component {
 		});
 	}
 	createWorkspace() {
-		let name = prompt('Name?');
-		if (!name) return;
+		let name = 'New Workspace';
 		feathers_app.service('workspaces').create({name:name}).catch(console.error);
 	}
-	renameWorkspace(e, data) {
-		let name = prompt('Name?');
-		if (!name) return;
-		feathers_app.service('workspaces').patch(data.workspace._id, {name:name}).catch(console.error);
+	editWorkspace(id, patch) {
+		feathers_app.service('workspaces').patch(id, patch).catch(console.error);
 	}
-	deleteWorkspace(e, data) {
+	deleteWorkspace(workspace) {
 		if (!confirm('Are you sure?')) return;
-		feathers_app.service('workspaces').remove(data.workspace._id).then(result => {
-
-		}).catch(console.error);
+		feathers_app.service('workspaces').remove(workspace._id).catch(console.error);
 	}
 	handleCreatedWorkspace(workspace) {
 		this.setState({ workspaces: this.state.workspaces.concat(workspace) });
@@ -52,7 +47,7 @@ class WorkspaceList extends React.Component {
 		for (let i in this.state.workspaces) {
 			if (this.state.workspaces[i]._id == workspace._id) {
 				let newWorkspaces = this.state.workspaces;
-				newWorkspaces[i].name = name;
+				newWorkspaces[i] = Object.assign({}, workspace);
 				this.setState({ workspaces: newWorkspaces });
 				break;
 			}
@@ -91,8 +86,8 @@ class WorkspaceList extends React.Component {
 			return (
 				<WorkspaceItem
 					key={workspace._id}
-					data={workspace}
-					onRename={that.renameWorkspace.bind(that)}
+					workspace={workspace}
+					onChange={that.editWorkspace.bind(that)}
 					onDelete={that.deleteWorkspace.bind(that)} />
 			);
 		});

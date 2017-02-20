@@ -8,6 +8,7 @@ import localstorage from 'feathers-localstorage';
 
 import './css/react-contextmenu.css';
 import 'react-select/dist/react-select.css';
+import './css/buttons.css';
 import './css/custom.css';
 
 import Skeleton from './components/skeleton.jsx';
