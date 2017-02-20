@@ -1,8 +1,9 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router';
-import { ContextMenu, MenuItem, ContextMenuTrigger } from "react-contextmenu";
 
 import collectionViews from '../components/collectionviews/index.js';
+
+import CollectionTab from '../components/collectiontab.jsx';
 import StatusText from '../components/statustext.jsx';
 
 class Workspace extends React.Component {
@@ -37,8 +38,7 @@ class Workspace extends React.Component {
 		});
 	}
 	createCollection() {
-		let name = prompt('Name?');
-		if (!name) return;
+		let name = 'New Collection';
 		let collection = {
 			workspace: this.state.id,
 			name: name,
@@ -55,24 +55,12 @@ class Workspace extends React.Component {
 			feathers_app.service('collections').patch(data.collection._id, {$inc: {position: move}}).catch(console.error);
 		}).catch(console.error);
 	}
-	renameCollection(e, data) {
-		let name = prompt('Name?');
-		if (!name) return;
-		feathers_app.service('collections').patch(data.collection._id, {name: name}).catch(console.error);
+	editCollection(id, patch) {
+		feathers_app.service('collections').patch(id, patch).catch(console.error);
 	}
-	changeCollectionViewType(e, data) {
-		let type = prompt('View Type?');
-		if (!collectionViews[type]) { alert('invalid'); return; }
-		if (['Board'].indexOf(type) != -1) {
-			let boardField = prompt('On which field?');
-			let cardField = prompt('Display which field as card title?');
-			feathers_app.service('collections').patch(data.collection._id, {viewType: type, boardField: boardField, cardField: cardField}).catch(console.error);
-		}
-		else feathers_app.service('collections').patch(data.collection._id, {viewType: type}).catch(console.error);
-	}
-	removeCollection(e, data) {
+	deleteCollection(id) {
 		if (!confirm('Are you sure?')) return;
-		feathers_app.service('collections').remove(data.collection._id).catch(console.error);
+		feathers_app.service('collections').remove(id).catch(console.error);
 	}
 	handleCreatedCollection(collection) {
 		if (collection.workspace != this.state.id) return;
@@ -126,38 +114,6 @@ class Workspace extends React.Component {
 	}
 	render() {
 		let that = this;
-		let collectionTabs = this.state.collections.map(function(collection) {
-			return (
-				<li key={collection._id} className={(collection._id == that.props.params.collection)?'pure-menu-item pure-menu-selected':'pure-menu-item'} style={{height:that.state.itemHeight}}>
-					<ContextMenuTrigger id={'collection'+collection._id}>
-						<Link to={'/workspace/'+that.state.id+'/collection/'+collection._id} className="pure-menu-link tab" title={collection._id}>
-							{collection.name}
-						</Link>
-					</ContextMenuTrigger>
-					<ContextMenu id={'collection'+collection._id}>
-						<MenuItem data={{collection: collection}} onClick={that.changeCollectionViewType.bind(that)}>
-							Change View Type
-						</MenuItem>
-						{collection.position != that.state.collections.length-1 &&
-							<MenuItem data={{move:'right', collection: collection}} onClick={that.moveCollection.bind(that)}>
-								Move Right
-							</MenuItem>
-						}
-						{collection.position != 0 &&
-							<MenuItem data={{move:'left', collection: collection}} onClick={that.moveCollection.bind(that)}>
-								Move Left
-							</MenuItem>
-						}
-						<MenuItem data={{collection: collection}} onClick={that.renameCollection.bind(that)}>
-							Rename Collection
-						</MenuItem>
-						<MenuItem data={{collection: collection}} onClick={that.removeCollection.bind(that)}>
-							Delete Collection
-						</MenuItem>
-					</ContextMenu>
-				</li>
-			);
-		});
 		return (
 			<div>
 
@@ -184,7 +140,20 @@ class Workspace extends React.Component {
 					<div className="pure-menu-heading">Collections:</div>
 					<ul className="pure-menu-list tabs">
 
-						{collectionTabs}
+						{this.state.collections.map(function(collection) {
+							return (
+								<CollectionTab
+									key={collection._id}
+									activeCollectionId={that.props.params.collection}
+									workspace={that.state.workspace}
+									collectionsLength={that.state.collections.length}
+									collection={collection}
+									height={that.state.itemHeight}
+									onChange={that.editCollection.bind(that)}
+									onMove={that.moveCollection.bind(that)}
+									onDelete={that.deleteCollection.bind(that)} />
+							);
+						})}
 
 					</ul>
 					<ul className="pure-menu-list">

@@ -28,7 +28,7 @@ a { text-decoration: none; }
 	margin: 5px;
 }
 
-.card button, .modalContent button {
+.card button, .modalContent button, .tab button {
 	float: right;
 }
 
@@ -61,4 +61,13 @@ a { text-decoration: none; }
 	border: none;
 	height: 100%;
 	width: 100%;
+}
+
+.Select {
+	display: inline-block;
+	margin-bottom: -13px;
+}
+.Select-input input {
+	border: 0 !important;
+	box-shadow: none !important;
 }
