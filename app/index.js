@@ -15,7 +15,7 @@ import Signup from './components/signup.jsx';
 import Login from './components/login.jsx';
 import Logout from './components/logout.jsx';
 
-import Collection from './components/collection.jsx';
+import CollectionContainer from './components/collectioncontainer.jsx';
 
 import Home from './pages/home.jsx';
 import Workspace from './pages/workspace.jsx';
@@ -65,7 +65,7 @@ class Root extends React.Component {
 				<Route path="/" component={Skeleton}>
 					<IndexRoute component={Home} onEnter={requireAuth}></IndexRoute>
 					<Route path="workspace/:workspace" onEnter={requireAuth} component={Workspace}>
-						<Route path="collection/:collection" component={Collection} />
+						<Route path="collection/:collection" component={CollectionContainer} />
 					</Route>
 					<Route path="login" component={Login}></Route>
 					<Route path="signup" component={Signup}></Route>

@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, withRouter } from 'react-router';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from "react-contextmenu";
 
+import collectionViews from '../components/collectionviews/index.js';
 import StatusText from '../components/statustext.jsx';
 
 class Workspace extends React.Component {
@@ -59,6 +60,16 @@ class Workspace extends React.Component {
 		if (!name) return;
 		feathers_app.service('collections').patch(data.collection._id, {name: name}).catch(console.error);
 	}
+	changeCollectionViewType(e, data) {
+		let type = prompt('View Type?');
+		if (!collectionViews[type]) { alert('invalid'); return; }
+		if (['Board'].indexOf(type) != -1) {
+			let boardField = prompt('On which field?');
+			let cardField = prompt('Display which field as card title?');
+			feathers_app.service('collections').patch(data.collection._id, {viewType: type, boardField: boardField, cardField: cardField}).catch(console.error);
+		}
+		else feathers_app.service('collections').patch(data.collection._id, {viewType: type}).catch(console.error);
+	}
 	removeCollection(e, data) {
 		if (!confirm('Are you sure?')) return;
 		feathers_app.service('collections').remove(data.collection._id).catch(console.error);
@@ -80,7 +91,7 @@ class Workspace extends React.Component {
 	}
 	handleRemovedCollection(collection) {
 		for (let i in this.state.collections) {
-			if (this.state.collections[i]._id == collections._id) {
+			if (this.state.collections[i]._id == collection._id) {
 				let newCollections = this.state.collections;
 				newCollections.splice(i, 1)
 				this.setState({ collections: newCollections });
@@ -116,6 +127,9 @@ class Workspace extends React.Component {
 						</Link>
 					</ContextMenuTrigger>
 					<ContextMenu id={'collection'+collection._id}>
+						<MenuItem data={{collection: collection}} onClick={that.changeCollectionViewType.bind(that)}>
+							Change View Type
+						</MenuItem>
 						{collection.position != that.state.collections.length-1 &&
 							<MenuItem data={{move:'right', collection: collection}} onClick={that.moveCollection.bind(that)}>
 								Move Right
@@ -174,7 +188,9 @@ class Workspace extends React.Component {
 					</ul>
 				</div>
 
-				{this.props.children}
+				<div className="workspace">
+					{this.props.children}
+				</div>
 
 			</div>
 		);
