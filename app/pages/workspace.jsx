@@ -44,7 +44,9 @@ class Workspace extends React.Component {
 			name: name,
 			position: this.state.collections.length
 		};
-		feathers_app.service('collections').create(collection).catch(console.error);
+		feathers_app.service('collections').create(collection).then(result => {
+			this.props.router.push('/workspace/' + this.state.id + '/collection/' + result._id + '/configure')
+		}).catch(console.error);
 	}
 	moveCollection(e, data) {
 		let move = (data.move == 'right')? 1: -1;

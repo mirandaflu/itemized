@@ -31,7 +31,9 @@ class WorkspaceList extends React.Component {
 	}
 	createWorkspace() {
 		let name = 'New Workspace';
-		feathers_app.service('workspaces').create({name:name}).catch(console.error);
+		feathers_app.service('workspaces').create({name:name}).then(result => {
+			this.props.router.push('/workspace/' + result._id + '/configure');
+		}).catch(console.error);
 	}
 	editWorkspace(id, patch) {
 		feathers_app.service('workspaces').patch(id, patch).catch(console.error);

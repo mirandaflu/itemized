@@ -17,6 +17,8 @@ import Login from './components/login.jsx';
 import Logout from './components/logout.jsx';
 
 import CollectionContainer from './components/collectioncontainer.jsx';
+import ConfigureWorkspace from './components/configureworkspace.jsx';
+import ConfigureCollection from './components/configurecollection.jsx';
 
 import Home from './pages/home.jsx';
 import Workspace from './pages/workspace.jsx';
@@ -65,7 +67,9 @@ class Root extends React.Component {
 			<Router history={browserHistory}>
 				<Route path="/" component={Skeleton}>
 					<IndexRoute component={Home} onEnter={requireAuth}></IndexRoute>
+					<Route path="workspace/:workspace/configure" component={ConfigureWorkspace} />
 					<Route path="workspace/:workspace" onEnter={requireAuth} component={Workspace}>
+						<Route path="collection/:collection/configure" component={ConfigureCollection} />
 						<Route path="collection/:collection" component={CollectionContainer} />
 					</Route>
 					<Route path="login" component={Login}></Route>
