@@ -1,0 +1,6 @@
+deploy:
+  script:
+    - gem install dpl
+    - dpl --provider=heroku --app=itemized-mirandaflu --api-key=$HEROKU_API_KEY
+  only:
+    - master
