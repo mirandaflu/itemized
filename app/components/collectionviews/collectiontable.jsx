@@ -1,9 +1,10 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router';
-import { ContextMenu, MenuItem, ContextMenuTrigger } from "react-contextmenu";
+import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 
 import fieldTypes from '../attributes/index.js';
 import StatusText from '../statustext.jsx';
+import FieldHeader from './fieldheader.jsx';
 
 class CollectionTable extends React.Component {
 	render() {
@@ -17,35 +18,10 @@ class CollectionTable extends React.Component {
 							{this.props.fields.map(function(field){
 								return(
 									<th key={field._id}>
-										<ContextMenuTrigger id={'field'+field._id}>
-											{field.name}
-										</ContextMenuTrigger>
-										<ContextMenu id={'field'+field._id}>
-											<MenuItem data={{field: field}} onClick={that.props.onChangeFieldType}>
-												Change Type
-											</MenuItem>
-											{field.type == 'Single Select' &&
-												<MenuItem data={{field: field}} onClick={that.props.onAddFieldOption}>
-													Add Option
-												</MenuItem>
-											}
-											{field.position != that.props.fields.length-1 &&
-												<MenuItem data={{move:'right', field: field}} onClick={that.props.onMoveField}>
-													Move Right
-												</MenuItem>
-											}
-											{field.position != 0 &&
-												<MenuItem data={{move:'left', field: field}} onClick={that.props.onMoveField}>
-													Move Left
-												</MenuItem>
-											}
-											<MenuItem data={{field: field}} onClick={that.props.onRenameField}>
-												Rename Field
-											</MenuItem>
-											<MenuItem data={{field: field}} onClick={that.props.onRemoveField}>
-												Delete Field
-											</MenuItem>
-										</ContextMenu>
+										<FieldHeader
+											fieldsLength={that.props.fields.length}
+											field={field}
+											onMove={that.props.onMoveField} />
 									</th>
 								);
 							})}

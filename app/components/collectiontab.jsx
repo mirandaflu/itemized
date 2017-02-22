@@ -55,7 +55,7 @@ export default class CollectionTab extends React.Component {
 		let collection = this.props.collection, that = this;
 		let viewOptions = [];
 		for (let o in collectionViews) {
-			viewOptions = viewOptions.concat({'value':o, 'label':o});
+			viewOptions.push({'value':o, 'label':o});
 		}
 		let boardOptions = this.state.fields
 			.filter(function(field) { return field.type == 'Single Select'; })
@@ -128,7 +128,7 @@ export default class CollectionTab extends React.Component {
 								}
 								{this.state.viewType == 'Board' &&
 									<div className="pure-control-group">
-										<label htmlFor="cardField">Board Field</label>
+										<label htmlFor="cardField">Card Field</label>
 										<Select
 											id="cardField"
 											value={this.state.cardField}
