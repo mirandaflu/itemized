@@ -11,15 +11,15 @@ import 'react-select/dist/react-select.css';
 import './css/buttons.css';
 import './css/custom.css';
 
-import Skeleton from './components/skeleton.jsx';
-import Signup from './components/signup.jsx';
-import Login from './components/login.jsx';
-import Logout from './components/logout.jsx';
 
 import CollectionContainer from './components/collectioncontainer.jsx';
 import ConfigureWorkspace from './components/configureworkspace.jsx';
 import ConfigureCollection from './components/configurecollection.jsx';
 
+import Skeleton from './components/skeleton.jsx';
+import Signup from './pages/signup.jsx';
+import Login from './pages/login.jsx';
+import Logout from './pages/logout.jsx';
 import Home from './pages/home.jsx';
 import Workspace from './pages/workspace.jsx';
 import Error from './pages/error.jsx';
@@ -66,15 +66,15 @@ class Root extends React.Component {
 		return (
 			<Router history={browserHistory}>
 				<Route path="/" component={Skeleton}>
-					<IndexRoute component={Home} onEnter={requireAuth}></IndexRoute>
+					<IndexRoute component={Home} onEnter={requireAuth} />
 					<Route path="workspace/:workspace/configure" component={ConfigureWorkspace} />
 					<Route path="workspace/:workspace" onEnter={requireAuth} component={Workspace}>
 						<Route path="collection/:collection/configure" component={ConfigureCollection} />
 						<Route path="collection/:collection" component={CollectionContainer} />
 					</Route>
-					<Route path="login" component={Login}></Route>
-					<Route path="signup" component={Signup}></Route>
-					<Route path="logout" component={Logout} onEnter={feathers_app.logout}></Route>
+					<Route path="login" component={Login} />
+					<Route path="signup" component={Signup} />
+					<Route path="logout" component={Logout} onEnter={feathers_app.logout} />
 					<Route path="*" component={Error} />
 				</Route>
 			</Router>
