@@ -1,6 +1,7 @@
 import React from 'react';
 
-import Footer from '../components/footer.jsx';
+import Navbar from './navbar.jsx';
+import Footer from './footer.jsx';
 
 export default class Skeleton extends React.Component {
 	componentWillUpdate() {
@@ -8,9 +9,9 @@ export default class Skeleton extends React.Component {
 	}
 	render() { return (
 		<div>
-			<div></div>
+			<Navbar workspace={this.props.params.workspace} />
 			{this.props.children}
-			<Footer />
+			<Footer path={this.props.location.pathname} />
 		</div>
 	); }
 }
