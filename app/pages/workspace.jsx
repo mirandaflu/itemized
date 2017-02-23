@@ -62,7 +62,9 @@ class Workspace extends React.Component {
 	}
 	deleteCollection(id) {
 		if (!confirm('Are you sure?')) return;
-		feathers_app.service('collections').remove(id).catch(console.error);
+		feathers_app.service('collections').remove(id).then(result => {
+			this.props.router.push('/workspace/' + this.state.id);
+		}).catch(console.error);
 	}
 	handleCreatedCollection(collection) {
 		if (collection.workspace != this.state.id) return;
@@ -119,56 +121,45 @@ class Workspace extends React.Component {
 		return (
 			<div>
 
-				<div className="pure-menu pure-menu-horizontal">
-					<ul className="pure-menu-list">
-						<li className="pure-menu-item">
-							<Link to="/" className="pure-menu-link">&laquo; Home</Link>
-						</li>
-						<li className="pure-menu-item">
-							<div className="pure-menu-heading">
-								Workspace: <span style={{textTransform:'none'}} title={this.state.id}>{this.state.workspace.name}</span>
-							</div>
-						</li>
-					</ul>
-				</div>
-
 				<StatusText
 					loaded={this.state.collectionsLoaded}
 					error={this.state.collectionsError}
 					data={this.state.collections}
-					nodatamessage='No Collections' />
+					nodatamessage='' />
 
-				<div className="pure-menu pure-menu-horizontal pure-menu-scrollable nobottompadding">
-					<div className="pure-menu-heading">Collections:</div>
-					<ul className="pure-menu-list tabs">
+				<div style={{width:'100%', overflow:'auto', marginTop:'5px'}}>
+					<div className="pure-menu pure-menu-horizontal nobottompadding">
+						<div className="pure-menu-heading">Collections:</div>
+						<ul className="pure-menu-list tabs">
 
-						{this.state.collections.map(function(collection) {
-							return (
-								<CollectionTab
-									key={collection._id}
-									activeCollectionId={that.props.params.collection}
-									workspace={that.state.workspace}
-									collectionsLength={that.state.collections.length}
-									collection={collection}
-									height={that.state.itemHeight}
-									onChange={that.editCollection.bind(that)}
-									onMove={that.moveCollection.bind(that)}
-									onDelete={that.deleteCollection.bind(that)} />
-							);
-						})}
+							{this.state.collections.map(function(collection) {
+								return (
+									<CollectionTab
+										key={collection._id}
+										activeCollectionId={that.props.params.collection}
+										workspace={that.state.workspace}
+										collectionsLength={that.state.collections.length}
+										collection={collection}
+										height={that.state.itemHeight}
+										onChange={that.editCollection.bind(that)}
+										onMove={that.moveCollection.bind(that)}
+										onDelete={that.deleteCollection.bind(that)} />
+								);
+							})}
 
-					</ul>
-					<ul className="pure-menu-list">
-						<li className="pure-menu-item" style={{paddingLeft:'15px', height:this.state.itemHeight}}>
-							<button className="pure-button" onClick={this.createCollection.bind(this)}>
-								Add Collection
-							</button>
-						</li>
-					</ul>
+						</ul>
+						<ul className="pure-menu-list">
+							<li className="pure-menu-item" style={{paddingLeft:'15px', height:this.state.itemHeight}}>
+								<button className="pure-button button-secondary" onClick={this.createCollection.bind(this)}>
+									<i className="fa fa-plus" />
+								</button>
+							</li>
+						</ul>
+					</div>
 				</div>
 
-				<div className="workspace">
-					{this.props.children}
+				<div className="workspace withshadow">
+					{this.props.children || ((this.state.collections.length == 0)?'Please create a collection':'Please select or create a collection')}
 				</div>
 
 			</div>

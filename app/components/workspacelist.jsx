@@ -104,8 +104,7 @@ class WorkspaceList extends React.Component {
 
 				<div className="pure-g">
 					{workspaceNodes}
-					<div className="pure-u-1 pure-u-sm-1-3 pure-u-lg-1-4">
-						<br />
+					<div className="pure-u-1" style={{margin:'5px'}}>
 						<button className="pure-button" onClick={this.createWorkspace.bind(this)}>
 							Create Workspace
 						</button>

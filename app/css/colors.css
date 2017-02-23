@@ -1,0 +1,14 @@
+body { background-color: #ced5d9; }
+
+.dark {
+	background-color: #222526;
+	color: white;
+}
+.card, .tab, .workspace {
+	background-color: white;
+}
+.alert {
+	background: #f1c40f;
+	color: #fff;
+}
+

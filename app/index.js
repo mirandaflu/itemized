@@ -6,11 +6,12 @@ import feathers from 'feathers-client';
 import io from 'socket.io-client';
 import localstorage from 'feathers-localstorage';
 
-import './css/react-contextmenu.css';
 import 'react-select/dist/react-select.css';
+import 'animate.css/animate.min.css';
+import './css/react-contextmenu.css';
 import './css/buttons.css';
 import './css/custom.css';
-
+import './css/colors.css';
 
 import CollectionContainer from './components/collectioncontainer.jsx';
 import ConfigureWorkspace from './components/configureworkspace.jsx';
