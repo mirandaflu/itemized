@@ -70,6 +70,12 @@ input { border-radius: 0 !important; }
 	margin-bottom: -13px;
 	top: -5px;
 }
+.Select * {
+	border-radius: 0;
+}
+.pure-g .Select {
+	width: 100%;
+}
 .pure-table .Select-control {
 	border: 0;
 	border-radius: 0;
