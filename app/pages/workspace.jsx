@@ -1,7 +1,9 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router';
-import { ContextMenu, MenuItem, ContextMenuTrigger } from "react-contextmenu";
 
+import collectionViews from '../components/collectionviews/index.js';
+
+import CollectionTab from '../components/collectiontab.jsx';
 import StatusText from '../components/statustext.jsx';
 
 class Workspace extends React.Component {
@@ -10,7 +12,7 @@ class Workspace extends React.Component {
 		this.state = {
 			itemHeight: '35px',
 			id: this.props.routeParams.workspace,
-			name: '',
+			workspace: {},
 			collectionsLoaded: false,
 			collectionsError: false,
 			collections: []
@@ -18,8 +20,8 @@ class Workspace extends React.Component {
 	}
 	getData() {
 		feathers_app.service('workspaces').get(this.state.id).then(result => {
-			this.setState({name:result.name});
-		});
+			this.setState({workspace:result});
+		}).catch(console.error);
 		feathers_app.service('collections').find({query:{workspace:this.state.id, $sort:{position:1}}}).then(result => {
 			this.setState({
 				collectionsLoaded: true,
@@ -36,14 +38,15 @@ class Workspace extends React.Component {
 		});
 	}
 	createCollection() {
-		let name = prompt('Name?');
-		if (!name) return;
+		let name = 'New Collection';
 		let collection = {
 			workspace: this.state.id,
 			name: name,
 			position: this.state.collections.length
 		};
-		feathers_app.service('collections').create(collection).catch(console.error);
+		feathers_app.service('collections').create(collection).then(result => {
+			this.props.router.push('/workspace/' + this.state.id + '/collection/' + result._id + '/configure')
+		}).catch(console.error);
 	}
 	moveCollection(e, data) {
 		let move = (data.move == 'right')? 1: -1;
@@ -54,14 +57,14 @@ class Workspace extends React.Component {
 			feathers_app.service('collections').patch(data.collection._id, {$inc: {position: move}}).catch(console.error);
 		}).catch(console.error);
 	}
-	renameCollection(e, data) {
-		let name = prompt('Name?');
-		if (!name) return;
-		feathers_app.service('collections').patch(data.collection._id, {name: name}).catch(console.error);
+	editCollection(id, patch) {
+		feathers_app.service('collections').patch(id, patch).catch(console.error);
 	}
-	removeCollection(e, data) {
+	deleteCollection(id) {
 		if (!confirm('Are you sure?')) return;
-		feathers_app.service('collections').remove(data.collection._id).catch(console.error);
+		feathers_app.service('collections').remove(id).then(result => {
+			this.props.router.push('/workspace/' + this.state.id);
+		}).catch(console.error);
 	}
 	handleCreatedCollection(collection) {
 		if (collection.workspace != this.state.id) return;
@@ -80,12 +83,17 @@ class Workspace extends React.Component {
 	}
 	handleRemovedCollection(collection) {
 		for (let i in this.state.collections) {
-			if (this.state.collections[i]._id == collections._id) {
+			if (this.state.collections[i]._id == collection._id) {
 				let newCollections = this.state.collections;
 				newCollections.splice(i, 1)
 				this.setState({ collections: newCollections });
 				break;
 			}
+		}
+	}
+	handlePatchedWorkspace(workspace) {
+		if (workspace._id == this.state.id) {
+			this.setState({workspace:workspace});
 		}
 	}
 	bindEventListeners() {
@@ -95,6 +103,8 @@ class Workspace extends React.Component {
 		feathers_app.service('collections').on('created', this.collectionCreatedListener);
 		feathers_app.service('collections').on('patched', this.collectionPatchedListener);
 		feathers_app.service('collections').on('removed', this.collectionRemovedListener);
+		this.workspacePatchedListener = this.handlePatchedWorkspace.bind(this);
+		feathers_app.service('workspaces').on('patched', this.workspacePatchedListener);
 	}
 	componentDidMount() {
 		this.getData();
@@ -104,77 +114,53 @@ class Workspace extends React.Component {
 		feathers_app.service('collections').removeListener('created', this.collectionCreatedListener);
 		feathers_app.service('collections').removeListener('patched', this.collectionPatchedListener);
 		feathers_app.service('collections').removeListener('removed', this.collectionRemovedListener);
+		feathers_app.service('workspaces').removeListener('patched', this.workspacePatchedListener);
 	}
 	render() {
 		let that = this;
-		let collectionTabs = this.state.collections.map(function(collection) {
-			return (
-				<li key={collection._id} className={(collection._id == that.props.params.collection)?'pure-menu-item pure-menu-selected':'pure-menu-item'} style={{height:that.state.itemHeight}}>
-					<ContextMenuTrigger id={'collection'+collection._id}>
-						<Link to={'/workspace/'+that.state.id+'/collection/'+collection._id} className="pure-menu-link tab" title={collection._id}>
-							{collection.name}
-						</Link>
-					</ContextMenuTrigger>
-					<ContextMenu id={'collection'+collection._id}>
-						{collection.position != that.state.collections.length-1 &&
-							<MenuItem data={{move:'right', collection: collection}} onClick={that.moveCollection.bind(that)}>
-								Move Right
-							</MenuItem>
-						}
-						{collection.position != 0 &&
-							<MenuItem data={{move:'left', collection: collection}} onClick={that.moveCollection.bind(that)}>
-								Move Left
-							</MenuItem>
-						}
-						<MenuItem data={{collection: collection}} onClick={that.renameCollection.bind(that)}>
-							Rename Collection
-						</MenuItem>
-						<MenuItem data={{collection: collection}} onClick={that.removeCollection.bind(that)}>
-							Delete Collection
-						</MenuItem>
-					</ContextMenu>
-				</li>
-			);
-		});
 		return (
 			<div>
-
-				<div className="pure-menu pure-menu-horizontal">
-					<ul className="pure-menu-list">
-						<li className="pure-menu-item">
-							<Link to="/" className="pure-menu-link">&laquo; Home</Link>
-						</li>
-						<li className="pure-menu-item">
-							<div className="pure-menu-heading">
-								Workspace: <span style={{textTransform:'none'}} title={this.state.id}>{this.state.name}</span>
-							</div>
-						</li>
-					</ul>
-				</div>
 
 				<StatusText
 					loaded={this.state.collectionsLoaded}
 					error={this.state.collectionsError}
 					data={this.state.collections}
-					nodatamessage='No Collections' />
+					nodatamessage='' />
 
-				<div className="pure-menu pure-menu-horizontal pure-menu-scrollable nobottompadding">
-					<div className="pure-menu-heading">Collections:</div>
-					<ul className="pure-menu-list tabs">
+				<div style={{width:'100%', overflow:'auto', marginTop:'5px'}}>
+					<div className="pure-menu pure-menu-horizontal nobottompadding">
+						<div className="pure-menu-heading">Collections:</div>
+						<ul className="pure-menu-list tabs">
 
-						{collectionTabs}
+							{this.state.collections.map(function(collection) {
+								return (
+									<CollectionTab
+										key={collection._id}
+										activeCollectionId={that.props.params.collection}
+										workspace={that.state.workspace}
+										collectionsLength={that.state.collections.length}
+										collection={collection}
+										height={that.state.itemHeight}
+										onChange={that.editCollection.bind(that)}
+										onMove={that.moveCollection.bind(that)}
+										onDelete={that.deleteCollection.bind(that)} />
+								);
+							})}
 
-					</ul>
-					<ul className="pure-menu-list">
-						<li className="pure-menu-item" style={{paddingLeft:'15px', height:this.state.itemHeight}}>
-							<button className="pure-button" onClick={this.createCollection.bind(this)}>
-								Add Collection
-							</button>
-						</li>
-					</ul>
+						</ul>
+						<ul className="pure-menu-list">
+							<li className="pure-menu-item" style={{paddingLeft:'15px', height:this.state.itemHeight}}>
+								<button className="pure-button button-secondary" onClick={this.createCollection.bind(this)}>
+									<i className="fa fa-plus" />
+								</button>
+							</li>
+						</ul>
+					</div>
 				</div>
 
-				{this.props.children}
+				<div className="workspace withshadow">
+					{this.props.children || ((this.state.collections.length == 0)?'Please create a collection':'Please select or create a collection')}
+				</div>
 
 			</div>
 		);

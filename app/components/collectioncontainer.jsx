@@ -3,13 +3,15 @@ import { Link, withRouter } from 'react-router';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from "react-contextmenu";
 
 import fieldTypes from './attributes/index.js';
+import collectionViews from './collectionviews/index.js';
 import StatusText from '../components/statustext.jsx';
 
-class Collection extends React.Component {
+class CollectionContainer extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			id: this.props.routeParams.collection,
+			collection: { viewType: 'Table' },
 			fields: [],
 			things: [],
 			attributes: []
@@ -139,10 +141,17 @@ class Collection extends React.Component {
 			}
 		}
 	}
+	handlePatchedCollection(collection) {
+		if (collection._id == this.state.collection._id) {
+			this.setState({ collection: collection });
+		}
+	}
 	loadData(collection) {
 		if (typeof collection == 'undefined') {
 			collection = this.state.id;
 		}
+		feathers_app.service('collections').get(collection)
+			.then(result => { this.setState({collection: result}); });
 		feathers_app.service('fields').find({query: {coll: collection, $sort: {position: 1}}})
 			.then(result => { this.setState({fields: result}); });
 		feathers_app.service('things').find({query: {coll: collection}})
@@ -167,7 +176,8 @@ class Collection extends React.Component {
 		feathers_app.service('attributes').on('created', this.attributeCreatedListener);
 		feathers_app.service('attributes').on('patched', this.attributePatchedListener);
 		feathers_app.service('attributes').on('removed', this.attributeRemovedListener);
-
+		this.collectionPatchedListener = this.handlePatchedCollection.bind(this);
+		feathers_app.service('collections').on('patched', this.collectionPatchedListener);
 	}
 	componentWillReceiveProps(nextProps) {
 		this.setState({id: nextProps.routeParams.collection});
@@ -186,102 +196,37 @@ class Collection extends React.Component {
 		feathers_app.service('attributes').removeListener('created', this.attributeCreatedListener);
 		feathers_app.service('attributes').removeListener('patched', this.attributePatchedListener);
 		feathers_app.service('attributes').removeListener('removed', this.attributeRemovedListener);
+		feathers_app.service('collections').removeListener('patched', this.collectionPatchedListener);
 	}
 	render() {
+		let CollectionComponent = (collectionViews[this.state.collection.viewType])?
+			collectionViews[this.state.collection.viewType].component:
+			collectionViews['Table'].component;
+
 		let that = this;
 		let attributesObject = {};
 		for (let attr of this.state.attributes) {
 			attributesObject[attr.thing + attr.field] = attr;
 		}
+
 		return (
-			<div className="workspace">
-				<table className="pure-table">
-					<thead>
-						<tr>
-							<th></th>
-							{this.state.fields.map(function(field){
-								return(
-									<th key={field._id}>
-										<ContextMenuTrigger id={'field'+field._id}>
-											{field.name}
-										</ContextMenuTrigger>
-										<ContextMenu id={'field'+field._id}>
-											<MenuItem data={{field: field}} onClick={that.changeFieldType.bind(that)}>
-												Change Type
-											</MenuItem>
-											{field.type == 'Single Select' &&
-												<MenuItem data={{field: field}} onClick={that.addFieldOption.bind(that)}>
-													Add Option
-												</MenuItem>
-											}
-											{field.position != that.state.fields.length-1 &&
-												<MenuItem data={{move:'right', field: field}} onClick={that.moveField.bind(that)}>
-													Move Right
-												</MenuItem>
-											}
-											{field.position != 0 &&
-												<MenuItem data={{move:'left', field: field}} onClick={that.moveField.bind(that)}>
-													Move Left
-												</MenuItem>
-											}
-											<MenuItem data={{field: field}} onClick={that.renameField.bind(that)}>
-												Rename Field
-											</MenuItem>
-											<MenuItem data={{field: field}} onClick={that.removeField.bind(that)}>
-												Delete Field
-											</MenuItem>
-										</ContextMenu>
-									</th>
-								);
-							})}
-							<th>
-								<button className="pure-button" onClick={this.createField.bind(this)}>Add Field</button>
-							</th>
-						</tr>
-					</thead>
-					<tbody>
-						{this.state.things.map(function(thing){
-							return(
-								<tr key={thing._id}>
-									<td>
-										<ContextMenuTrigger id={'thing'+thing._id}>
-											=
-										</ContextMenuTrigger>
-										<ContextMenu id={'thing'+thing._id}>
-											<MenuItem data={{thing: thing}} onClick={that.removeThing.bind(that)}>
-												Delete Thing
-											</MenuItem>
-										</ContextMenu>
-									</td>
-									{that.state.fields.map(function(field){
-										let value = '', attribute = null;
-										if (attributesObject[thing._id + field._id]) {
-											attribute = attributesObject[thing._id + field._id];
-											value = attribute.value;
-										}
-										let FieldComponent = fieldTypes[field.type].component;
-										return (
-											<td className="cell" key={thing._id + field._id}>
-												<FieldComponent
-													fieldType={field.type}
-													attribute={attribute}
-													value={value}
-													options={field.options}
-													onCreateOption={that.handleCreateOption.bind(that, field._id)}
-													onCommitChange={that.commitValueChange.bind(that, thing._id, field._id, attribute)} />
-											</td>
-										);
-									})}
-								</tr>
-							);
-						})}
-					</tbody>
-				</table>
-				<br />
-				<button className="pure-button" onClick={this.addThing.bind(this)}>Add Thing</button>
-			</div>
+			<CollectionComponent
+				collection={this.state.collection}
+				fields={this.state.fields}
+				things={this.state.things}
+				attributesObject={attributesObject}
+				onCreateField={this.createField.bind(this)}
+				onAddThing={this.addThing.bind(this)}
+				onChangeFieldType={this.changeFieldType.bind(this)}
+				onAddFieldOption={this.addFieldOption.bind(this)}
+				onMoveField={this.moveField.bind(this)}
+				onRenameField={this.renameField.bind(this)}
+				onRemoveField={this.removeField.bind(this)}
+				onRemoveThing={this.removeThing.bind(this)}
+				onCreateOption={this.handleCreateOption.bind(this)}
+				onCommitValueChange={this.commitValueChange.bind(this)} />
 		);
 	}
 }
 
-module.exports = withRouter(Collection);
+module.exports = withRouter(CollectionContainer);
