@@ -16,19 +16,31 @@ class CollectionTable extends React.Component {
 			sort: null,
 			group: null,
 			filters: [],
-			filterInProgress: false,
+			filterModalOpen: false,
 		};
 	}
-	handleFilterChange() {
-		console.log('woo');
+	closeFilterModal() { this.setState({filterModalOpen: false}); }
+	handleFilterChange(filters) {
+		this.setState({filters: filters.map(function(filter) {
+			let field = (filter.field)? filter.field.label: '',
+				value = (filter.value)? filter.value.label: '';
+			return {
+				label: field +' '+ filter.operator.label +' '+ value,
+				value: filter
+			};
+		})});
 	}
 	handleSortFilterGroupChange(type, value) {
-		if (type == 'filter') {
-			this.setState({
-				filterInProgress: value
-			});
+		let newFilter = false;
+		if (type == 'filters') {
+			for (let i in value) {
+				if (value[i].value == 'new') {
+					this.setState({filterModalOpen: true});
+					newFilter = true;
+				}
+			}
 		}
-		else {
+		if (!newFilter) {
 			let s = {};
 			s[type] = value;
 			this.setState(s);
@@ -36,12 +48,12 @@ class CollectionTable extends React.Component {
 	}
 	render() {
 		let that = this;
-		let things = this.props.things, fields = this.props.fields, attributes = this.props.attributesObject;
+		let things = this.props.things, fields = this.props.fields, attributes = this.props.attributesObject, filters = this.state.filters;
 
 		if (this.state.sort) {
 			things = things.sort(function(a,b) {
-				let A = attributes[a._id+that.state.sort.value].value,
-					B = attributes[b._id+that.state.sort.value].value;
+				let A = (attributes[a._id+that.state.sort.value])? attributes[a._id+that.state.sort.value].value: '',
+					B = (attributes[b._id+that.state.sort.value])? attributes[b._id+that.state.sort.value].value: '';
 				
 				switch(typeof A) {
 					case 'number':
@@ -52,6 +64,23 @@ class CollectionTable extends React.Component {
 						return 0;
 				}
 			});
+		}
+		if (filters.length > 0) {
+			for (let filter of filters) {
+				let operator = filter.value.operator.value,
+					value = (filter.value && filter.value.value)? filter.value.value.value: '',
+					fieldID = (filter.value && filter.value.field)? filter.value.field.value: null;
+				if (operator && value && fieldID) {
+					things = things.filter(function(thing) {
+						let testAttribute = (attributes[thing._id+fieldID])? attributes[thing._id+fieldID]: null;
+						console.log(testAttribute);
+						let testValue = (testAttribute)? testAttribute.value: null;
+						let s = '"'+testValue+'"'+operator+'"'+value+'"';
+						console.log(s);
+						return eval(s);
+					});
+				}
+			}
 		}
 		if (this.state.group) {
 			things = things.sort(function(a,b) {
@@ -72,6 +101,11 @@ class CollectionTable extends React.Component {
 			for (let i = 1; i < things.length; i++) {
 				if (attributes[things[i]._id+that.state.group.value] && attributes[currentGroupRow._id+that.state.group.value] &&
 				attributes[things[i]._id+that.state.group.value].value == attributes[currentGroupRow._id+that.state.group.value].value) {
+					currentGroupRow.rowSpan += 1;
+					things[i].rowSpan = 0;
+				}
+				else if ((!attributes[things[i]._id+that.state.group.value] || attributes[things[i]._id+that.state.group.value].value == '') &&
+				(!attributes[currentGroupRow._id+that.state.group.value] || attributes[currentGroupRow._id+that.state.group.value].value == '')) {
 					currentGroupRow.rowSpan += 1;
 					things[i].rowSpan = 0;
 				}
@@ -97,10 +131,11 @@ class CollectionTable extends React.Component {
 						<Select
 							placeholder="Hide"
 							multi={true}
+							searchable={false}
 							value={this.state.hide}
 							options={fields.map(function(field){ return { value: field._id, label: field.name }; })}
 							onChange={this.handleSortFilterGroupChange.bind(this, 'hide')} />
-						<i className="fa fa-minus-square" />
+						<i className="fa fa-eye-slash" />
 					</div>
 					<div className="pure-u-1 pure-u-sm-1-2 pure-u-md-1-4">
 						<Select
@@ -113,16 +148,17 @@ class CollectionTable extends React.Component {
 					<div className="pure-u-1 pure-u-sm-1-2 pure-u-md-1-4">
 						<Select
 							placeholder="Filter"
-							value={this.state.filter}
-							options={fields.map(function(field){ return { value: field._id, label: field.name }; })}
-							onChange={this.handleSortFilterGroupChange.bind(this, 'filter')} />
+							multi={true}
+							value={filters}
+							options={[{value:'new', label:'New Filter'}]}
+							onChange={this.handleSortFilterGroupChange.bind(this, 'filters')} />
 						<i className="fa fa-filter" />
 						<FilterMaker
-							isOpen={!!this.state.filterInProgress}
-							onChange={this.handleFilterChange}
+							isOpen={this.state.filterModalOpen}
+							onClose={this.closeFilterModal.bind(this)}
+							onChange={this.handleFilterChange.bind(this)}
 							fields={this.props.fields}
-							attributes={this.props.attributes}
-							newFilterField={this.state.filterInProgress} />
+							attributes={this.props.attributes} />
 					</div>
 					<div className="pure-u-1 pure-u-sm-1-2 pure-u-md-1-4">
 						<Select
@@ -133,7 +169,7 @@ class CollectionTable extends React.Component {
 						<i className="fa fa-object-group" />
 					</div>
 				</div>
-				<div style={{width:'100%', overflowX:'auto', overflowY:'visible', whiteSpace:'nowrap'}}>
+				<div style={{width:'100%', overflowX:'auto', overflowY:'visible'}}>
 					<table className="pure-table">
 						<thead>
 							<tr>

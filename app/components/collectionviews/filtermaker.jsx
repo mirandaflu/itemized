@@ -8,10 +8,10 @@ class FilterRow extends React.Component {
 		this.state = {
 			operatorOptions: [
 				{
-					label: 'equals',
+					label: 'is',
 					value: '=='
 				}, {
-					label: 'does not equal',
+					label: 'isn\'t',
 					value: '!='
 				}, {
 					label: 'is greater than',
@@ -34,10 +34,19 @@ class FilterRow extends React.Component {
 			value: this.props.value || null
 		}
 	}
+	operatorOptions(fieldType) {
+		switch(fieldType) {
+			case 'Text':
+			case 'Number':
+			case 'Checkbox':
+			case 'Single Select':
+			case 'Multiple Select':
+		}
+	}
 	handleSelectChange(type, value) {
 		let s = {};
 		s[type] = value;
-		console.log(s);
+		this.props.onChange(s);
 		this.setState(s);
 	}
 	render() {
@@ -62,7 +71,7 @@ class FilterRow extends React.Component {
 					value={this.state.operator}
 					onChange={this.handleSelectChange.bind(this, 'operator')}
 					options={this.state.operatorOptions} />
-				{!this.state.operator.noValue && <Select
+				{!this.state.operator.noValue && <Select.Creatable
 					value={this.state.value}
 					onChange={this.handleSelectChange.bind(this, 'value')}
 					options={valueOptions} />}
@@ -76,54 +85,42 @@ export default class FilterMaker extends React.Component {
 		super(props);
 		this.state = {
 			modalOpen: false,
-			filters: [],
-			defaultFilter: {
-				field: null,
-				operator: null,
-				value: null
-			}
+			filters: []
 		};
 	}
-	handleSelectChange(type, value) {
-		let s = {};
-		s[type] = value;
-		console.log(s);
-		this.setState(s);
+	defaultFilter() {
+		return {
+			field: null,
+			operator: {
+				label: 'equals',
+				value: '=='
+			},
+			value: null
+		};
 	}
 	addFilter() {
 		this.setState({
-			filters: this.state.filters.concat({
-				field: null,
-				operator: null,
-				value: null
-			})
+			filters: this.state.filters.concat(this.defaultFilter())
 		});
 	}
+	handleFilterChange(index, state) {
+		let filters = this.state.filters;
+		filters[index] = Object.assign(filters[index], state);
+		this.setState({filters: filters});
+		this.props.onChange(filters);
+	}
 	closeModal() {
-		this.setState({ modalOpen: false });
+		this.props.onClose();
 	}
 	componentWillReceiveProps(nextProps) {
-		console.log(nextProps.newFilterField);
 		let s = { modalOpen: nextProps.isOpen };
-		if (nextProps.isOpen) {
-			s.filters = this.state.filters.concat({
-				field: nextProps.newFilterField,
-				operator: null,
-				value: null
-			});
+		if (nextProps.isOpen && this.state.filters.length == 0) {
+			s.filters = this.state.filters.concat(this.defaultFilter());
 		}
 		this.setState(s);
 	}
 	render() {
-		let that = this, i = 0;
-		let valueOptions = this.props.attributes.filter(function(attribute) {
-			if (!that.state.field) return false;
-			else return attribute.field == that.state.field.value;
-		}).map(function(attribute) { return attribute.value; });
-		valueOptions = [ ...new Set(valueOptions)]; // remove duplicates
-		valueOptions = valueOptions.map(function(attribute) {
-			return { value: attribute, label: attribute };
-		});
+		let that = this, i = -1;
 		return (
 			<Modal isOpen={this.state.modalOpen} contentLabel="Modal-FilterMaker">
 				<div className="modalContent">
@@ -136,10 +133,11 @@ export default class FilterMaker extends React.Component {
 								attributes={that.props.attributes}
 								field={filter.field}
 								operator={filter.operator}
-								value={filter.value} />
+								value={filter.value}
+								onChange={that.handleFilterChange.bind(that, i)} />
 						);
 					})}
-					<br /><br />
+					<br />
 					<button style={{float:'none'}} className="pure-button" onClick={this.addFilter.bind(this)}>Add Filter</button>
 				</div>
 			</Modal>
