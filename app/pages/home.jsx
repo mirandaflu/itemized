@@ -13,7 +13,6 @@ class Home extends React.Component {
 				</div>
 				<div className="pure-u-1 pure-u-sm-1-24 pure-u-md-1-8 pure-u-xl-1-6" />
 			</div>
-			<Link to="/logout">Log out</Link>
 		</div>
 	); }
 }

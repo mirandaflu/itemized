@@ -38,7 +38,7 @@ class WorkspaceItem extends React.Component {
 				<Link to={'/workspace/'+this.props.workspace._id}>
 					<div className="card withshadow">
 
-						<button className="pure-button button-small" onClick={this.startWorkspaceEdit.bind(this)}>
+						<button style={{marginTop:'-5.5px'}} className="pure-button button-small" onClick={this.startWorkspaceEdit.bind(this)}>
 							<i className="fa fa-edit" />
 						</button>
 
@@ -49,7 +49,7 @@ class WorkspaceItem extends React.Component {
 							contentLabel="Modal">
 							<div className="modalContent">
 
-								<button onClick={this.closeModal.bind(this)}><i className="fa fa-close" /></button>
+								<button className="pure-button" onClick={this.closeModal.bind(this)}><i className="fa fa-close" /></button>
 								<form className="pure-form pure-form-aligned">
 									<fieldset>
 										<div className="pure-control-group">

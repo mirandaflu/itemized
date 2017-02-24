@@ -10,7 +10,7 @@ class CollectionTable extends React.Component {
 	render() {
 		let that = this;
 		return (
-			<div className="workspace">
+			<div>
 				<table className="pure-table">
 					<thead>
 						<tr>
@@ -26,7 +26,7 @@ class CollectionTable extends React.Component {
 								);
 							})}
 							<th>
-								<button className="pure-button" onClick={this.props.onCreateField}>Add Field</button>
+								<button className="pure-button button-secondary" onClick={this.props.onCreateField}>Add Field</button>
 							</th>
 						</tr>
 					</thead>
@@ -68,8 +68,7 @@ class CollectionTable extends React.Component {
 						})}
 					</tbody>
 				</table>
-				<br />
-				<button className="pure-button" onClick={this.props.onAddThing}>Add Thing</button>
+				<button className="pure-button button-secondary" style={{marginTop:'8px'}} onClick={this.props.onAddThing}>Add Thing</button>
 			</div>
 		);
 	}
