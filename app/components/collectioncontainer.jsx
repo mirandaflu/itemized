@@ -214,6 +214,7 @@ class CollectionContainer extends React.Component {
 				collection={this.state.collection}
 				fields={this.state.fields}
 				things={this.state.things}
+				attributes={this.state.attributes}
 				attributesObject={attributesObject}
 				onCreateField={this.createField.bind(this)}
 				onAddThing={this.addThing.bind(this)}
