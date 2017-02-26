@@ -11,7 +11,7 @@ class CollectionTable extends React.Component {
 		let that = this;
 		return (
 			<div>
-				<table className="pure-table">
+				<table className="pure-table animated fadeIn">
 					<thead>
 						<tr>
 							<th></th>
@@ -52,7 +52,7 @@ class CollectionTable extends React.Component {
 										}
 										let FieldComponent = fieldTypes[field.type].component;
 										return (
-											<td className="cell" key={thing._id + field._id}>
+											<td className="cell animated fadeIn" key={thing._id + field._id}>
 												<FieldComponent
 													fieldType={field.type}
 													attribute={attribute}
