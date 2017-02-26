@@ -1,9 +1,13 @@
+import StaticText from './statictext.jsx';
 import TextInput from './textinput.jsx';
 import NumberInput from './numberinput.jsx';
 import CheckboxInput from './checkboxinput.jsx';
 import SelectInput from './selectinput.jsx';
 
 module.exports = {
+	"Static": {
+		component: StaticText
+	},
 	"Text": {
 		component: TextInput
 	},
