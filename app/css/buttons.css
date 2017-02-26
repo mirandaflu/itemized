@@ -3,7 +3,6 @@
 .button-warning,
 .button-secondary {
 	color: white;
-	text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
 }
 
 .button-success {
@@ -35,4 +34,11 @@
 
 .button-xlarge {
 	font-size: 125%;
+}
+
+.pure-button:hover {
+	background-image: linear-gradient(rgba(0,0,0,.08), rgba(0,0,0,.08));
+}
+.pure-button:active {
+	background-image: linear-gradient(rgba(255,255,255,.08), rgba(255,255,255,.08));
 }

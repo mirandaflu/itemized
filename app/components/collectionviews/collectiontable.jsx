@@ -182,7 +182,7 @@ class CollectionTable extends React.Component {
 					</div>
 				</div>
 				<div style={{width:'100%', overflowX:'auto', overflowY:'visible'}}>
-					<table className="pure-table">
+					<table className="pure-table animated fadeIn">
 						<thead>
 							<tr>
 								<th></th>

@@ -36,7 +36,7 @@ class WorkspaceItem extends React.Component {
 		return (
 			<div className="pure-u-1 pure-u-sm-1-3 pure-u-lg-1-4">
 				<Link to={'/workspace/'+this.props.workspace._id}>
-					<div className="card withshadow">
+					<div className="card withshadow hovershadow">
 
 						<button style={{marginTop:'-5.5px'}} className="pure-button button-small" onClick={this.startWorkspaceEdit.bind(this)}>
 							<i className="fa fa-edit" />
