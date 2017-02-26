@@ -33,7 +33,7 @@ export default class ConfigureWorkspace extends React.Component {
 
 				Choose Template:
 				<br /><br />
-				<Link className="pure-button" to={'/workspace/' + this.props.params.workspace}>Empty Workspace</Link>
+				<Link className="card withshadow hovershadow" to={'/workspace/' + this.props.params.workspace}>Empty Workspace</Link>
 			</div>
 		);
 	}
