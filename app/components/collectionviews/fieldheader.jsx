@@ -89,7 +89,7 @@ export default class FieldHeader extends React.Component {
 				</ContextMenu>
 				<Modal isOpen={this.state.modalOpen} contentLabel="Modal">
 					<div className="modalContent">
-						<button onClick={this.closeModal.bind(this)}><i className="fa fa-close" /></button>
+						<button className="pure-button" onClick={this.closeModal.bind(this)}><i className="fa fa-close" /></button>
 
 						<form className="pure-form pure-form-aligned">
 							<fieldset>
