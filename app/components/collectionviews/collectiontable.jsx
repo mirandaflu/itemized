@@ -22,15 +22,11 @@ class CollectionTable extends React.Component {
 		};
 	}
 	closeFilterModal() { this.setState({filterModalOpen: false}); }
-	handleFilterChange(filters) {
-		this.setState({filters: filters.map(function(filter) {
-			let field = (filter.field)? filter.field.label: '',
-				value = (filter.value)? filter.value.label: '';
-			return {
-				label: field +' '+ filter.operator.label +' '+ value,
-				value: filter
-			};
-		})});
+	handleFilterChange(index, patch) {
+		let filters = this.state.filters;
+		if (!filters[index]) filters[index] = {};
+		filters[index] = Object.assign(filters[index], patch);
+		this.setState({filters: filters});
 	}
 	handleFilterAnyAll() { this.setState({matchAll:!this.state.matchAll}); }
 	handleSortFilterGroupChange(type, value) {
@@ -42,8 +38,15 @@ class CollectionTable extends React.Component {
 					newFilter = true;
 				}
 			}
+			if (!newFilter) {
+				let s = {};
+				s[type] = value.map(function(filterOption) {
+					return filterOption.value;
+				});
+				this.setState(s);
+			}
 		}
-		if (!newFilter) {
+		else {
 			let s = {};
 			s[type] = value;
 			this.setState(s);
@@ -52,6 +55,15 @@ class CollectionTable extends React.Component {
 	render() {
 		let that = this;
 		let things = this.props.things, fields = this.props.fields, attributes = this.props.attributesObject, filters = this.state.filters;
+		let displayFilters = filters.map(function(filter){
+			let field = (filter.field)? filter.field.label: '',
+				operator = (filter.operator)? filter.operator.label: '',
+				value = (filter.value)? filter.value.label: ''; 
+			return { 
+				label: field +' '+ operator +' '+ value, 
+				value: filter 
+			};
+		});
 
 		if (this.state.sort) {
 			things = things.sort(function(a,b) {
@@ -71,14 +83,14 @@ class CollectionTable extends React.Component {
 		if (filters.length > 0) {
 			let filteredThings = [], filteredThingIDs = [];
 			for (let filter of filters) {
-				let operator = filter.value.operator.value,
-					value = (filter.value && filter.value.value)? filter.value.value.value: '',
-					fieldID = (filter.value && filter.value.field)? filter.value.field.value._id: null;
+				let operator = filter.operator.value,
+					value = (filter.value)? filter.value.value: '',
+					fieldID = (filter.field)? filter.field.value._id: null;
 				if (operator && value && fieldID) {
 					for (let thing of things) {
 						let testAttribute = (attributes[thing._id+fieldID])? attributes[thing._id+fieldID]: null;
 						let testValue = (testAttribute)? testAttribute.value: null;
-						if (filter.value.operator.value.comparison(testValue, value) && filteredThingIDs.indexOf(thing._id) == -1) {
+						if (filter.operator.value.comparison(testValue, value) && filteredThingIDs.indexOf(thing._id) == -1) {
 							filteredThings.push(thing);
 							filteredThingIDs.push(thing._id);
 						}
@@ -159,11 +171,12 @@ class CollectionTable extends React.Component {
 						<Select
 							placeholder="Filter"
 							multi={true}
-							value={filters}
+							value={displayFilters}
 							options={[{value:'new', label:'Edit Filters'}]}
 							onChange={this.handleSortFilterGroupChange.bind(this, 'filters')} />
 						<i className="fa fa-filter" />
 						<FilterMaker
+							filters={filters}
 							isOpen={this.state.filterModalOpen}
 							onClose={this.closeFilterModal.bind(this)}
 							onChange={this.handleFilterChange.bind(this)}
