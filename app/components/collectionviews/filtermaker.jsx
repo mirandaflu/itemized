@@ -2,45 +2,23 @@ import React from 'react';
 import Modal from 'react-modal';
 import Select from 'react-select';
 
+import filterTypes from './filterTypes.js'
+
 class FilterRow extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {
-			operatorOptions: [
-				{
-					label: 'is',
-					value: '=='
-				}, {
-					label: 'isn\'t',
-					value: '!='
-				}, {
-					label: 'is greater than',
-					value: '>'
-				}, {
-					label: 'is less than',
-					value: '<'
-				}, {
-					label: 'is set',
-					value: '!== null',
-					noValue: true
-				}, {
-					label: 'is not set',
-					value: '=== null',
-					noValue: true
-				}
-			],
-			field: this.props.field || null,
-			operator: this.props.operator || { label: 'equals', value: '==' },
-			value: this.props.value || null
+		let operatorOptions = [];
+		for (let f in filterTypes) {
+			operatorOptions.push({
+				label: f,
+				value: filterTypes[f]
+			});
 		}
-	}
-	operatorOptions(fieldType) {
-		switch(fieldType) {
-			case 'Text':
-			case 'Number':
-			case 'Checkbox':
-			case 'Single Select':
-			case 'Multiple Select':
+		this.state = {
+			operatorOptions: operatorOptions,
+			field: this.props.field || null,
+			operator: this.props.operator || { label: 'is', value: filterTypes.is },
+			value: this.props.value || null
 		}
 	}
 	handleSelectChange(type, value) {
@@ -51,26 +29,31 @@ class FilterRow extends React.Component {
 	}
 	render() {
 		let that = this;
+
 		let valueOptions = this.props.attributes.filter(function(attribute) {
 			if (!that.state.field) return false;
-			else return attribute.field == that.state.field.value;
+			else return attribute.field == that.state.field.value._id;
 		}).map(function(attribute) { return attribute.value; });
 		valueOptions = [ ...new Set(valueOptions)]; // remove duplicates
 		valueOptions = valueOptions.map(function(attribute) {
 			return { value: attribute, label: attribute };
 		});
+
 		return (
 			<div style={{marginBottom:'10px'}}>
 				<Select
 					clearable={false}
 					value={this.state.field}
 					onChange={this.handleSelectChange.bind(this, 'field')}
-					options={this.props.fields.map(function(field){ return { value: field._id, label: field.name }; })} />
+					options={this.props.fields.map(function(field){ return { value: field, label: field.name }; })} />
 				<Select
 					clearable={false}
 					value={this.state.operator}
 					onChange={this.handleSelectChange.bind(this, 'operator')}
-					options={this.state.operatorOptions} />
+					options={this.state.operatorOptions.filter(function(opt) {
+						if (!that.state.field) return false;
+						else return opt.value.fieldTypes.indexOf(that.state.field.value.type) !== -1;
+					})} />
 				{!this.state.operator.noValue && <Select.Creatable
 					value={this.state.value}
 					onChange={this.handleSelectChange.bind(this, 'value')}
@@ -92,8 +75,8 @@ export default class FilterMaker extends React.Component {
 		return {
 			field: null,
 			operator: {
-				label: 'equals',
-				value: '=='
+				label: 'is',
+				value: filterTypes.is
 			},
 			value: null
 		};
@@ -125,6 +108,18 @@ export default class FilterMaker extends React.Component {
 			<Modal isOpen={this.state.modalOpen} contentLabel="Modal-FilterMaker">
 				<div className="modalContent">
 					<button className="pure-button" onClick={this.closeModal.bind(this)}><i className="fa fa-close" /></button>
+					
+					<form className="pure-form">
+						<label htmlFor="all" className="pure-radio">
+							<input type="radio" id="all" name="match" value="all" checked={this.props.matchAll} onChange={this.props.onToggleAnyAll} /> Match all
+						</label>
+						<label htmlFor="any" className="pure-radio">
+							<input type="radio" id="any" name="match" value="any" checked={!this.props.matchAll} onChange={this.props.onToggleAnyAll} /> Match any
+						</label>
+					</form>
+
+					<br /><br />
+
 					{this.state.filters.map(function(filter) {
 						i++;
 						return (

@@ -5,6 +5,7 @@ import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 
 import fieldTypes from '../attributes/index.js';
 import StatusText from '../statustext.jsx';
+import filterTypes from './filterTypes.js';
 import FieldHeader from './fieldheader.jsx';
 import FilterMaker from './filtermaker.jsx';
 
@@ -17,6 +18,7 @@ class CollectionTable extends React.Component {
 			group: null,
 			filters: [],
 			filterModalOpen: false,
+			matchAll: true
 		};
 	}
 	closeFilterModal() { this.setState({filterModalOpen: false}); }
@@ -30,6 +32,7 @@ class CollectionTable extends React.Component {
 			};
 		})});
 	}
+	handleFilterAnyAll() { this.setState({matchAll:!this.state.matchAll}); }
 	handleSortFilterGroupChange(type, value) {
 		let newFilter = false;
 		if (type == 'filters') {
@@ -66,21 +69,28 @@ class CollectionTable extends React.Component {
 			});
 		}
 		if (filters.length > 0) {
+			let filteredThings = [], filteredThingIDs = [];
 			for (let filter of filters) {
 				let operator = filter.value.operator.value,
 					value = (filter.value && filter.value.value)? filter.value.value.value: '',
-					fieldID = (filter.value && filter.value.field)? filter.value.field.value: null;
+					fieldID = (filter.value && filter.value.field)? filter.value.field.value._id: null;
 				if (operator && value && fieldID) {
-					things = things.filter(function(thing) {
+					for (let thing of things) {
 						let testAttribute = (attributes[thing._id+fieldID])? attributes[thing._id+fieldID]: null;
-						console.log(testAttribute);
 						let testValue = (testAttribute)? testAttribute.value: null;
-						let s = '"'+testValue+'"'+operator+'"'+value+'"';
-						console.log(s);
-						return eval(s);
-					});
+						if (filter.value.operator.value.comparison(testValue, value) && filteredThingIDs.indexOf(thing._id) == -1) {
+							filteredThings.push(thing);
+							filteredThingIDs.push(thing._id);
+						}
+					}
+				}
+				if (this.state.matchAll) {
+					things = filteredThings;
+					filteredThings = [];
+					filteredThingIDs = [];
 				}
 			}
+			if (!this.state.matchAll) things = filteredThings;
 		}
 		if (this.state.group) {
 			things = things.sort(function(a,b) {
@@ -150,13 +160,15 @@ class CollectionTable extends React.Component {
 							placeholder="Filter"
 							multi={true}
 							value={filters}
-							options={[{value:'new', label:'New Filter'}]}
+							options={[{value:'new', label:'Edit Filters'}]}
 							onChange={this.handleSortFilterGroupChange.bind(this, 'filters')} />
 						<i className="fa fa-filter" />
 						<FilterMaker
 							isOpen={this.state.filterModalOpen}
 							onClose={this.closeFilterModal.bind(this)}
 							onChange={this.handleFilterChange.bind(this)}
+							onToggleAnyAll={this.handleFilterAnyAll.bind(this)}
+							matchAll={this.state.matchAll}
 							fields={this.props.fields}
 							attributes={this.props.attributes} />
 					</div>
