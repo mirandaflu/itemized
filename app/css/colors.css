@@ -19,3 +19,23 @@ th { border-left: none !important; }
 form input[type=text]:hover, form input[type=email]:hover, form input[type=password]:hover {
 	border: 1px solid #aaa;
 }
+
+.pure-menu-item::after {
+	content: '';
+	display: block;
+	width: 0;
+	height: 1px;
+	margin: 0 auto;
+	background: #cccccc;
+	transition: width .3s;
+}
+.pure-menu-item:hover::after {
+	width: 100%;
+}
+.pure-menu-selected::after {
+	content: '';
+	display: block;
+	width: 100%;
+	height: 2px;
+	background: rgb(66, 184, 221);
+}
