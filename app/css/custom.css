@@ -10,6 +10,8 @@ input {
 	box-shadow: none !important;
 }
 
+.bold { font-weight: bold; }
+
 .pure-button {
 	font-weight: bold;
 }
@@ -47,22 +49,9 @@ input {
 	float: right;
 }
 
-.tabs {
-	border-bottom: 1px solid #999;
-}
-.tab {
-	border: 1px solid #999;
-	border-bottom: none;
-	margin: 0 3px;
-}
-.pure-menu-selected .tab {
-	position: relative;
-	top: 1px;
-}
-
 .workspace {
-	padding: 10px;
-	margin: 0 5px;
+	padding: 10px 15px;
+	margin: 0;
 }
 
 .cell {
@@ -110,9 +99,6 @@ input {
 
 .pure-menu-link:focus {
 	background-color: transparent !important;
-}
-.pure-menu-selected .tab {
-	background-color: white !important;
 }
 
 .navbar {
