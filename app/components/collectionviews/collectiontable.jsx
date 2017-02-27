@@ -163,7 +163,7 @@ class CollectionTable extends React.Component {
 						<Select
 							placeholder="Sort"
 							value={this.state.sort}
-							options={fields.map(function(field){ return { value: field._id, label: field.name }; })}
+							options={this.props.fields.map(function(field){ return { value: field._id, label: field.name }; })}
 							onChange={this.handleSortFilterGroupChange.bind(this, 'sort')} />
 						<i className="fa fa-sort" />
 					</div>
@@ -189,7 +189,7 @@ class CollectionTable extends React.Component {
 						<Select
 							placeholder="Group"
 							value={this.state.group}
-							options={fields.map(function(field){ return { value:field._id, label:field.name }; })}
+							options={this.props.fields.map(function(field){ return { value:field._id, label:field.name }; })}
 							onChange={this.handleSortFilterGroupChange.bind(this, 'group')} />
 						<i className="fa fa-object-group" />
 					</div>
