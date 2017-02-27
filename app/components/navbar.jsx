@@ -34,7 +34,10 @@ class Navbar extends React.Component {
 				}
 				<Link to="/" className="pure-menu-heading pure-menu-link">Itemized</Link>
 				{this.props.workspace &&
-					<Link to={'/workspace/'+this.props.workspace} className="pure-menu-heading pure-menu-link">
+					<Link
+						to={'/workspace/'+this.props.workspace}
+						style={{width:'70%', textOverflow:'ellipsis', overflow:'hidden', whiteSpace:'nowrap'}}
+						className="pure-menu-heading pure-menu-link">
 						{this.state.workspaceName}
 					</Link>}
 			</div>
