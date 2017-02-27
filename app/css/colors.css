@@ -1,14 +1,16 @@
 body { background-color: #f5f7f8; }
 
-.dark {
-	background-color: #222526;
+.dark { background-color: #222526; }
+.medium-dark { background-color: #36393e; }
+.dark, .medium-dark {
 	color: white;
 }
 .navbar.dark .pure-menu-link:hover {
 	background-color: #36393e;
 }
-.card, .tab, .workspace {
+.card, .workspace {
 	background-color: white;
+	color: black;
 }
 .alert {
 	background: #f1c40f;

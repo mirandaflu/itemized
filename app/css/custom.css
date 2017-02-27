@@ -132,3 +132,16 @@ input {
 	background-color: transparent;
 }
 
+.list {
+	margin: 5px;
+	padding: 5px;
+}
+.list h4 {
+	margin: 0 5px;
+}
+.list .dropzone {
+	height: 100%;
+}
+.dragging, .placeholder {
+	opacity: 0.5;
+}
