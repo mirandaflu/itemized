@@ -1,14 +1,43 @@
-body { background-color: #ced5d9; }
+body { background-color: #f5f7f8; }
 
-.dark {
-	background-color: #222526;
+.dark { background-color: #222526; }
+.medium-dark { background-color: #36393e; }
+.dark, .medium-dark {
 	color: white;
 }
-.card, .tab, .workspace {
+.navbar.dark .pure-menu-link:hover {
+	background-color: #36393e;
+}
+.card, .workspace {
 	background-color: white;
+	color: black;
 }
 .alert {
 	background: #f1c40f;
 	color: #fff;
 }
 
+th { border-left: none !important; }
+form input[type=text]:hover, form input[type=email]:hover, form input[type=password]:hover {
+	border: 1px solid #aaa;
+}
+
+.pure-menu-item::after {
+	content: '';
+	display: block;
+	width: 0;
+	height: 1px;
+	margin: 0 auto;
+	background: #cccccc;
+	transition: width .3s;
+}
+.pure-menu-item:hover::after {
+	width: 100%;
+}
+.pure-menu-selected::after {
+	content: '';
+	display: block;
+	width: 100%;
+	height: 2px;
+	background: rgb(66, 184, 221);
+}

@@ -10,7 +10,6 @@ class Workspace extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			itemHeight: '35px',
 			id: this.props.routeParams.workspace,
 			workspace: {},
 			collectionsLoaded: false,
@@ -129,8 +128,8 @@ class Workspace extends React.Component {
 
 				<div style={{width:'100%', overflow:'auto', marginTop:'5px'}}>
 					<div className="pure-menu pure-menu-horizontal nobottompadding">
-						<div className="pure-menu-heading">Collections:</div>
-						<ul className="pure-menu-list tabs">
+						<div className="pure-menu-heading bold">Collections:</div>
+						<ul className="pure-menu-list">
 
 							{this.state.collections.map(function(collection) {
 								return (
@@ -140,7 +139,6 @@ class Workspace extends React.Component {
 										workspace={that.state.workspace}
 										collectionsLength={that.state.collections.length}
 										collection={collection}
-										height={that.state.itemHeight}
 										onChange={that.editCollection.bind(that)}
 										onMove={that.moveCollection.bind(that)}
 										onDelete={that.deleteCollection.bind(that)} />
@@ -148,13 +146,11 @@ class Workspace extends React.Component {
 							})}
 
 						</ul>
-						<ul className="pure-menu-list">
-							<li className="pure-menu-item" style={{paddingLeft:'15px', height:this.state.itemHeight}}>
-								<button className="pure-button button-secondary" onClick={this.createCollection.bind(this)}>
-									<i className="fa fa-plus" />
-								</button>
-							</li>
-						</ul>
+						<div className="pure-menu-heading" style={{padding:0, paddingLeft:'15px'}}>
+							<button className="pure-button button-secondary button-small" onClick={this.createCollection.bind(this)}>
+								<i className="fa fa-plus" />
+							</button>
+						</div>
 					</div>
 				</div>
 

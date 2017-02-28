@@ -1,8 +1,16 @@
-* { box-sizing: border-box }
+* {
+	box-sizing: border-box;
+	font-family: 'Open Sans', sans-serif;
+}
 
 a { text-decoration: none; }
 
-input { border-radius: 0 !important; }
+input {
+	border-radius: 0 !important;
+	box-shadow: none !important;
+}
+
+.bold { font-weight: bold; }
 
 .pure-button {
 	font-weight: bold;
@@ -21,6 +29,12 @@ input { border-radius: 0 !important; }
 		0 1px 5px 0 rgba(0,0,0,0.12),
 		0 3px 1px -2px rgba(0,0,0,0.2);
 }
+.hovershadow:hover {
+	box-shadow:
+		0 3px 3px 0 rgba(0,0,0,0.2),
+		0 2px 6px 0 rgba(0,0,0,0.2),
+		0 4px 2px -3px rgba(0,0,0,0.3);
+}
 
 .nobottompadding {
 	padding-bottom: 0 !important;
@@ -35,22 +49,9 @@ input { border-radius: 0 !important; }
 	float: right;
 }
 
-.tabs {
-	border-bottom: 1px solid #999;
-}
-.tab {
-	border: 1px solid #999;
-	border-bottom: none;
-	margin: 0 3px;
-}
-.pure-menu-selected .tab {
-	position: relative;
-	top: 1px;
-}
-
 .workspace {
-	padding: 10px;
-	margin: 0 5px;
+	padding: 10px 15px;
+	margin: 0;
 }
 
 .cell {
@@ -114,9 +115,6 @@ input { border-radius: 0 !important; }
 .pure-menu-link:focus {
 	background-color: transparent !important;
 }
-.pure-menu-selected .tab {
-	background-color: white !important;
-}
 
 .navbar {
 	font-weight: bold;
@@ -128,9 +126,22 @@ input { border-radius: 0 !important; }
 	color: white !important;
 }
 .navbar-container {
-	height: 34px;
+	height: 40px;
 }
 .navbar span:hover {
 	background-color: transparent;
 }
 
+.list {
+	margin: 5px;
+	padding: 5px;
+}
+.list h4 {
+	margin: 0 5px;
+}
+.carddropzone {
+	height: 100%;
+}
+.dragging, .placeholder {
+	opacity: 0.5;
+}

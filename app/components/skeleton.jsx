@@ -1,7 +1,5 @@
 import React from 'react';
-
 import Navbar from './navbar.jsx';
-import Footer from './footer.jsx';
 
 export default class Skeleton extends React.Component {
 	componentWillUpdate() {
@@ -9,9 +7,8 @@ export default class Skeleton extends React.Component {
 	}
 	render() { return (
 		<div>
-			<Navbar workspace={this.props.params.workspace} />
+			<Navbar workspace={this.props.params.workspace} path={this.props.location.pathname} />
 			{this.props.children}
-			<Footer path={this.props.location.pathname} />
 		</div>
 	); }
 }

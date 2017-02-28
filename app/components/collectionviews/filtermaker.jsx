@@ -24,8 +24,11 @@ class FilterRow extends React.Component {
 	handleSelectChange(type, value) {
 		let s = {};
 		s[type] = value;
-		this.props.onChange(s);
 		this.setState(s);
+		this.props.onChange(s);
+	}
+	componentDidMount() {
+		this.props.onChange({ operator: this.state.operator });
 	}
 	render() {
 		let that = this;
@@ -57,6 +60,7 @@ class FilterRow extends React.Component {
 				{!this.state.operator.noValue && <Select.Creatable
 					value={this.state.value}
 					onChange={this.handleSelectChange.bind(this, 'value')}
+					promptTextCreator={(label) => `${label} `}
 					options={valueOptions} />}
 			</div>
 		);
@@ -64,13 +68,6 @@ class FilterRow extends React.Component {
 }
 
 export default class FilterMaker extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			modalOpen: false,
-			filters: []
-		};
-	}
 	defaultFilter() {
 		return {
 			field: null,
@@ -82,45 +79,37 @@ export default class FilterMaker extends React.Component {
 		};
 	}
 	addFilter() {
-		this.setState({
-			filters: this.state.filters.concat(this.defaultFilter())
-		});
-	}
-	handleFilterChange(index, state) {
-		let filters = this.state.filters;
-		filters[index] = Object.assign(filters[index], state);
-		this.setState({filters: filters});
-		this.props.onChange(filters);
+		this.props.onChange(this.props.filters.length, this.defaultFilter());
 	}
 	closeModal() {
 		this.props.onClose();
 	}
 	componentWillReceiveProps(nextProps) {
-		let s = { modalOpen: nextProps.isOpen };
-		if (nextProps.isOpen && this.state.filters.length == 0) {
-			s.filters = this.state.filters.concat(this.defaultFilter());
+		if (nextProps.isOpen && this.props.filters.length == 0) {
+			this.addFilter();
 		}
-		this.setState(s);
 	}
 	render() {
 		let that = this, i = -1;
 		return (
-			<Modal isOpen={this.state.modalOpen} contentLabel="Modal-FilterMaker">
+			<Modal isOpen={this.props.isOpen} contentLabel="Modal-FilterMaker">
 				<div className="modalContent">
 					<button className="pure-button" onClick={this.closeModal.bind(this)}><i className="fa fa-close" /></button>
 					
 					<form className="pure-form">
 						<label htmlFor="all" className="pure-radio">
-							<input type="radio" id="all" name="match" value="all" checked={this.props.matchAll} onChange={this.props.onToggleAnyAll} /> Match all
+							<input type="radio" id="all" name="match" value="all"
+								checked={this.props.matchAll} onChange={this.props.onToggleAnyAll} /> Match all
 						</label>
 						<label htmlFor="any" className="pure-radio">
-							<input type="radio" id="any" name="match" value="any" checked={!this.props.matchAll} onChange={this.props.onToggleAnyAll} /> Match any
+							<input type="radio" id="any" name="match" value="any"
+								checked={!this.props.matchAll} onChange={this.props.onToggleAnyAll} /> Match any
 						</label>
 					</form>
 
 					<br /><br />
 
-					{this.state.filters.map(function(filter) {
+					{this.props.filters.map(function(filter) {
 						i++;
 						return (
 							<FilterRow key={i}
@@ -129,7 +118,7 @@ export default class FilterMaker extends React.Component {
 								field={filter.field}
 								operator={filter.operator}
 								value={filter.value}
-								onChange={that.handleFilterChange.bind(that, i)} />
+								onChange={that.props.onChange.bind(that, i)} />
 						);
 					})}
 					<br />

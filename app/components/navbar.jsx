@@ -22,9 +22,24 @@ class Navbar extends React.Component {
 	render() { return (
 		<div className="navbar-container">
 			<div className="navbar dark withshadow pure-menu pure-menu-horizontal">
-				<Link to="/" className="pure-menu-heading pure-menu-link"><i className="fa fa-bars" /></Link>
-				<Link to="/" className="pure-menu-heading pure-menu-link" style={{textTransform:'none'}}>Itemized</Link>
-				{this.props.workspace && <span className="pure-menu-heading pure-menu-link" style={{textTransform:'none'}}>{this.state.workspaceName}</span>}
+				{
+					!feathers_app.get('user') &&
+					['/login','/signup'].indexOf(this.props.path) == -1 &&
+						<Link to="/login" className="pure-menu-heading pure-menu-link" style={{float:'right'}}>Log in</Link>
+				}
+				{
+					feathers_app.get('user') &&
+					['/'].indexOf(this.props.path) != -1 &&
+						<Link to="/logout" className="pure-menu-heading pure-menu-link" style={{float:'right'}}>Log out</Link>
+				}
+				<Link to="/" className="pure-menu-heading pure-menu-link">Itemized</Link>
+				{this.props.workspace &&
+					<Link
+						to={'/workspace/'+this.props.workspace}
+						style={{width:'70%', textOverflow:'ellipsis', overflow:'hidden', whiteSpace:'nowrap'}}
+						className="pure-menu-heading pure-menu-link">
+						{this.state.workspaceName}
+					</Link>}
 			</div>
 		</div>
 	); }
