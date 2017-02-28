@@ -14,14 +14,16 @@ class CollectionTable extends React.Component {
 		super(props);
 		this.state = {
 			hide: null,
-			sort: null,
+			sort: [],
 			group: null,
 			filters: [],
 			filterModalOpen: false,
-			matchAll: true
+			matchAll: true,
+			asc: true
 		};
 	}
 	closeFilterModal() { this.setState({filterModalOpen: false}); }
+	toggleAscDesc() { this.setState({asc: !this.state.asc}); }
 	handleFilterChange(index, patch) {
 		let filters = this.state.filters;
 		if (!filters[index]) filters[index] = {};
@@ -66,19 +68,25 @@ class CollectionTable extends React.Component {
 		});
 
 		if (this.state.sort) {
-			things = things.sort(function(a,b) {
-				let A = (attributes[a._id+that.state.sort.value])? attributes[a._id+that.state.sort.value].value: '',
-					B = (attributes[b._id+that.state.sort.value])? attributes[b._id+that.state.sort.value].value: '';
-				
-				switch(typeof A) {
-					case 'number':
-						return A - B;
-					case 'string':
-						if (A < B) return -1;
-						if (A > B) return 1;
-						return 0;
-				}
-			});
+			for (let i = this.state.sort.length - 1; i >= 0; i -= 1) {
+				let sort = this.state.sort[i];
+				things = things.sort(function(a,b) {
+					let A = (attributes[a._id+sort.value])? attributes[a._id+sort.value].value: '',
+						B = (attributes[b._id+sort.value])? attributes[b._id+sort.value].value: '';
+					
+					switch(typeof A) {
+						case 'number':
+							return A - B;
+						case 'string':
+							if (A < B) return -1;
+							if (A > B) return 1;
+							return 0;
+					}
+				});
+			}
+			if (!this.state.asc) {
+				things.reverse();
+			}
 		}
 		if (filters.length > 0) {
 			let filteredThings = [], filteredThingIDs = [];
@@ -162,10 +170,11 @@ class CollectionTable extends React.Component {
 					<div className="pure-u-1 pure-u-sm-1-2 pure-u-md-1-4">
 						<Select
 							placeholder="Sort"
+							multi={true}
 							value={this.state.sort}
 							options={this.props.fields.map(function(field){ return { value: field._id, label: field.name }; })}
 							onChange={this.handleSortFilterGroupChange.bind(this, 'sort')} />
-						<i className="fa fa-sort" />
+						<i className="fa fa-sort" onClick={this.toggleAscDesc.bind(this)} />
 					</div>
 					<div className="pure-u-1 pure-u-sm-1-2 pure-u-md-1-4">
 						<Select
