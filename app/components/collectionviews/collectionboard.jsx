@@ -16,6 +16,13 @@ class CollectionBoard extends React.Component {
 			dragID: null
 		};
 	}
+	addList() {
+		let name = prompt('Name?');
+		if (!name) return;
+		feathers_app.service('fields')
+			.patch(this.state.boardField._id, {options: this.state.boardField.options.concat(name)})
+			.catch(console.error);
+	}
 	getBoardField(props) {
 		let boardField = null;
 		for (let i in props.fields) {
@@ -108,6 +115,11 @@ class CollectionBoard extends React.Component {
 						</div>
 					);
 				})}
+				<div className="list pure-u-1 pure-u-sm-1-4 pure-u-md-1-5 pure-u-lg-1-6">
+					<button className="pure-button button-secondary" onClick={this.addList.bind(this)}>
+						<i className="fa fa-plus" /> Add List
+					</button>
+				</div>
 			</div>
 		);
 	}
