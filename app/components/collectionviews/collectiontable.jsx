@@ -23,37 +23,85 @@ class CollectionTable extends React.Component {
 		};
 	}
 	closeFilterModal() { this.setState({filterModalOpen: false}); }
-	toggleAscDesc() { this.setState({asc: !this.state.asc}); }
+	toggleAscDesc() {
+		let s = {asc: !this.state.asc};
+		this.setState(s);
+		this.updateStoredFilters(s);
+	}
 	handleFilterChange(index, patch) {
 		let filters = this.state.filters;
 		if (!filters[index]) filters[index] = {};
 		filters[index] = Object.assign(filters[index], patch);
-		this.setState({filters: filters});
+		let s = {filters: filters};
+		this.setState(s);
+		this.updateStoredFilters(s);
 	}
-	handleFilterAnyAll() { this.setState({matchAll:!this.state.matchAll}); }
+	handleFilterAnyAll() {
+		let s = {matchAll:!this.state.matchAll};
+		this.setState(s);
+		this.updateStoredFilters(s);
+	}
 	handleSortFilterGroupChange(type, value) {
-		let newFilter = false;
+		let newFilter = false, s = {};
 		if (type == 'filters') {
 			for (let i in value) {
 				if (value[i].value == 'new') {
-					this.setState({filterModalOpen: true});
+					s.filterModalOpen = true;
 					newFilter = true;
 				}
 			}
 			if (!newFilter) {
-				let s = {};
 				s[type] = value.map(function(filterOption) {
 					return filterOption.value;
 				});
-				this.setState(s);
 			}
 		}
 		else {
-			let s = {};
 			s[type] = value;
-			this.setState(s);
 		}
+		this.setState(s);
+		this.updateStoredFilters(s);
 	}
+	updateStoredFilters(stateUpdate) {
+		let id = 'filtersortgroup' + this.props.collection._id;
+		let record = {
+			data: {
+				hide: stateUpdate.hide || this.state.hide,
+				sort: stateUpdate.sort || this.state.sort,
+				group: stateUpdate.group || this.state.group,
+				filters: stateUpdate.filters || this.state.filters,
+				asc: stateUpdate.asc || this.state.asc,
+				matchAll: stateUpdate.matchAll || this.state.matchAll
+			}
+		};
+		feathers_app.service('localdata').patch(id, record).catch(console.error);
+	}
+	getStoredFilters(props) {
+		if (!props.collection._id) return;
+		let id = 'filtersortgroup' + props.collection._id;
+		feathers_app.service('localdata').get(id).then(result => {
+			this.setState({
+				hide: result.data.hide,
+				sort: result.data.sort,
+				group: result.data.group,
+				filters: result.data.filters,
+				asc: result.data.asc,
+				matchAll: result.data.matchAll
+			});
+		}).catch(error => {
+			feathers_app.service('localdata').create({id:id}).catch(console.error);
+			this.setState({
+				hide: null,
+				sort: [],
+				group: null,
+				filters: [],
+				asc: true,
+				matchAll: true
+			});
+		});
+	}
+	componentDidMount() { this.getStoredFilters(this.props); }
+	componentWillReceiveProps(nextProps) { this.getStoredFilters(this.props); }
 	render() {
 		let that = this;
 		let things = this.props.things, fields = this.props.fields, attributes = this.props.attributesObject, filters = this.state.filters;
