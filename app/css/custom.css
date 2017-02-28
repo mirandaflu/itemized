@@ -139,7 +139,7 @@ input {
 .list h4 {
 	margin: 0 5px;
 }
-.list .dropzone {
+.carddropzone {
 	height: 100%;
 }
 .dragging, .placeholder {
