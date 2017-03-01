@@ -100,6 +100,37 @@ class CollectionBoard extends React.Component {
 			}
 		}
 	}
+	addThing(event) {
+		let cardFieldName = '', fields = this.props.fields;
+		for (let i in fields) {
+			if (fields[i]._id == this.props.collection.cardField) {
+				cardFieldName = fields[i].name;
+			}
+		}
+		let s = prompt(cardFieldName+'?');
+		if (!s) return;
+
+		let listvalue = event.target.dataset.listvale,
+			thing = {
+			coll: this.props.collection._id,
+			listPosition: this.props.things.length
+		};
+		feathers_app.service('things').create(thing).then(newThing => {
+			let attr1 = {
+				coll: this.props.collection._id,
+				thing: newThing._id,
+				field: this.props.collection.cardField,
+				value: s
+			}, attr2 = {
+				coll: this.props.collection._id,
+				thing: newThing._id,
+				field: this.props.collection.boardField,
+				value: listvalue
+			};
+			feathers_app.service('attributes').create(attr1).catch(console.error);
+			feathers_app.service('attributes').create(attr2).catch(console.error);
+		}).catch(console.error);
+	}
 	componentWillReceiveProps(nextProps) {
 		let things = nextProps.things;
 		things.sort(function(a,b) { return a.listPosition - b.listPosition; });
@@ -167,6 +198,14 @@ class CollectionBoard extends React.Component {
 										);
 									}
 								})}
+								<div style={{padding:'2px 4px'}}>
+									<button className="pure-button button-small button-secondary"
+										data-listvalue={option}
+										style={{width:'100%'}}
+										onClick={that.addThing.bind(that)}>
+										<i className="fa fa-plus" />
+									</button>
+								</div>
 							</div>
 							<div className="listfooter" style={{width:'100%', height:'24px'}} />
 						</div>
