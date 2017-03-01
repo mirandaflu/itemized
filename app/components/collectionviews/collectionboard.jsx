@@ -14,7 +14,9 @@ class CollectionBoard extends React.Component {
 			attributesObject: this.props.attributesObject,
 			boardField: this.getBoardField(this.props),
 			dragging: null,
-			dragID: null
+			dragID: null,
+			dragStartX: 0,
+			dragStartY: 0
 		};
 	}
 	addList() {
@@ -231,8 +233,8 @@ class CollectionBoard extends React.Component {
 		this.setState({things:things});
 	}
 	_handleElementMove(event, placeholder) {
-		const x = event.clientX,
-			y = event.clientY,
+		const x = event.clientX - this.state.dragStartX,
+			y = event.clientY - this.state.dragStartY,
 			draggedEl = placeholder;
 		draggedEl.style.display = 'block';
 		draggedEl.style.position = 'absolute';
@@ -259,9 +261,12 @@ class CollectionBoard extends React.Component {
 			.catch(console.error);
 	}
 	_handleCardDragStart(event) {
+		let rect = event.target.getBoundingClientRect();
 		this.setState({
 			dragID:event.target.dataset.attributeid,
-			thingsBeforeDragging: this.state.things
+			thingsBeforeDragging: this.state.things,
+			dragStartX: event.pageX - rect.left,
+			dragStartY: event.pageY - rect.top
 		});
 		this.refs.cardplaceholder.innerHTML = event.target.innerHTML;
 	}
