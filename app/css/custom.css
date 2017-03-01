@@ -145,3 +145,7 @@ input {
 .dragging, .placeholder {
 	opacity: 0.5;
 }
+
+.list, .card {
+	touch-action: none;
+}
