@@ -93,6 +93,16 @@ class CollectionContainer extends React.Component {
 		if (thing.coll != this.state.id) return;
 		this.setState({things: this.state.things.concat(thing)});
 	}
+	handlePatchedThing(thing) {
+		for (let i in this.state.things) {
+			if (this.state.things[i]._id == thing._id) {
+				let newThings = Object.assign(this.state.things);
+				newThings[i] = Object.assign({}, thing);
+				this.setState({ things: newThings });
+				break;
+			}
+		}
+	}
 	handleRemovedThing(thing) {
 		for (let i in this.state.things) {
 			if (this.state.things[i]._id == thing._id) {
@@ -167,8 +177,10 @@ class CollectionContainer extends React.Component {
 		feathers_app.service('fields').on('patched', this.fieldPatchedListener);
 		feathers_app.service('fields').on('removed', this.fieldRemovedListener);
 		this.thingCreatedListener = this.handleCreatedThing.bind(this);
+		this.thingPatchedListener = this.handlePatchedThing.bind(this);
 		this.thingRemovedListener = this.handleRemovedThing.bind(this);
 		feathers_app.service('things').on('created', this.thingCreatedListener);
+		feathers_app.service('things').on('patched', this.thingPatchedListener);
 		feathers_app.service('things').on('removed', this.thingRemovedListener);
 		this.attributeCreatedListener = this.handleCreatedAttribute.bind(this);
 		this.attributePatchedListener = this.handlePatchedAttribute.bind(this);
@@ -192,6 +204,7 @@ class CollectionContainer extends React.Component {
 		feathers_app.service('fields').removeListener('patched', this.fieldPatchedListener);
 		feathers_app.service('fields').removeListener('removed', this.fieldRemovedListener);
 		feathers_app.service('things').removeListener('created', this.thingCreatedListener);
+		feathers_app.service('things').removeListener('patched', this.thingPatchedListener);
 		feathers_app.service('things').removeListener('removed', this.thingRemovedListener);
 		feathers_app.service('attributes').removeListener('created', this.attributeCreatedListener);
 		feathers_app.service('attributes').removeListener('patched', this.attributePatchedListener);
