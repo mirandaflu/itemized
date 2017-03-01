@@ -11,6 +11,7 @@ const Schema = mongoose.Schema;
 const thingSchema = new Schema({
 
 	coll: { type: Schema.ObjectId, ref: 'collection', required: true },
+	listPosition: { type: Number, default: Infinity },
 
 	createdAt: { type: Date, 'default': Date.now },
 	updatedAt: { type: Date, 'default': Date.now }
