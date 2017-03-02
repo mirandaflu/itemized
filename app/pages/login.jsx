@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router';
 
+import GoogleButton from '../components/googlebutton.jsx';
 import MessageBanner from '../components/messagebanner.jsx';
 
 class Login extends React.Component {
@@ -39,6 +40,9 @@ class Login extends React.Component {
 			<div className="pure-g">
 				<div className="pure-u-1 pure-u-sm-1-4 pure-u-md-1-3" />
 				<div className="pure-u-1 pure-u-sm-1-2 pure-u-md-1-3 card withshadow">
+					<div style={{textAlign:'center'}}>
+						<GoogleButton preposition="in" />
+					</div>
 					<form className="pure-form pure-form-stacked" onSubmit={this.handleSubmit.bind(this)}>
 						<fieldset>
 							<legend>Log in</legend>
