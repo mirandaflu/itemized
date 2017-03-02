@@ -41,3 +41,20 @@ form input[type=text]:hover, form input[type=email]:hover, form input[type=passw
 	height: 2px;
 	background: rgb(66, 184, 221);
 }
+
+#google-button {
+	background-color: white;
+	font-weight: 500;
+}
+#google-button:hover {
+	background-color: white;
+	background-image: none;
+	box-shadow:
+		0 3px 3px 0 rgba(72,133,237,0.24),
+		0 2px 6px 0 rgba(72,133,237,0.22),
+		0 4px 2px -3px rgba(72,133,237,0.3);
+}
+#google-button:active {
+	background-color: #E6E6E6;
+	background-image: none;
+}

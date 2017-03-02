@@ -9,6 +9,7 @@ class Navbar extends React.Component {
 		};
 	}
 	loadWorkspaceName(id) {
+		if (!id) return;
 		feathers_app.service('workspaces').get(id)
 			.then(result => { this.setState({workspaceName: result.name}); })
 			.catch(console.error);

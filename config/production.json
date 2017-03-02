@@ -7,6 +7,16 @@
     "token": {
       "secret": "FEATHERS_AUTH_SECRET"
     },
-    "local": {}
+    "local": {},
+    "google": {
+      "clientID": "GOOGLE_OAUTH_CLIENT_ID",
+      "clientSecret": "GOOGLE_OAUTH_CLIENT_SECRET",
+      "permissions": {
+        "authType": "rerequest",
+        "scope": ["profile"]
+      }
+    },
+    "successRedirect": "/",
+    "failureFlash": true
   }
 }
