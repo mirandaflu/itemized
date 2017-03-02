@@ -11,30 +11,30 @@ const hooks = require('feathers-hooks');
 const rest = require('feathers-rest');
 const bodyParser = require('body-parser');
 const socketio = require('feathers-socketio');
-const webpack = require('webpack');
 const middleware = require('./middleware');
 const services = require('./services');
-const config = require('../webpack.config.js');
 
 const app = feathers();
-const compiler = webpack(config);
 
-app.use(require('webpack-dev-middleware')(compiler, {
-	noInfo: true,
-	publicPath: config.output.publicPath,
-	historyApiFallback: true
-}));
-
-app.use(require('webpack-hot-middleware')(compiler));
+if (process.env.NODE_ENV != 'production') {
+	const config = require('../webpack.dev.config.js');
+	const webpack = require('webpack');
+	const compiler = webpack(config);
+	app.use(require('webpack-dev-middleware')(compiler, {
+		noInfo: true,
+		publicPath: config.output.publicPath,
+		historyApiFallback: true
+	}));
+	app.use(require('webpack-hot-middleware')(compiler));
+}
 
 app.configure(configuration(path.join(__dirname, '..')));
 
 app.use(compress())
 	.options('*', cors())
 	.use(cors())
-	.use(favicon( path.join(app.get('public'), 'favicon.ico') ))
+	.use(favicon( path.join( __dirname, '../app/favicon.ico') ))
 	.use('/', serveStatic( __dirname + '../dist/' ))
-	.use('/', serveStatic( app.get('public') ))
 	.use(bodyParser.json())
 	.use(bodyParser.urlencoded({ extended: true }))
 	.configure(hooks())

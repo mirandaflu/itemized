@@ -2,8 +2,9 @@ var webpack = require('webpack');
 var HTMLWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  devtool: 'source-map',
+  devtool: 'eval',
   entry: [
+    'webpack-hot-middleware/client',
     __dirname + '/app/index.js'
   ],
   output: {
@@ -12,18 +13,8 @@ module.exports = {
     publicPath: '/'
   },
   plugins: [
-    new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false
-      },
-      exclude: /\.js($|\?)/i
-    }),
-    new webpack.DefinePlugin({
-      'process.env': {
-        'NODE_ENV': JSON.stringify('production')
-      }
-    }),
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NoErrorsPlugin(),
     new HTMLWebpackPlugin({
       template: __dirname + '/app/index.html',
       filename: 'index.html',

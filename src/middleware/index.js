@@ -13,7 +13,15 @@ module.exports = function() {
 
 	// account for using react-router with browserHistory
 	app.get('*', function (request, response){
-		response.sendFile(path.resolve(__dirname, '../../dist', 'index.html'));
+		if (request.url == '/index_bundle.js') {
+			response.sendFile(path.resolve(__dirname, '../../dist', 'index_bundle.js'));
+		}
+		else if (request.url == '/index_bundle.js') {
+			response.sendFile(path.resolve(__dirname, '../../dist', 'index_bundle.js.map'));
+		}
+		else {
+			response.sendFile(path.resolve(__dirname, '../../dist', 'index.html'));
+		}
 	});
 
 	app.use(notFound());
