@@ -9,6 +9,7 @@ import localstorage from 'feathers-localstorage';
 import 'react-select/dist/react-select.css';
 import 'animate.css/animate.min.css';
 import './css/react-contextmenu.css';
+import './css/responsive-widths.css';
 import './css/buttons.css';
 import './css/custom.css';
 import './css/colors.css';

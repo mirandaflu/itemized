@@ -62,6 +62,7 @@ class CollectionContainer extends React.Component {
 		this.setState({ fields: this.state.fields.concat(field) });
 	}
 	handlePatchedField(field) {
+		if (!this._mounted) return;
 		for (let i in this.state.fields) {
 			if (this.state.fields[i]._id == field._id) {
 				let newFields = this.state.fields;
@@ -94,6 +95,7 @@ class CollectionContainer extends React.Component {
 		this.setState({things: this.state.things.concat(thing)});
 	}
 	handlePatchedThing(thing) {
+		if (!this._mounted) return;
 		for (let i in this.state.things) {
 			if (this.state.things[i]._id == thing._id) {
 				let newThings = Object.assign(this.state.things);
@@ -132,6 +134,7 @@ class CollectionContainer extends React.Component {
 		this.setState({ attributes: this.state.attributes.concat(attribute) });
 	}
 	handlePatchedAttribute(attribute) {
+		if (!this._mounted) return;
 		for (let i in this.state.attributes) {
 			if (this.state.attributes[i]._id == attribute._id) {
 				let newAttributes = this.state.attributes;
@@ -152,6 +155,7 @@ class CollectionContainer extends React.Component {
 		}
 	}
 	handlePatchedCollection(collection) {
+		if (!this._mounted) return;
 		if (collection._id == this.state.collection._id) {
 			this.setState({ collection: collection });
 		}
@@ -196,6 +200,7 @@ class CollectionContainer extends React.Component {
 		this.loadData(nextProps.routeParams.collection);
 	}
 	componentDidMount() {
+		this._mounted = true;
 		this.loadData();
 		this.bindEventListeners();
 	}
@@ -210,6 +215,7 @@ class CollectionContainer extends React.Component {
 		feathers_app.service('attributes').removeListener('patched', this.attributePatchedListener);
 		feathers_app.service('attributes').removeListener('removed', this.attributeRemovedListener);
 		feathers_app.service('collections').removeListener('patched', this.collectionPatchedListener);
+		this._mounted = false;
 	}
 	render() {
 		let CollectionComponent = (collectionViews[this.state.collection.viewType])?
