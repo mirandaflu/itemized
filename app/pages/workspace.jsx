@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router';
+import Select from 'react-select';
 
 import collectionViews from '../components/collectionviews/index.js';
 
@@ -35,6 +36,9 @@ class Workspace extends React.Component {
 				collections: []
 			});
 		});
+	}
+	goToCollection(o) {
+		this.props.router.push('/workspace/'+this.state.id+'/collection/'+o.value);
 	}
 	createCollection() {
 		let name = 'New Collection';
@@ -126,7 +130,7 @@ class Workspace extends React.Component {
 					data={this.state.collections}
 					nodatamessage='' />
 
-				<div style={{width:'100%', overflow:'auto', marginTop:'5px'}}>
+				<div id="collectionNavWide">
 					<div className="pure-menu pure-menu-horizontal nobottompadding">
 						<div className="pure-menu-heading bold">Collections:</div>
 						<ul className="pure-menu-list">
@@ -152,6 +156,17 @@ class Workspace extends React.Component {
 							</button>
 						</div>
 					</div>
+				</div>
+				<div id="collectionNavNarrow">
+					Collection: <Select value={this.props.params.collection}
+						options={this.state.collections.map(function(collection) {
+							return {label: collection.name, value: collection._id}
+						})}
+						onChange={this.goToCollection.bind(this)}
+						style={{}} />
+					<button className="pure-button button-secondary button-small" onClick={this.createCollection.bind(this)}>
+						<i className="fa fa-plus" />
+					</button>
 				</div>
 
 				<div className="workspace withshadow">
