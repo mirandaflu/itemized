@@ -41,6 +41,7 @@ app.use(compress())
 	.configure(rest())
 	.configure(socketio())
 	.configure(services)
-	.configure(middleware);
+	.configure(middleware)
+	.enable("trust proxy");
 
 module.exports = app;
