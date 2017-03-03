@@ -232,7 +232,7 @@ class CollectionBoard extends React.Component {
 		things.sort(function(a,b) { return a.listPosition - b.listPosition; });
 		this.setState({things:things});
 	}
-	_handleElementMove(event, placeholder) {
+	_handleElementMove(event, placeholder, extraTransform) {
 		const x = event.clientX - this.state.dragStartX,
 			y = event.clientY - this.state.dragStartY,
 			draggedEl = placeholder;
@@ -240,9 +240,11 @@ class CollectionBoard extends React.Component {
 		draggedEl.style.position = 'absolute';
 		draggedEl.style.top = '0px';
 		draggedEl.style.left = '0px';
-		draggedEl.style.WebkitTransition = draggedEl.style.transition = 'none';
+		draggedEl.style.WebkitTransition = draggedEl.style.transition = 'transform 0.1s';
+		let transform = 'translate(' + x + 'px, ' + y + 'px) ';
+		if (extraTransform) transform += ' '+extraTransform;
 		draggedEl.style.webkitTransform = draggedEl.style.transform =
-			draggedEl.style.msTransform = 'translate(' + x + 'px, ' + y + 'px)';
+			draggedEl.style.msTransform = transform;
 	}
 	_handleListDragStart(event) {
 		this.setState({dragID:'option'+event.target.dataset.optionname});
@@ -270,7 +272,10 @@ class CollectionBoard extends React.Component {
 		});
 		this.refs.cardplaceholder.innerHTML = event.target.innerHTML;
 	}
-	_handleCardMove(event) { this._handleElementMove(event, this.refs.cardplaceholder); }
+	_handleCardMove(event) {
+		let rotate = 'rotate(' + event.dx*3 + 'deg)';
+		this._handleElementMove(event, this.refs.cardplaceholder, rotate);
+	}
 	_handleCardOverList(event) {
 		let aO = Object.assign(this.state.attributesObject);
 		aO[event.relatedTarget.dataset.attributeindex].value = event.target.dataset.option;
