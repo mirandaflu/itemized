@@ -112,7 +112,7 @@ class CollectionBoard extends React.Component {
 		let s = prompt(cardFieldName+'?');
 		if (!s) return;
 
-		let listvalue = event.target.dataset.listvale,
+		let listvalue = event.target.dataset.listvalue,
 			thing = {
 			coll: this.props.collection._id,
 			listPosition: this.props.things.length
