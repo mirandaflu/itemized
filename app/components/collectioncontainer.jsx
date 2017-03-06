@@ -3,7 +3,7 @@ import { Link, withRouter } from 'react-router';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from "react-contextmenu";
 
 import fieldTypes from './attributes/index.js';
-import collectionViews from './collectionviews/index.js';
+import CollectionSettingsShell from './collectionviews/collectionsettings.jsx'
 import StatusText from '../components/statustext.jsx';
 
 class CollectionContainer extends React.Component {
@@ -218,18 +218,13 @@ class CollectionContainer extends React.Component {
 		this._mounted = false;
 	}
 	render() {
-		let CollectionComponent = (collectionViews[this.state.collection.viewType])?
-			collectionViews[this.state.collection.viewType].component:
-			collectionViews['Table'].component;
-
 		let that = this;
 		let attributesObject = {};
 		for (let attr of this.state.attributes) {
 			attributesObject[attr.thing + attr.field] = attr;
 		}
-
 		return (
-			<CollectionComponent
+			<CollectionSettingsShell
 				collection={this.state.collection}
 				fields={this.state.fields}
 				things={this.state.things}
