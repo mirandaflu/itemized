@@ -13,6 +13,7 @@ import './css/responsive-widths.css';
 import './css/buttons.css';
 import './css/custom.css';
 import './css/colors.css';
+import './rollbar.js';
 
 import CollectionContainer from './components/collectioncontainer.jsx';
 import ConfigureWorkspace from './components/configureworkspace.jsx';
