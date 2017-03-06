@@ -15,7 +15,9 @@ export default class CollectionSettingsShell extends React.Component {
 			filters: [],
 			filterModalOpen: false,
 			matchAll: true,
-			asc: true
+			asc: true,
+			controlsVisible: false,
+			controlDivClassName: 'pure-u-1 pure-u-sm-1-2 pure-u-md-1-4 pure-u-lg-1-5'
 		};
 	}
 	closeFilterModal() { this.setState({filterModalOpen: false}); }
@@ -23,6 +25,9 @@ export default class CollectionSettingsShell extends React.Component {
 		let s = {asc: !this.state.asc};
 		this.setState(s);
 		this.updateStoredFilters(s);
+	}
+	toggleControls() {
+		this.setState({ controlsVisible: !this.state.controlsVisible });
 	}
 	handleFilterChange(index, patch) {
 		let filters = this.state.filters;
@@ -231,8 +236,9 @@ export default class CollectionSettingsShell extends React.Component {
 
 		return (
 			<div>
-				<div className="sortfiltergroup pure-g">
-					<div className="pure-u-1 pure-u-sm-1-2 pure-u-md-1-4">
+				<div className="sortfiltergroup pure-g"
+					style={{display:(this.state.controlsVisible)?'inherit':'none'}}>
+					<div className={this.state.controlDivClassName}>
 						<Select
 							placeholder="View as"
 							value={this.props.collection.viewType}
@@ -241,7 +247,7 @@ export default class CollectionSettingsShell extends React.Component {
 						<i className="fa fa-eye" />
 					</div>
 					{collectionViews[this.props.collection.viewType].controls.listby &&
-						<div className="pure-u-1 pure-u-sm-1-2 pure-u-md-1-4">
+						<div className={this.state.controlDivClassName}>
 							<Select
 								placeholder="List by"
 								value={this.props.collection.boardField}
@@ -252,7 +258,7 @@ export default class CollectionSettingsShell extends React.Component {
 						</div>
 					}
 					{collectionViews[this.props.collection.viewType].controls.cardname &&
-						<div className="pure-u-1 pure-u-sm-1-2 pure-u-md-1-4">
+						<div className={this.state.controlDivClassName}>
 							<Select
 								placeholder="Card name"
 								value={this.props.collection.cardField}
@@ -263,7 +269,7 @@ export default class CollectionSettingsShell extends React.Component {
 						</div>
 					}
 					{collectionViews[this.props.collection.viewType].controls.hide &&
-						<div className="pure-u-1 pure-u-sm-1-2 pure-u-md-1-4">
+						<div className={this.state.controlDivClassName}>
 							<Select
 								placeholder="Hide"
 								multi={true}
@@ -275,7 +281,7 @@ export default class CollectionSettingsShell extends React.Component {
 						</div>
 					}
 					{collectionViews[this.props.collection.viewType].controls.sort &&
-						<div className="pure-u-1 pure-u-sm-1-2 pure-u-md-1-4">
+						<div className={this.state.controlDivClassName}>
 							<Select
 								placeholder="Sort"
 								multi={true}
@@ -285,7 +291,7 @@ export default class CollectionSettingsShell extends React.Component {
 							<i className="fa fa-sort" onClick={this.toggleAscDesc.bind(this)} />
 						</div>
 					}
-					<div className="pure-u-1 pure-u-sm-1-2 pure-u-md-1-4">
+					<div className={this.state.controlDivClassName}>
 						<Select
 							placeholder="Filter"
 							multi={true}
@@ -304,7 +310,7 @@ export default class CollectionSettingsShell extends React.Component {
 							attributes={this.props.attributes} />
 					</div>
 					{collectionViews[this.props.collection.viewType].controls.group &&
-						<div className="pure-u-1 pure-u-sm-1-2 pure-u-md-1-4">
+						<div className={this.state.controlDivClassName}>
 							<Select
 								placeholder="Group"
 								value={this.state.group}
@@ -313,7 +319,16 @@ export default class CollectionSettingsShell extends React.Component {
 							<i className="fa fa-object-group" />
 						</div>
 					}
-			</div>
+				</div>
+				<button
+					style={{float:'right'}}
+					className="pure-button button-small"
+					onClick={this.toggleControls.bind(this)}>
+					{this.state.controlsVisible &&
+						<div><i className="fa fa-gear" /> <i className="fa fa-caret-up" /></div>}
+					{!this.state.controlsVisible &&
+						<div><i className="fa fa-gear" /> <i className="fa fa-caret-down" /></div>}
+				</button>
 				<CollectionComponent
 					collection={this.props.collection}
 					fields={fields}
