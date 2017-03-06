@@ -9,7 +9,7 @@ export default class CollectionSettingsShell extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			hide: null,
+			hide: [],
 			sort: [],
 			group: null,
 			filters: [],
@@ -49,7 +49,6 @@ export default class CollectionSettingsShell extends React.Component {
 			case 'boardField':
 			case 'cardField':
 				s[type] = value.value;
-				console.log(s);
 				feathers_app.service('collections').patch(this.props.collection._id, s);
 				break;
 			case 'filters':
@@ -136,7 +135,10 @@ export default class CollectionSettingsShell extends React.Component {
 			};
 		});
 
+		let activeFilterCount = 0;
+
 		if (this.state.sort) {
+			activeFilterCount += this.state.sort.length;
 			for (let i = this.state.sort.length - 1; i >= 0; i -= 1) {
 				let sort = this.state.sort[i];
 				things = things.sort(function(a,b) {
@@ -158,6 +160,7 @@ export default class CollectionSettingsShell extends React.Component {
 			}
 		}
 		if (filters.length > 0) {
+			activeFilterCount += filters.length;
 			let filteredThings = [], filteredThingIDs = [];
 			for (let filter of filters) {
 				let operator = filter.operator.value,
@@ -183,6 +186,7 @@ export default class CollectionSettingsShell extends React.Component {
 			if (!this.state.matchAll) things = filteredThings;
 		}
 		if (this.state.group) {
+			activeFilterCount += 1;
 			things = things.sort(function(a,b) {
 				let A = (attributes[a._id+that.state.group.value])? attributes[a._id+that.state.group.value].value: '',
 					B = (attributes[b._id+that.state.group.value])? attributes[b._id+that.state.group.value].value: '';
@@ -216,6 +220,7 @@ export default class CollectionSettingsShell extends React.Component {
 			}
 		}
 		if (this.state.hide) {
+			activeFilterCount += this.state.hide.length;
 			fields = fields.filter(function(field) {
 				for (let h of that.state.hide) {
 					if (h.value == field._id) return false;
@@ -325,9 +330,16 @@ export default class CollectionSettingsShell extends React.Component {
 					className="pure-button button-small"
 					onClick={this.toggleControls.bind(this)}>
 					{this.state.controlsVisible &&
-						<div><i className="fa fa-gear" /> <i className="fa fa-caret-up" /></div>}
+						<div>
+							<i className="fa fa-gear" /> <i className="fa fa-caret-up" />
+						</div>
+					}
 					{!this.state.controlsVisible &&
-						<div><i className="fa fa-gear" /> <i className="fa fa-caret-down" /></div>}
+						<div title={activeFilterCount+' active filter(s)'}>
+							{(activeFilterCount > 0)?activeFilterCount+' ':''}
+							<i className="fa fa-gear" /> <i className="fa fa-caret-down" />
+						</div>
+					}
 				</button>
 				<CollectionComponent
 					collection={this.props.collection}
