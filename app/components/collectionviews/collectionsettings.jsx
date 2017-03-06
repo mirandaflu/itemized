@@ -118,6 +118,9 @@ export default class CollectionSettingsShell extends React.Component {
 		let CollectionComponent = (collectionViews[this.props.collection.viewType])?
 			collectionViews[this.props.collection.viewType].component:
 			collectionViews['Table'].component;
+		let CollectionControls = (collectionViews[this.props.collection.viewType])?
+			collectionViews[this.props.collection.viewType].controls:
+			collectionViews['Table'].controls;
 
 		let that = this;
 		let things = this.props.things,
@@ -251,7 +254,7 @@ export default class CollectionSettingsShell extends React.Component {
 							onChange={this.handleControlChange.bind(this, 'viewType')} />
 						<i className="fa fa-eye" />
 					</div>
-					{collectionViews[this.props.collection.viewType].controls.listby &&
+					{CollectionControls.listby &&
 						<div className={this.state.controlDivClassName}>
 							<Select
 								placeholder="List by"
@@ -262,7 +265,7 @@ export default class CollectionSettingsShell extends React.Component {
 							<i className="fa fa-columns" />
 						</div>
 					}
-					{collectionViews[this.props.collection.viewType].controls.cardname &&
+					{CollectionControls.cardname &&
 						<div className={this.state.controlDivClassName}>
 							<Select
 								placeholder="Card name"
@@ -273,7 +276,7 @@ export default class CollectionSettingsShell extends React.Component {
 							<i className="fa fa-clone" />
 						</div>
 					}
-					{collectionViews[this.props.collection.viewType].controls.hide &&
+					{CollectionControls.hide &&
 						<div className={this.state.controlDivClassName}>
 							<Select
 								placeholder="Hide"
@@ -285,7 +288,7 @@ export default class CollectionSettingsShell extends React.Component {
 							<i className="fa fa-eye-slash" />
 						</div>
 					}
-					{collectionViews[this.props.collection.viewType].controls.sort &&
+					{CollectionControls.sort &&
 						<div className={this.state.controlDivClassName}>
 							<Select
 								placeholder="Sort"
@@ -314,7 +317,7 @@ export default class CollectionSettingsShell extends React.Component {
 							fields={this.props.fields}
 							attributes={this.props.attributes} />
 					</div>
-					{collectionViews[this.props.collection.viewType].controls.group &&
+					{CollectionControls.group &&
 						<div className={this.state.controlDivClassName}>
 							<Select
 								placeholder="Group"
