@@ -106,37 +106,6 @@ export default class CollectionTab extends React.Component {
 										</div>
 									);
 								})}
-								<div className="pure-control-group">
-									<label htmlFor="viewType">View</label>
-									<Select
-										id="viewType"
-										value={this.state.viewType}
-										options={viewOptions}
-										clearable={false}
-										onChange={this.handleSelectChange.bind(this, 'viewType')} />
-								</div>
-								{this.state.viewType == 'Board' &&
-									<div className="pure-control-group">
-										<label htmlFor="boardField">Board Field</label>
-										<Select
-											id="boardField"
-											value={this.state.boardField}
-											options={boardOptions}
-											clearable={false}
-											onChange={this.handleSelectChange.bind(this, 'boardField')} />
-									</div>
-								}
-								{this.state.viewType == 'Board' &&
-									<div className="pure-control-group">
-										<label htmlFor="cardField">Card Field</label>
-										<Select
-											id="cardField"
-											value={this.state.cardField}
-											options={cardOptions}
-											clearable={false}
-											onChange={this.handleSelectChange.bind(this, 'cardField')} />
-									</div>
-								}
 								<div className="pure-controls">
 									<button className="pure-button button-error"
 										onClick={this.handleDeleteClick.bind(this)}>

@@ -37,26 +37,38 @@ export default class CollectionSettingsShell extends React.Component {
 		this.setState(s);
 		this.updateStoredFilters(s);
 	}
-	handleSortFilterGroupChange(type, value) {
+	handleControlChange(type, value) {
 		let newFilter = false, s = {};
-		if (type == 'filters') {
-			for (let i in value) {
-				if (value[i].value == 'new') {
-					s.filterModalOpen = true;
-					newFilter = true;
+		switch(type) {
+			case 'viewType':
+			case 'boardField':
+			case 'cardField':
+				s[type] = value.value;
+				console.log(s);
+				feathers_app.service('collections').patch(this.props.collection._id, s);
+				break;
+			case 'filters':
+				for (let i in value) {
+					if (value[i].value == 'new') {
+						s.filterModalOpen = true;
+						newFilter = true;
+					}
 				}
-			}
-			if (!newFilter) {
-				s[type] = value.map(function(filterOption) {
-					return filterOption.value;
-				});
-			}
+				if (!newFilter) {
+					s[type] = value.map(function(filterOption) {
+						return filterOption.value;
+					});
+				}
+				this.setState(s);
+				this.updateStoredFilters(s);
+				break;
+			default:
+				s[type] = value;
+				this.setState(s);
+				this.updateStoredFilters(s);
+				break;
 		}
-		else {
-			s[type] = value;
-		}
-		this.setState(s);
-		this.updateStoredFilters(s);
+		
 	}
 	updateStoredFilters(stateUpdate) {
 		let id = 'filtersortgroup' + this.props.collection._id;
@@ -207,35 +219,79 @@ export default class CollectionSettingsShell extends React.Component {
 			});
 		}
 
+		let viewOptions = [];
+		for (let o in collectionViews) {
+			viewOptions.push({'value':o, 'label':o});
+		}
+		let boardOptions = this.props.fields
+			.filter(function(field) { return field.type == 'Single Select'; })
+			.map(function(field) { return {value: field._id, label: field.name}; });
+		let cardOptions = this.props.fields
+			.map(function(field) { return {value: field._id, label: field.name}; });
+
 		return (
 			<div>
 				<div className="sortfiltergroup pure-g">
 					<div className="pure-u-1 pure-u-sm-1-2 pure-u-md-1-4">
 						<Select
-							placeholder="Hide"
-							multi={true}
-							searchable={false}
-							value={this.state.hide}
-							options={fields.map(function(field){ return { value: field._id, label: field.name }; })}
-							onChange={this.handleSortFilterGroupChange.bind(this, 'hide')} />
-						<i className="fa fa-eye-slash" />
+							placeholder="View as"
+							value={this.props.collection.viewType}
+							options={viewOptions}
+							onChange={this.handleControlChange.bind(this, 'viewType')} />
+						<i className="fa fa-eye" />
 					</div>
-					<div className="pure-u-1 pure-u-sm-1-2 pure-u-md-1-4">
-						<Select
-							placeholder="Sort"
-							multi={true}
-							value={this.state.sort}
-							options={this.props.fields.map(function(field){ return { value: field._id, label: field.name }; })}
-							onChange={this.handleSortFilterGroupChange.bind(this, 'sort')} />
-						<i className="fa fa-sort" onClick={this.toggleAscDesc.bind(this)} />
-					</div>
+					{collectionViews[this.props.collection.viewType].controls.listby &&
+						<div className="pure-u-1 pure-u-sm-1-2 pure-u-md-1-4">
+							<Select
+								placeholder="List by"
+								value={this.props.collection.boardField}
+								options={boardOptions}
+								clearable={false}
+								onChange={this.handleControlChange.bind(this, 'boardField')} />
+							<i className="fa fa-columns" />
+						</div>
+					}
+					{collectionViews[this.props.collection.viewType].controls.cardname &&
+						<div className="pure-u-1 pure-u-sm-1-2 pure-u-md-1-4">
+							<Select
+								placeholder="Card name"
+								value={this.props.collection.cardField}
+								options={cardOptions}
+								clearable={false}
+								onChange={this.handleControlChange.bind(this, 'cardField')} />
+							<i className="fa fa-clone" />
+						</div>
+					}
+					{collectionViews[this.props.collection.viewType].controls.hide &&
+						<div className="pure-u-1 pure-u-sm-1-2 pure-u-md-1-4">
+							<Select
+								placeholder="Hide"
+								multi={true}
+								searchable={false}
+								value={this.state.hide}
+								options={fields.map(function(field){ return { value: field._id, label: field.name }; })}
+								onChange={this.handleControlChange.bind(this, 'hide')} />
+							<i className="fa fa-eye-slash" />
+						</div>
+					}
+					{collectionViews[this.props.collection.viewType].controls.sort &&
+						<div className="pure-u-1 pure-u-sm-1-2 pure-u-md-1-4">
+							<Select
+								placeholder="Sort"
+								multi={true}
+								value={this.state.sort}
+								options={this.props.fields.map(function(field){ return { value: field._id, label: field.name }; })}
+								onChange={this.handleControlChange.bind(this, 'sort')} />
+							<i className="fa fa-sort" onClick={this.toggleAscDesc.bind(this)} />
+						</div>
+					}
 					<div className="pure-u-1 pure-u-sm-1-2 pure-u-md-1-4">
 						<Select
 							placeholder="Filter"
 							multi={true}
 							value={displayFilters}
 							options={[{value:'new', label:'Edit Filters'}]}
-							onChange={this.handleSortFilterGroupChange.bind(this, 'filters')} />
+							onChange={this.handleControlChange.bind(this, 'filters')} />
 						<i className="fa fa-filter" />
 						<FilterMaker
 							filters={filters}
@@ -247,14 +303,16 @@ export default class CollectionSettingsShell extends React.Component {
 							fields={this.props.fields}
 							attributes={this.props.attributes} />
 					</div>
-					<div className="pure-u-1 pure-u-sm-1-2 pure-u-md-1-4">
-						<Select
-							placeholder="Group"
-							value={this.state.group}
-							options={this.props.fields.map(function(field){ return { value:field._id, label:field.name }; })}
-							onChange={this.handleSortFilterGroupChange.bind(this, 'group')} />
-						<i className="fa fa-object-group" />
-					</div>
+					{collectionViews[this.props.collection.viewType].controls.group &&
+						<div className="pure-u-1 pure-u-sm-1-2 pure-u-md-1-4">
+							<Select
+								placeholder="Group"
+								value={this.state.group}
+								options={this.props.fields.map(function(field){ return { value:field._id, label:field.name }; })}
+								onChange={this.handleControlChange.bind(this, 'group')} />
+							<i className="fa fa-object-group" />
+						</div>
+					}
 			</div>
 				<CollectionComponent
 					collection={this.props.collection}

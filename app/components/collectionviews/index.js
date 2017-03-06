@@ -3,9 +3,20 @@ import CollectionBoard from './collectionboard.jsx';
 
 module.exports = {
 	"Table": {
-		component: CollectionTable
+		component: CollectionTable,
+		controls: {
+			hide: true,
+			sort: true,
+			filter: true,
+			group: true
+		}
 	},
 	"Board": {
-		component: CollectionBoard
+		component: CollectionBoard,
+		controls: {
+			filter: true,
+			listby: true,
+			cardname: true
+		}
 	}
 };
