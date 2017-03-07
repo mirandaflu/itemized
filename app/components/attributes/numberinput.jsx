@@ -16,7 +16,6 @@ export default class NumberInput extends React.Component {
 	render() { return (
 		<input type="number"
 			value={this.state.value}
-			onFocus={this.props.onEditStart}
 			onChange={this.handleChange.bind(this)}
 			onBlur={this.props.onCommitChange} />
 	);}

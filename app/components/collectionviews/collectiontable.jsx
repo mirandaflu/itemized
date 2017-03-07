@@ -15,7 +15,7 @@ export default class CollectionTable extends React.Component {
 			attributes = this.props.attributesObject;
 
 		return (
-			<div style={{width:'100%', overflowX:'auto', overflowY:'visible'}}>
+			<div>
 				<table className="pure-table animated fadeIn">
 					<thead>
 						<tr>
