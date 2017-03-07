@@ -11,6 +11,16 @@ module.exports = function() {
 	// handling middleware should go last.
 	const app = this;
 
+	// redirect to https in production
+	app.get('*', function(req,res,next) {
+		if (req.headers['x-forwarded-proto'] != 'https' && process.env.NODE_ENV === "production"){
+			res.redirect('https://'+req.headers.host+req.url);
+		}
+		else {
+			next();
+		}
+	});
+
 	// account for using react-router with browserHistory
 	app.get('*', function (request, response){
 		if (request.url == '/index_bundle.js') {
