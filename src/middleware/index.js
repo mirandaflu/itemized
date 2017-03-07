@@ -19,6 +19,9 @@ module.exports = function() {
 		else if (request.url == '/index_bundle.js') {
 			response.sendFile(path.resolve(__dirname, '../../dist', 'index_bundle.js.map'));
 		}
+		else if (request.url == '/manifest.json') {
+			response.sendFile(path.resolve(__dirname, '../../app', 'manifest.json'));
+		}
 		else {
 			response.sendFile(path.resolve(__dirname, '../../dist', 'index.html'));
 		}
