@@ -23,6 +23,7 @@ import ConfigureCollection from './components/configurecollection.jsx';
 import Skeleton from './components/skeleton.jsx';
 import Signup from './pages/signup.jsx';
 import Login from './pages/login.jsx';
+import Account from './pages/account.jsx';
 import Logout from './pages/logout.jsx';
 import Home from './pages/home.jsx';
 import Workspace from './pages/workspace.jsx';
@@ -76,6 +77,7 @@ class Root extends React.Component {
 						<Route path="collection/:collection/configure" component={ConfigureCollection} />
 						<Route path="collection/:collection" component={CollectionContainer} />
 					</Route>
+					<Route path="account" component={Account} onEnter={requireAuth} />
 					<Route path="login" component={Login} />
 					<Route path="signup" component={Signup} />
 					<Route path="logout" component={Logout} onEnter={feathers_app.logout} />

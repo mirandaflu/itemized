@@ -30,8 +30,9 @@ class Navbar extends React.Component {
 				}
 				{
 					feathers_app.get('user') &&
-					['/'].indexOf(this.props.path) != -1 &&
-						<Link to="/logout" className="pure-menu-heading pure-menu-link" style={{float:'right'}}>Log out</Link>
+						<Link to="/account" className="pure-menu-heading pure-menu-link" style={{float:'right'}}>
+							<i className="fa fa-user" />
+						</Link>
 				}
 				<Link to="/" className="pure-menu-heading pure-menu-link">Itemized</Link>
 				{this.props.workspace &&
