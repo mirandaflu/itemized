@@ -17,7 +17,6 @@ export default class TextInput extends React.Component {
 		return (
 			<input type="text"
 				value={this.state.value}
-				onFocus={this.props.onEditStart}
 				onChange={this.handleChange.bind(this)}
 				onBlur={this.props.onCommitChange} />
 		);
