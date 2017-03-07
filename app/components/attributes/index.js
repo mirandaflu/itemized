@@ -4,6 +4,7 @@ import NumberInput from './numberinput.jsx';
 import CheckboxInput from './checkboxinput.jsx';
 import SelectInput from './selectinput.jsx';
 import DateInput from './dateinput.jsx';
+import LinkInput from './linkinput.jsx';
 
 module.exports = {
 	"Static": {
@@ -32,6 +33,12 @@ module.exports = {
 	},
 	"Date and Time": {
 		component: DateInput
+	},
+	"Email Address": {
+		component: LinkInput
+	},
+	"URL": {
+		component: LinkInput
 	}
 };
 
@@ -39,17 +46,8 @@ module.exports = {
 
 Possible future field types
 
-single line text
-number (specify number of decimal places)
 currency/number with unit
-checkbox
-single select
-multiple select
-url
-email address
 long text
-date
-date + time
 percent/progress
 collaborator
 linked record field
