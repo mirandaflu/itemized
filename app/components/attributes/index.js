@@ -3,6 +3,7 @@ import TextInput from './textinput.jsx';
 import NumberInput from './numberinput.jsx';
 import CheckboxInput from './checkboxinput.jsx';
 import SelectInput from './selectinput.jsx';
+import DateInput from './dateinput.jsx';
 
 module.exports = {
 	"Static": {
@@ -22,6 +23,15 @@ module.exports = {
 	},
 	"Multiple Select": {
 		component: SelectInput
+	},
+	"Date": {
+		component: DateInput
+	},
+	"Time": {
+		component: DateInput
+	},
+	"Date and Time": {
+		component: DateInput
 	}
 };
 
