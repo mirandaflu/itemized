@@ -29,7 +29,8 @@ class ConfigureCollection extends React.Component {
 			this.setState({ collection: collection });
 		}
 	}
-	returnToCollection() {
+	returnToCollection(event) {
+		event.preventDefault();
 		this.props.router.push('/workspace/' + this.props.params.workspace + '/collection/' + this.props.params.collection);
 	}
 	componentDidMount() {
@@ -49,7 +50,7 @@ class ConfigureCollection extends React.Component {
 						onClick={this.returnToCollection.bind(this)}>
 						<i className="fa fa-close" />
 					</button>
-					<form className="pure-form pure-form-aligned">
+					<form className="pure-form pure-form-aligned" onSubmit={this.returnToCollection.bind(this)}>
 						<fieldset>
 							<div className="pure-control-group">
 								<label htmlFor="name">Collection Name</label>
@@ -58,14 +59,12 @@ class ConfigureCollection extends React.Component {
 									value={this.state.collection.name}
 									onChange={this.handleNameChange.bind(this)} />
 							</div>
-							<div className="pure-controls">
-								<button className="pure-button button-error"
-									onClick={this.handleDeleteClick.bind(this)}>
-									Delete Collection
-								</button>
-							</div>
 						</fieldset>
 					</form>
+					<button className="pure-button button-error"
+						onClick={this.handleDeleteClick.bind(this)}>
+						Delete Collection
+					</button>
 
 					Choose Template:
 					<br /><br />
