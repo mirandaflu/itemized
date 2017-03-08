@@ -26,4 +26,19 @@ module.exports = function() {
 
 	// Set up our after hooks
 	workspaceService.after(hooks.after);
+
+	// Filter socket events: only users with a role in the workspace get updates
+	workspaceService.filter(function(data, connection, hook) {
+		let userID = connection.user._id.toString(),
+			owner = data.owner.toString(),
+			admins = data.admins.map((o) => o.toString()),
+			editors = data.editors.map((o) => o.toString()),
+			viewers = data.viewers.map((o) => o.toString());
+		if (userID != owner && admins.indexOf(userID) == -1 && editors.indexOf(userID) == -1 && viewers.indexOf(userID) == -1) {
+			return false;
+		}
+		else {
+			return data;
+		}
+	});
 };

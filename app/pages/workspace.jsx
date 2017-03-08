@@ -20,6 +20,7 @@ class Workspace extends React.Component {
 	}
 	getData() {
 		feathers_app.service('workspaces').get(this.state.id).then(result => {
+			document.title = result.name + ' | Itemized';
 			this.setState({workspace:result});
 		}).catch(console.error);
 		feathers_app.service('collections').find({query:{workspace:this.state.id, $sort:{position:1}}}).then(result => {
@@ -170,7 +171,9 @@ class Workspace extends React.Component {
 				</div>
 
 				<div className="workspace withshadow">
-					{this.props.children || ((this.state.collections.length == 0)?'Please create a collection':'Please select or create a collection')}
+					{(this.props.children)?
+						React.cloneElement(this.props.children, { collectionsLength: this.state.collections.length }):
+						((this.state.collections.length == 0)?'Please create a collection':'Please select or create a collection')}
 				</div>
 
 			</div>

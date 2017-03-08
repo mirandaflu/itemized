@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router';
-import { ContextMenu, MenuItem, ContextMenuTrigger } from "react-contextmenu";
 
 import fieldTypes from './attributes/index.js';
 import CollectionSettingsShell from './collectionviews/collectionsettings.jsx'
@@ -224,22 +223,26 @@ class CollectionContainer extends React.Component {
 			attributesObject[attr.thing + attr.field] = attr;
 		}
 		return (
-			<CollectionSettingsShell
-				collection={this.state.collection}
-				fields={this.state.fields}
-				things={this.state.things}
-				attributes={this.state.attributes}
-				attributesObject={attributesObject}
-				onCreateField={this.createField.bind(this)}
-				onAddThing={this.addThing.bind(this)}
-				onChangeFieldType={this.changeFieldType.bind(this)}
-				onAddFieldOption={this.addFieldOption.bind(this)}
-				onMoveField={this.moveField.bind(this)}
-				onRenameField={this.renameField.bind(this)}
-				onRemoveField={this.removeField.bind(this)}
-				onRemoveThing={this.removeThing.bind(this)}
-				onCreateOption={this.handleCreateOption.bind(this)}
-				onCommitValueChange={this.commitValueChange.bind(this)} />
+			<div>
+				<CollectionSettingsShell
+					collection={this.state.collection}
+					collectionsLength={this.props.collectionsLength}
+					fields={this.state.fields}
+					things={this.state.things}
+					attributes={this.state.attributes}
+					attributesObject={attributesObject}
+					onCreateField={this.createField.bind(this)}
+					onAddThing={this.addThing.bind(this)}
+					onChangeFieldType={this.changeFieldType.bind(this)}
+					onAddFieldOption={this.addFieldOption.bind(this)}
+					onMoveField={this.moveField.bind(this)}
+					onRenameField={this.renameField.bind(this)}
+					onRemoveField={this.removeField.bind(this)}
+					onRemoveThing={this.removeThing.bind(this)}
+					onCreateOption={this.handleCreateOption.bind(this)}
+					onCommitValueChange={this.commitValueChange.bind(this)} />
+				{this.props.children}
+			</div>
 		);
 	}
 }
