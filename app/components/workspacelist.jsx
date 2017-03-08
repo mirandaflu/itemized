@@ -84,32 +84,74 @@ class WorkspaceList extends React.Component {
 	}
 	render() {
 		let that = this;
-		let workspaceNodes = this.state.workspaces.map(function(workspace) {
-			return (
-				<WorkspaceItem
-					key={workspace._id}
-					workspace={workspace}
-					onChange={that.editWorkspace.bind(that)}
-					onDelete={that.deleteWorkspace.bind(that)} />
-			);
-		});
+		let userID = feathers_app.get('user')._id;
+		let yourWorkspaceNodes = [],
+			editWorkspaceNodes = [],
+			viewWorkspaceNodes = [];
+		for (let workspace of this.state.workspaces) {
+			if (workspace.owner == userID || workspace.admins.indexOf(userID) != -1) {
+				yourWorkspaceNodes.push( (
+					<WorkspaceItem
+						key={workspace._id}
+						workspace={workspace}
+						onChange={that.editWorkspace.bind(that)}
+						onDelete={that.deleteWorkspace.bind(that)} />
+				) );
+			}
+			else if (workspace.editors.indexOf(userID) != -1) {
+				editWorkspaceNodes.push( (
+					<WorkspaceItem
+						key={workspace._id}
+						workspace={workspace}
+						onChange={that.editWorkspace.bind(that)}
+						onDelete={that.deleteWorkspace.bind(that)} />
+				) );
+			}
+			else if (workspace.viewers.indexOf(userID) != -1) {
+				viewWorkspaceNodes.push( (
+					<WorkspaceItem
+						key={workspace._id}
+						workspace={workspace}
+						onChange={that.editWorkspace.bind(that)}
+						onDelete={that.deleteWorkspace.bind(that)} />
+				) );
+			}
+		}
 		return (
 			<div>
-
 				<StatusText
 					loaded={this.state.workspacesLoaded}
 					error={this.state.workspacesError}
 					data={this.state.workspaces}
 					nodatamessage='No Workspaces' />
-
+				
+				<h3>Your workspaces</h3>
 				<div className="pure-g">
-					{workspaceNodes}
+					{yourWorkspaceNodes}
 					<div className="pure-u-1" style={{margin:'15px', textAlign:'center'}}>
 						<button className="pure-button button-secondary" onClick={this.createWorkspace.bind(this)}>
 							<i className="fa fa-plus" />&nbsp;&nbsp;&nbsp;Create Workspace
 						</button>
 					</div>
 				</div>
+				
+				{editWorkspaceNodes.length > 0 &&
+					<div>
+						<h4>Workspaces you can edit</h4>
+						<div className="pure-g">
+							{editWorkspaceNodes}
+						</div>
+					</div>
+				}
+
+				{viewWorkspaceNodes.length > 0 &&
+					<div>
+						<h4>Workspaces you can view</h4>
+						<div className="pure-g">
+							{viewWorkspaceNodes}
+						</div>
+					</div>
+				}
 
 			</div>
 		);
