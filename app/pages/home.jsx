@@ -4,6 +4,9 @@ import { Link, withRouter } from 'react-router';
 import WorkspaceList from '../components/workspacelist.jsx';
 
 class Home extends React.Component {
+	componentDidMount() {
+		document.title = 'Itemized';
+	}
 	render() { return (
 		<div>
 			<div className="pure-g">
