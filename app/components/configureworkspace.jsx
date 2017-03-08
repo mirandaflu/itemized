@@ -4,11 +4,13 @@ import Select from 'react-select';
 import { Link, withRouter } from 'react-router';
 
 import UserSelect from './userselect.jsx';
+import MessageBanner from './messagebanner.jsx';
 
 class ConfigureWorkspace extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			name: null,
 			workspace: {
 				admins: [],
 				editors: [],
@@ -19,7 +21,7 @@ class ConfigureWorkspace extends React.Component {
 	}
 	loadWorkspace() {
 		feathers_app.service('workspaces').get(this.props.params.workspace)
-			.then(result => { this.setState({ workspace: result }); })
+			.then(result => { this.setState({ workspace: result, name: result.name }); })
 			.catch(console.error);
 	}
 	indexUsernames() {
@@ -39,16 +41,20 @@ class ConfigureWorkspace extends React.Component {
 		};
 	} 
 	handleNameChange(event) {
-		let name = event.target.value;
-		feathers_app.service('workspaces').patch(this.props.params.workspace, {name:name}).catch(console.error);
+		this.setState({ name: event.target.value });
+	}
+	commitNameChange() {
+		if (this.state.name == '') this.refs.messageBanner.showMessage('Name cannot be blank');
+		else feathers_app.service('workspaces').patch(this.props.params.workspace, {name:this.state.name}).catch(console.error);
 	}
 	handleSelectChange(role, options) {
 		let patch = {};
 		patch[role] = options.map(function(option) { return option.value; });
 		feathers_app.service('workspaces').patch(this.state.workspace._id, patch).catch(console.error);
 	}
-	handleSubmit(event) {
+	returnToWorkspace(event) {
 		event.preventDefault();
+		this.commitNameChange();
 		this.props.router.push('/workspace/' + this.props.params.workspace);
 	}
 	handleDeleteClick() {
@@ -59,11 +65,8 @@ class ConfigureWorkspace extends React.Component {
 	}
 	handlePatchedWorkspace(workspace) {
 		if (workspace._id == this.state.workspace._id) {
-			this.setState({ workspace: workspace });
+			this.setState({ workspace: workspace, name: workspace.name });
 		}
-	}
-	returnToWorkspace() {
-		this.props.router.push('/workspace/' + this.props.params.workspace);
 	}
 	componentDidMount() {
 		this.loadWorkspace();
@@ -80,17 +83,19 @@ class ConfigureWorkspace extends React.Component {
 			<div className="workspace">
 				<Modal contentLabel="configureworkspace" isOpen={true}>
 					<div className="modalContent">
+						<MessageBanner ref="messageBanner" />
 						<button className="pure-button button-small" onClick={this.returnToWorkspace.bind(this)}>
 							<i className="fa fa-close" />
 						</button>
-						<form onSubmit={this.handleSubmit.bind(this)} className="pure-form pure-form-aligned">
+						<form onSubmit={this.returnToWorkspace.bind(this)} className="pure-form pure-form-aligned">
 							<fieldset>
 								<div className="pure-control-group">
 									<label htmlFor="name">Workspace Name</label>
 									<input id="name" type="text"
 										ref="nameInput"
-										value={this.state.workspace.name}
-										onChange={this.handleNameChange.bind(this)} />
+										value={this.state.name}
+										onChange={this.handleNameChange.bind(this)}
+										onBlur={this.commitNameChange.bind(this)} />
 								</div>
 							</fieldset>
 							<div className="pure-controls">
