@@ -12,15 +12,21 @@ exports.before = {
 		auth.populateUser(),
 		auth.restrictToAuthenticated()
 	],
-	find: [],
+	find: [
+		localHooks.restrictToAnyRole()
+	],
 	get: [],
 	create: [
 		auth.associateCurrentUser({as: 'owner'})
 	],
-	update: [],
-	patch: [],
+	update: [
+		localHooks.restrictToEditorOrHigher()
+	],
+	patch: [
+		localHooks.restrictToEditorOrHigher()
+	],
 	remove: [
-		localHooks.removeAssociated()
+		localHooks.restrictToAdminOrHigher()
 	]
 };
 
@@ -31,5 +37,7 @@ exports.after = {
 	create: [],
 	update: [],
 	patch: [],
-	remove: []
+	remove: [
+		localHooks.removeAssociated()
+	]
 };
