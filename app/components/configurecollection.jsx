@@ -2,21 +2,27 @@ import React from 'react';
 import Modal from 'react-modal';
 import { Link, withRouter } from 'react-router';
 
+import MessageBanner from './messagebanner.jsx';
+
 class ConfigureCollection extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			name: null,
 			collection: {}
 		};
 	}
 	loadCollection() {
 		feathers_app.service('collections').get(this.props.params.collection)
-			.then(result => { this.setState({ collection: result }); })
+			.then(result => { this.setState({ collection: result, name: result.name }); })
 			.catch(console.error);
 	}
-	handleNameChange(e) {
-		let name = e.target.value;
-		feathers_app.service('collections').patch(this.props.params.collection, {name:name}).catch(console.error);
+	handleNameChange(event) {
+		this.setState({ name: event.target.value });
+	}
+	commitNameChange() {
+		if (this.state.name == '') this.refs.messageBanner.showMessage('Name cannot be blank');
+		else feathers_app.service('collections').patch(this.props.params.collection, {name:this.state.name}).catch(console.error);
 	}
 	handleDeleteClick() {
 		if (!confirm('Are you sure?')) return;
@@ -26,11 +32,12 @@ class ConfigureCollection extends React.Component {
 	}
 	handlePatchedCollection(collection) {
 		if (collection._id == this.state.collection._id) {
-			this.setState({ collection: collection });
+			this.setState({ collection: collection, name: collection.name });
 		}
 	}
 	returnToCollection(event) {
 		event.preventDefault();
+		this.commitNameChange();
 		this.props.router.push('/workspace/' + this.props.params.workspace + '/collection/' + this.props.params.collection);
 	}
 	componentDidMount() {
@@ -45,6 +52,7 @@ class ConfigureCollection extends React.Component {
 		return (
 			<Modal isOpen={true} contentLabel="configurecollection">
 				<div className="modalContent">
+					<MessageBanner ref="messageBanner" />
 					<button
 						className="pure-button button-small"
 						onClick={this.returnToCollection.bind(this)}>
@@ -56,8 +64,9 @@ class ConfigureCollection extends React.Component {
 								<label htmlFor="name">Collection Name</label>
 								<input id="name" type="text"
 									ref="nameInput"
-									value={this.state.collection.name}
-									onChange={this.handleNameChange.bind(this)} />
+									value={this.state.name}
+									onChange={this.handleNameChange.bind(this)}
+									onBlur={this.commitNameChange.bind(this)} />
 							</div>
 						</fieldset>
 					</form>
