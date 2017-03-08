@@ -26,4 +26,14 @@ module.exports = function(){
 
 	// Set up our after hooks
 	userService.after(hooks.after);
+
+	// Filter socket events: only the user sees their own changes
+	userService.filter(function(data, connection, hook) {
+		if (data._id.toString() == connection.user._id.toString()) {
+			return data;
+		}
+		else {
+			return false;
+		}
+	});
 };
