@@ -1,5 +1,6 @@
 import React from 'react';
 import Select from 'react-select';
+import { Link } from 'react-router';
 
 import collectionViews from './index.js';
 import filterTypes from './filterTypes.js';
@@ -28,6 +29,15 @@ export default class CollectionSettingsShell extends React.Component {
 	}
 	toggleControls() {
 		this.setState({ controlsVisible: !this.state.controlsVisible });
+	}
+	moveCollection(direction) {
+		let move = (direction == 'right')? 1: -1;
+		feathers_app.service('collections').patch(null, {$inc: {position: -move}}, {query: {
+			workspace: this.state.id,
+			position: this.props.collection.position + move
+		}}).then(result => {
+			feathers_app.service('collections').patch(this.props.collection._id, {$inc: {position: move}}).catch(console.error);
+		}).catch(console.error);
 	}
 	handleFilterChange(index, patch) {
 		let filters = this.state.filters;
@@ -327,6 +337,25 @@ export default class CollectionSettingsShell extends React.Component {
 							<i className="fa fa-object-group" />
 						</div>
 					}
+					<div className={this.state.controlDivClassName} style={{textAlign:'center'}}>
+						<button className="pure-button button-small"
+							disabled={this.props.collection.position == 0}
+							onClick={this.moveCollection.bind(this, 'left')}>
+							<i className="fa fa-arrow-left" />
+						</button>
+						<button className="pure-button button-small" disabled="true">Reorder</button>
+						<button className="pure-button button-small"
+							disabled={this.props.collection.position == this.props.collectionsLength - 1}
+							onClick={this.moveCollection.bind(this, 'right')}>
+							<i className="fa fa-arrow-right" />
+						</button>
+					</div>
+					<div className={this.state.controlDivClassName} style={{textAlign:'center'}}>
+						<Link className="pure-button button-small"
+							to={'/workspace/'+this.props.collection.workspace+'/collection/'+this.props.collection._id+'/configure'}>
+							Edit Collection
+						</Link>
+					</div>
 				</div>
 				<button
 					style={{float:'right'}}

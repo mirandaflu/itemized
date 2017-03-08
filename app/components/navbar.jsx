@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router';
 
-class Navbar extends React.Component {
+export default class Navbar extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -47,13 +47,19 @@ class Navbar extends React.Component {
 				<Link to="/" className="pure-menu-heading pure-menu-link">Itemized</Link>
 				{this.props.workspace &&
 					<Link
-						to={'/workspace/'+this.props.workspace+'/configure'}
+						to={'/workspace/'+this.props.workspace}
 						className="pure-menu-heading pure-menu-link">
 						{this.state.workspaceName}
-					</Link>}
+					</Link>
+				}
+				{this.props.workspace &&
+					<Link
+						to={'/workspace/'+this.props.workspace+'/configure'}
+						className="pure-menu-heading pure-menu-link">
+						<i className="fa fa-pencil" />
+					</Link>
+				}
 			</div>
 		</div>
 	); }
 }
-
-module.exports = withRouter(Navbar);

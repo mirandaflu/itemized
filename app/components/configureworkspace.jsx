@@ -40,7 +40,6 @@ class ConfigureWorkspace extends React.Component {
 	} 
 	handleNameChange(event) {
 		let name = event.target.value;
-		this.setState({ name:name });
 		feathers_app.service('workspaces').patch(this.props.params.workspace, {name:name}).catch(console.error);
 	}
 	handleSelectChange(role, options) {

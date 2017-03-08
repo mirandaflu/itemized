@@ -1,7 +1,5 @@
 import React from 'react';
-import Modal from 'react-modal';
 import { Link, withRouter } from 'react-router';
-import { ContextMenu, MenuItem, ContextMenuTrigger } from "react-contextmenu";
 
 class WorkspaceItem extends React.Component {
 	constructor(props) {
