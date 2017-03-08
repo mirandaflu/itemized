@@ -20,6 +20,7 @@ class Workspace extends React.Component {
 	}
 	getData() {
 		feathers_app.service('workspaces').get(this.state.id).then(result => {
+			document.title = result.name + ' | Itemized';
 			this.setState({workspace:result});
 		}).catch(console.error);
 		feathers_app.service('collections').find({query:{workspace:this.state.id, $sort:{position:1}}}).then(result => {
