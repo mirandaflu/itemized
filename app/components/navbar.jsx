@@ -30,36 +30,36 @@ export default class Navbar extends React.Component {
 	componentWillUnmount() {
 		feathers_app.service('workspaces').removeListener('patched', this.workspacePatchedListener);
 	}
-	render() { return (
-		<div className="navbar-container">
-			<div className="navbar dark withshadow pure-menu pure-menu-horizontal">
-				{
-					!feathers_app.get('user') &&
-					['/login','/signup'].indexOf(this.props.path) == -1 &&
+	render() {
+		let user = feathers_app.get('user');
+		return (
+			<div className="navbar-container">
+				<div className="navbar dark withshadow pure-menu pure-menu-horizontal">
+					{!user && ['/login','/signup'].indexOf(this.props.path) == -1 &&
 						<Link to="/login" className="pure-menu-heading pure-menu-link" style={{float:'right'}}>Log in</Link>
-				}
-				{
-					feathers_app.get('user') &&
+					}
+					{user &&
 						<Link to="/account" className="pure-menu-heading pure-menu-link" style={{float:'right'}}>
-							<i className="fa fa-user" />
+							{user.username} <i className="fa fa-user" />
 						</Link>
-				}
-				<Link to="/" className="pure-menu-heading pure-menu-link">Itemized</Link>
-				{this.props.workspace &&
-					<Link
-						to={'/workspace/'+this.props.workspace}
-						className="pure-menu-heading pure-menu-link">
-						{this.state.workspaceName}
-					</Link>
-				}
-				{this.props.workspace &&
-					<Link
-						to={'/workspace/'+this.props.workspace+'/configure'}
-						className="pure-menu-heading pure-menu-link">
-						<i className="fa fa-pencil" />
-					</Link>
-				}
+					}
+					<Link to="/" className="pure-menu-heading pure-menu-link">Itemized</Link>
+					{this.props.workspace &&
+						<Link
+							to={'/workspace/'+this.props.workspace}
+							className="pure-menu-heading pure-menu-link">
+							{this.state.workspaceName}
+						</Link>
+					}
+					{this.props.workspace &&
+						<Link
+							to={'/workspace/'+this.props.workspace+'/configure'}
+							className="pure-menu-heading pure-menu-link">
+							<i className="fa fa-pencil" />
+						</Link>
+					}
+				</div>
 			</div>
-		</div>
-	); }
+		);
+	}
 }
