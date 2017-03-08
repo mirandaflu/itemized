@@ -149,3 +149,8 @@ input {
 .list, .card {
 	touch-action: none;
 }
+
+.fa-question-circle-o {
+	color: grey;
+	cursor: help;
+}

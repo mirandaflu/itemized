@@ -23,6 +23,7 @@ import ConfigureCollection from './components/configurecollection.jsx';
 import Skeleton from './components/skeleton.jsx';
 import Signup from './pages/signup.jsx';
 import Login from './pages/login.jsx';
+import Account from './pages/account.jsx';
 import Logout from './pages/logout.jsx';
 import Home from './pages/home.jsx';
 import Workspace from './pages/workspace.jsx';
@@ -71,11 +72,13 @@ class Root extends React.Component {
 			<Router history={browserHistory}>
 				<Route path="/" component={Skeleton}>
 					<IndexRoute component={Home} onEnter={requireAuth} />
-					<Route path="workspace/:workspace/configure" component={ConfigureWorkspace} />
 					<Route path="workspace/:workspace" onEnter={requireAuth} component={Workspace}>
-						<Route path="collection/:collection/configure" component={ConfigureCollection} />
-						<Route path="collection/:collection" component={CollectionContainer} />
+						<Route path="configure" component={ConfigureWorkspace} />
+						<Route path="collection/:collection" component={CollectionContainer}>
+							<Route path="configure" component={ConfigureCollection} />
+						</Route>
 					</Route>
+					<Route path="account" component={Account} onEnter={requireAuth} />
 					<Route path="login" component={Login} />
 					<Route path="signup" component={Signup} />
 					<Route path="logout" component={Logout} onEnter={feathers_app.logout} />
@@ -91,5 +94,10 @@ feathers_app.authenticate().catch(error => {
 	console.error('Error authenticating!', error);
 }).then(result => {
 	render( <Root />, document.getElementById('app') );
+	feathers_app.service('users').on('patched', function(user) {
+		if (user._id == feathers_app.get('user')._id) {
+			feathers_app.set('user', user);
+		}
+	});
 });
 

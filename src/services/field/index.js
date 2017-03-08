@@ -3,6 +3,7 @@
 const service = require('feathers-mongoose');
 const field = require('./field-model');
 const hooks = require('./hooks');
+const byCheckingWorkspace = require('../../filters/bycheckingworkspace.js');
 
 module.exports = function() {
 	const app = this;
@@ -23,4 +24,7 @@ module.exports = function() {
 
 	// Set up our after hooks
 	fieldService.after(hooks.after);
+
+	// Filter socket events: only users currently viewing the collection get updates
+	fieldService.filter(byCheckingWorkspace);
 };
