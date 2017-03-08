@@ -72,10 +72,11 @@ class Root extends React.Component {
 			<Router history={browserHistory}>
 				<Route path="/" component={Skeleton}>
 					<IndexRoute component={Home} onEnter={requireAuth} />
-					<Route path="workspace/:workspace/configure" component={ConfigureWorkspace} />
 					<Route path="workspace/:workspace" onEnter={requireAuth} component={Workspace}>
-						<Route path="collection/:collection/configure" component={ConfigureCollection} />
-						<Route path="collection/:collection" component={CollectionContainer} />
+						<Route path="configure" component={ConfigureWorkspace} />
+						<Route path="collection/:collection" component={CollectionContainer}>
+							<Route path="configure" component={ConfigureCollection} />
+						</Route>
 					</Route>
 					<Route path="account" component={Account} onEnter={requireAuth} />
 					<Route path="login" component={Login} />

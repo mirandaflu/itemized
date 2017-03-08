@@ -14,11 +14,21 @@ class Navbar extends React.Component {
 			.then(result => { this.setState({workspaceName: result.name}); })
 			.catch(console.error);
 	}
+	handlePatchedWorkspace(workspace) {
+		if (workspace._id == this.props.workspace) {
+			this.setState({ workspaceName: workspace.name });
+		}
+	}
 	componentWillReceiveProps(nextProps) {
 		this.loadWorkspaceName(nextProps.workspace);
 	}
 	componentDidMount() {
 		this.loadWorkspaceName(this.props.workspace);
+		this.workspacePatchedListener = this.handlePatchedWorkspace.bind(this);
+		feathers_app.service('workspaces').on('patched', this.workspacePatchedListener);
+	}
+	componentWillUnmount() {
+		feathers_app.service('workspaces').removeListener('patched', this.workspacePatchedListener);
 	}
 	render() { return (
 		<div className="navbar-container">
