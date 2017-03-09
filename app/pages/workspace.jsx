@@ -172,7 +172,7 @@ class Workspace extends React.Component {
 
 				<div className="workspace withshadow">
 					{(this.props.children)?
-						React.cloneElement(this.props.children, { collectionsLength: this.state.collections.length }):
+						React.Children.map(this.props.children, child => React.cloneElement(child, {collectionsLength: this.state.collections.length})):
 						((this.state.collections.length == 0)?'Please create a collection':'Please select or create a collection')}
 				</div>
 

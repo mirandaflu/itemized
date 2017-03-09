@@ -1,6 +1,6 @@
 import React from 'react';
 import Select from 'react-select';
-import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
+import { Link } from 'react-router';
 
 import fieldTypes from '../attributes/index.js';
 import StatusText from '../statustext.jsx';
@@ -31,7 +31,9 @@ export default class CollectionTable extends React.Component {
 								);
 							})}
 							<th>
-								<button className="pure-button button-secondary" onClick={this.props.onCreateField}>Add Field</button>
+								<button className="pure-button button-secondary" onClick={this.props.onCreateField}>
+									Add Field
+								</button>
 							</th>
 						</tr>
 					</thead>
@@ -40,14 +42,9 @@ export default class CollectionTable extends React.Component {
 							return(
 								<tr key={thing._id}>
 									<td>
-										<ContextMenuTrigger id={'thing'+thing._id}>
-											=
-										</ContextMenuTrigger>
-										<ContextMenu id={'thing'+thing._id}>
-											<MenuItem data={{thing: thing}} onClick={that.props.onRemoveThing}>
-												Delete Thing
-											</MenuItem>
-										</ContextMenu>
+										<Link to={'/workspace/'+that.props.collection.workspace+'/collection/'+that.props.collection._id+'/thing/'+thing._id}>
+											<i className="fa fa-expand" style={{color:'grey'}} />
+										</Link>
 									</td>
 									{fields.map(function(field){
 										let value = '', attribute = null, style = {},
@@ -82,7 +79,10 @@ export default class CollectionTable extends React.Component {
 						})}
 					</tbody>
 				</table>
-				<button className="pure-button button-secondary" style={{marginTop:'8px'}} onClick={this.props.onAddThing}>Add Thing</button>
+				<button className="pure-button button-secondary" style={{marginTop:'8px'}} onClick={this.props.onAddThing}>
+					Add Thing
+				</button>
+				{this.props.children}
 			</div>
 		);
 	}

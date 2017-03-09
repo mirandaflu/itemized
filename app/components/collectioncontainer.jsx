@@ -241,7 +241,12 @@ class CollectionContainer extends React.Component {
 					onRemoveThing={this.removeThing.bind(this)}
 					onCreateOption={this.handleCreateOption.bind(this)}
 					onCommitValueChange={this.commitValueChange.bind(this)} />
-				{this.props.children}
+				{ React.Children.map(this.props.children, child => React.cloneElement(child, {
+					attributesObject: attributesObject,
+					fields: this.state.fields,
+					onCreateOption: this.handleCreateOption.bind(this),
+					onCommitValueChange: this.commitValueChange.bind(this)
+				})) }
 			</div>
 		);
 	}
