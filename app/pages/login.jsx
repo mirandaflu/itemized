@@ -40,26 +40,38 @@ class Login extends React.Component {
 			<div className="pure-g">
 				<div className="pure-u-1 pure-u-sm-1-4 pure-u-md-1-3" />
 				<div className="pure-u-1 pure-u-sm-1-2 pure-u-md-1-3 card withshadow">
+					<p>
+						Welcome to <strong>Itemized</strong> - part spreadsheet, part kanban board, still growing and changing
+					</p>
 					<div style={{textAlign:'center'}}>
 						<GoogleButton preposition="in" />
 					</div>
-					<form className="pure-form pure-form-stacked" onSubmit={this.handleSubmit.bind(this)}>
-						<fieldset>
-							<legend>Log in</legend>
-							<div className="pure-control-group">
-								<label htmlFor="email">Email Address</label>
-								<input id="email" type="email" placeholder="Email Address" onChange={this.handleChange.bind(this)} />
-							</div>
-							<div className="pure-control-group">
-								<label htmlFor="password">Password</label>
-								<input id="password" type="password" placeholder="Password" onChange={this.handleChange.bind(this)} />
-							</div>
-							<div className="pure-controls">
-								<button className="pure-button pure-button-primary" type="submit">Log in</button>
-							</div>
-						</fieldset>
-					</form>
-					<Link to="/signup">Sign up</Link>
+					<p style={{color:'grey'}}>
+						This app doesn't use any of your Google account data,
+						this just saves <Link to="https://github.com/mirandaflu">me</Link> from having to
+						send password reset emails.
+					</p>
+					{window.location.host == 'localhost:3030' &&
+						<form className="pure-form pure-form-stacked" onSubmit={this.handleSubmit.bind(this)}>
+							<fieldset>
+								<legend>Log in</legend>
+								<div className="pure-control-group">
+									<label htmlFor="email">Email Address</label>
+									<input id="email" type="email" placeholder="Email Address" onChange={this.handleChange.bind(this)} />
+								</div>
+								<div className="pure-control-group">
+									<label htmlFor="password">Password</label>
+									<input id="password" type="password" placeholder="Password" onChange={this.handleChange.bind(this)} />
+								</div>
+								<div className="pure-controls">
+									<button className="pure-button pure-button-primary" type="submit">Log in</button>
+								</div>
+							</fieldset>
+						</form>
+					}
+					{window.location.host == 'localhost:3030' &&
+						<Link to="/signup">Sign up</Link>
+					}
 				</div>
 			</div>
 		</div>
