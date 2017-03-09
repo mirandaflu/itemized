@@ -95,7 +95,6 @@ class CollectionBoard extends React.Component {
 				});
 			});
 			for (let id in listMapping) {
-				// console.log(id, listMapping[id]);
 				feathers_app.service('things').patch(id, {listPosition:listMapping[id]})
 					.catch(console.error);
 			}
@@ -192,6 +191,11 @@ class CollectionBoard extends React.Component {
 												data-thingposition={i}
 												data-listposition={thing.listPosition}
 												key={thing._id + that.props.collection.cardField}>
+
+												<Link style={{float:'right'}}
+													to={'/workspace/'+that.props.collection.workspace+'/collection/'+that.props.collection._id+'/thing/'+thing._id}>
+													<i className="fa fa-expand" style={{color:'grey'}} />
+												</Link>
 
 												{cardName}
 
