@@ -70,7 +70,9 @@ export default class FieldHeader extends React.Component {
 		return (
 			<div>
 				<ContextMenuTrigger id={'field'+field._id}>
-					{field.name}
+					<div className="blocktexthighlight">
+						{field.name}
+					</div>
 				</ContextMenuTrigger>
 				<ContextMenu id={'field'+field._id}>
 					<MenuItem onClick={this.startFieldEdit.bind(this)}>
