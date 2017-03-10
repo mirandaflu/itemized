@@ -56,7 +56,7 @@ exports.allowWorkspaceEditorOrHigher = function(options) {
 				}
 				else reject(new Error('Unknown error occurred while checking permissions'));
 			}
-			else if (['attribute','field','thing'].indexOf(hook.service.Model.modelName)) {
+			else if (['attribute','field','thing'].indexOf(hook.service.Model.modelName) != -1) {
 				if (hook.method == 'create') {
 					hook.app.service('collections').get(hook.data.coll).then(collection => {
 						hook.app.service('workspaces')
