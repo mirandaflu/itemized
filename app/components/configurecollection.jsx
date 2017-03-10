@@ -15,14 +15,18 @@ class ConfigureCollection extends React.Component {
 	loadCollection() {
 		feathers_app.service('collections').get(this.props.params.collection)
 			.then(result => { this.setState({ collection: result, name: result.name }); })
-			.catch(console.error);
+			.catch(this.showMessage.bind(this));
 	}
 	handleNameChange(event) {
 		this.setState({ name: event.target.value });
 	}
 	commitNameChange() {
 		if (this.state.name == '') this.refs.messageBanner.showMessage('Name cannot be blank');
-		else feathers_app.service('collections').patch(this.props.params.collection, {name:this.state.name}).catch(console.error);
+		else {
+			feathers_app.service('collections')
+				.patch(this.props.params.collection, {name:this.state.name})
+				.catch(this.showMessage.bind(this));
+		}
 	}
 	handleDeleteClick() {
 		if (!confirm('Are you sure?')) return;
@@ -39,6 +43,9 @@ class ConfigureCollection extends React.Component {
 		event.preventDefault();
 		this.commitNameChange();
 		this.props.router.push('/workspace/' + this.props.params.workspace + '/collection/' + this.props.params.collection);
+	}
+	showMessage(error) {
+		if (this.refs.messageBanner) this.refs.messageBanner.showMessage(error.message);
 	}
 	componentDidMount() {
 		this.loadCollection();

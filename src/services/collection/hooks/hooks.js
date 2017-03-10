@@ -23,3 +23,12 @@ exports.updateCollectionPositions = function(options) {
 		});
 	};
 };
+
+exports.mustProvideWorkspace = function(options) {
+	return function(hook) {
+		return new Promise((resolve, reject) => {
+			if (!hook.params.query.workspace && !hook.data.workspace) reject(new Error('You must specify a workspace to find collections.'));
+			else resolve(hook);
+		});
+	};
+};
