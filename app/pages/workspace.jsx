@@ -5,6 +5,7 @@ import Select from 'react-select';
 import collectionViews from '../components/collectionviews/index.js';
 
 import CollectionTab from '../components/collectiontab.jsx';
+import MessageBanner from '../components/messagebanner.jsx';
 import StatusText from '../components/statustext.jsx';
 
 class Workspace extends React.Component {
@@ -131,6 +132,8 @@ class Workspace extends React.Component {
 					data={this.state.collections}
 					nodatamessage='' />
 
+				<MessageBanner ref="messageBanner" />
+
 				<div id="collectionNavWide">
 					<div className="pure-menu pure-menu-horizontal nobottompadding">
 						<div className="pure-menu-heading bold">Collections:</div>
@@ -172,7 +175,7 @@ class Workspace extends React.Component {
 
 				<div className="workspace withshadow">
 					{(this.props.children)?
-						React.Children.map(this.props.children, child => React.cloneElement(child, {collectionsLength: this.state.collections.length})):
+						React.Children.map(this.props.children, child => React.cloneElement(child, {collectionsLength: this.state.collections.length, messageBanner: this.refs.messageBanner})):
 						((this.state.collections.length == 0)?'Please create a collection':'Please select or create a collection')}
 				</div>
 
