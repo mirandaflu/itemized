@@ -12,12 +12,22 @@ exports.before = {
 		auth.populateUser(),
 		auth.restrictToAuthenticated()
 	],
-	find: [],
+	find: [
+		localHooks.mustProvideWorkspace()
+	],
 	get: [],
-	create: [],
-	update: [],
-	patch: [],
+	create: [
+		localHooks.mustProvideWorkspace(),
+		globalHooks.allowWorkspaceEditorOrHigher()
+	],
+	update: [
+		globalHooks.allowWorkspaceEditorOrHigher()
+	],
+	patch: [
+		globalHooks.allowWorkspaceEditorOrHigher()
+	],
 	remove: [
+		globalHooks.allowWorkspaceEditorOrHigher(),
 		localHooks.removeAssociated()
 	]
 };
