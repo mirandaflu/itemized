@@ -31,7 +31,7 @@ export default class CollectionTable extends React.Component {
 								);
 							})}
 							<th>
-								<button className="pure-button button-secondary" onClick={this.props.onCreateField}>
+								<button className="pure-button button-secondary" onClick={this.props.onCreateField} disabled={this.props.readOnly}>
 									Add Field
 								</button>
 							</th>
@@ -62,6 +62,9 @@ export default class CollectionTable extends React.Component {
 											}
 											else return null;
 										}
+										if (that.props.readOnly) {
+											FieldComponent = fieldTypes['Static'].component;
+										}
 										return (
 											<td className="cell" style={style} rowSpan={rowSpan} key={thing._id + field._id}>
 												<FieldComponent
@@ -79,7 +82,7 @@ export default class CollectionTable extends React.Component {
 						})}
 					</tbody>
 				</table>
-				<button className="pure-button button-secondary" style={{marginTop:'8px'}} onClick={this.props.onAddThing}>
+				<button className="pure-button button-secondary" style={{marginTop:'8px'}} onClick={this.props.onAddThing} disabled={this.props.readOnly}>
 					Add Thing
 				</button>
 				{this.props.children}
