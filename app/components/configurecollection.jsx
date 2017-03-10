@@ -26,7 +26,7 @@ class ConfigureCollection extends React.Component {
 	}
 	handleDeleteClick() {
 		if (!confirm('Are you sure?')) return;
-		feathers_app.service('collections').remove(this.props.collection._id).then(result => {
+		feathers_app.service('collections').remove(this.props.params.collection).then(result => {
 			this.props.router.push('/workspace/'+this.props.params.workspace);
 		});
 	}
