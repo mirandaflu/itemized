@@ -103,6 +103,7 @@ class CollectionBoard extends React.Component {
 		if (!s) return;
 
 		let listvalue = event.target.dataset.listvalue,
+			swimLane = event.target.dataset.swimlane,
 			thing = {
 			coll: this.props.collection._id,
 			listPosition: this.props.things.length
@@ -121,6 +122,15 @@ class CollectionBoard extends React.Component {
 			};
 			feathers_app.service('attributes').create(attr1).catch(console.error);
 			feathers_app.service('attributes').create(attr2).catch(console.error);
+			if (this.props.collection.swimLane) {
+				let attr3 = {
+					coll: this.props.collection._id,
+					thing: newThing._id,
+					field: this.props.collection.swimLane,
+					value: swimLane
+				}
+				feathers_app.service('attributes').create(attr3).catch(console.error);
+			}
 		}).catch(console.error);
 	}
 	getField(props, id) {
@@ -167,7 +177,7 @@ class CollectionBoard extends React.Component {
 							{things.map(function(thing) {
 								if (!attributesObject[thing._id + boardField._id]) return;
 								if (attributesObject[thing._id + boardField._id].value == option &&
-								(!options.swimLane || attributesObject[thing._id + swimLane._id].value == options.swimLaneOption)) {
+								(!options.swimLane || attributesObject[thing._id + options.swimLane._id].value == options.swimLaneOption)) {
 									let nameIndex = thing._id + that.props.collection.cardField,
 										cardName = (attributesObject[nameIndex])?
 											attributesObject[nameIndex].value:
@@ -208,6 +218,7 @@ class CollectionBoard extends React.Component {
 							<div style={{padding:'2px 4px'}}>
 								<button className="pure-button button-small button-secondary"
 									data-listvalue={option}
+									data-swimlane={options.swimLaneOption}
 									style={{width:'100%'}}
 									onClick={that.addThing.bind(that)}>
 									<i className="fa fa-plus" />
