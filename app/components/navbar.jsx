@@ -5,13 +5,14 @@ export default class Navbar extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			workspaceName: ''
+			workspaceName: '',
+			workspace: {}
 		};
 	}
 	loadWorkspaceName(id) {
 		if (!id) return;
 		feathers_app.service('workspaces').get(id)
-			.then(result => { this.setState({workspaceName: result.name}); })
+			.then(result => { this.setState({workspaceName: result.name, workspace: result}); })
 			.catch(console.error);
 	}
 	handlePatchedWorkspace(workspace) {
@@ -51,7 +52,7 @@ export default class Navbar extends React.Component {
 							{this.state.workspaceName}
 						</Link>
 					}
-					{this.props.workspace &&
+					{this.props.workspace && this.state.workspace.viewers && this.state.workspace.viewers.indexOf(feathers_app.get('user')._id) == -1 &&
 						<Link
 							to={'/workspace/'+this.props.workspace+'/configure'}
 							className="pure-menu-heading pure-menu-link">

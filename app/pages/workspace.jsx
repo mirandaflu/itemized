@@ -122,7 +122,8 @@ class Workspace extends React.Component {
 		feathers_app.service('workspaces').removeListener('patched', this.workspacePatchedListener);
 	}
 	render() {
-		let that = this;
+		let that = this,
+			readOnly = this.state.workspace.viewers && this.state.workspace.viewers.indexOf(feathers_app.get('user')._id) != -1;
 		return (
 			<div>
 
@@ -155,7 +156,8 @@ class Workspace extends React.Component {
 
 						</ul>
 						<div className="pure-menu-heading" style={{padding:0, paddingLeft:'15px'}}>
-							<button className="pure-button button-secondary button-small" onClick={this.createCollection.bind(this)}>
+							<button className="pure-button button-secondary button-small"
+								onClick={this.createCollection.bind(this)} disabled={readOnly}>
 								<i className="fa fa-plus" />
 							</button>
 						</div>
@@ -175,7 +177,11 @@ class Workspace extends React.Component {
 
 				<div className="workspace withshadow">
 					{(this.props.children)?
-						React.Children.map(this.props.children, child => React.cloneElement(child, {collectionsLength: this.state.collections.length, messageBanner: this.refs.messageBanner})):
+						React.Children.map(this.props.children, child => React.cloneElement(child, {
+							collectionsLength: this.state.collections.length,
+							messageBanner: this.refs.messageBanner,
+							readOnly: readOnly
+						})):
 						((this.state.collections.length == 0)?'Please create a collection':'Please select or create a collection')}
 				</div>
 

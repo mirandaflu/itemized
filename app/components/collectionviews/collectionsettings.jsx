@@ -59,7 +59,11 @@ export default class CollectionSettingsShell extends React.Component {
 			case 'boardField':
 			case 'cardField':
 				s[type] = value.value;
-				feathers_app.service('collections').patch(this.props.collection._id, s);
+				feathers_app.service('collections').patch(this.props.collection._id, s).catch(console.error);
+				break;
+			case 'swimLane':
+				s[type] = (value == null)? null: value.value;
+				feathers_app.service('collections').patch(this.props.collection._id, s).catch(console.error);
 				break;
 			case 'filters':
 				for (let i in value) {
@@ -251,6 +255,7 @@ export default class CollectionSettingsShell extends React.Component {
 			.map(function(field) { return {value: field._id, label: field.name}; });
 		let cardOptions = this.props.fields
 			.map(function(field) { return {value: field._id, label: field.name}; });
+		let swimLaneOptions = boardOptions;
 
 		return (
 			<div>
@@ -284,6 +289,17 @@ export default class CollectionSettingsShell extends React.Component {
 								clearable={false}
 								onChange={this.handleControlChange.bind(this, 'cardField')} />
 							<i className="fa fa-clone" />
+						</div>
+					}
+					{CollectionControls.swimlane &&
+						<div className={this.state.controlDivClassName}>
+							<Select
+								placeholder="Swim lane"
+								value={this.props.collection.swimLane}
+								options={swimLaneOptions}
+								clearable={true}
+								onChange={this.handleControlChange.bind(this, 'swimLane')} />
+							<i className="fa fa-tasks" />
 						</div>
 					}
 					{CollectionControls.hide &&
@@ -337,25 +353,29 @@ export default class CollectionSettingsShell extends React.Component {
 							<i className="fa fa-object-group" />
 						</div>
 					}
-					<div className={this.state.controlDivClassName} style={{textAlign:'center'}}>
-						<button className="pure-button button-small"
-							disabled={this.props.collection.position == 0}
-							onClick={this.moveCollection.bind(this, 'left')}>
-							<i className="fa fa-arrow-left" />
-						</button>
-						<button className="pure-button button-small" disabled="true">Reorder</button>
-						<button className="pure-button button-small"
-							disabled={this.props.collection.position == this.props.collectionsLength - 1}
-							onClick={this.moveCollection.bind(this, 'right')}>
-							<i className="fa fa-arrow-right" />
-						</button>
-					</div>
-					<div className={this.state.controlDivClassName} style={{textAlign:'center'}}>
-						<Link className="pure-button button-small"
-							to={'/workspace/'+this.props.collection.workspace+'/collection/'+this.props.collection._id+'/configure'}>
-							Edit Collection
-						</Link>
-					</div>
+					{!this.props.readOnly &&
+						<div className={this.state.controlDivClassName} style={{textAlign:'center'}}>
+							<button className="pure-button button-small"
+								disabled={this.props.collection.position == 0}
+								onClick={this.moveCollection.bind(this, 'left')}>
+								<i className="fa fa-arrow-left" />
+							</button>
+							<button className="pure-button button-small" disabled="true">Reorder</button>
+							<button className="pure-button button-small"
+								disabled={this.props.collection.position == this.props.collectionsLength - 1}
+								onClick={this.moveCollection.bind(this, 'right')}>
+								<i className="fa fa-arrow-right" />
+							</button>
+						</div>
+					}
+					{!this.props.readOnly &&
+						<div className={this.state.controlDivClassName} style={{textAlign:'center'}}>
+							<Link className="pure-button button-small"
+								to={'/workspace/'+this.props.collection.workspace+'/collection/'+this.props.collection._id+'/configure'}>
+								Edit Collection
+							</Link>
+						</div>
+					}
 				</div>
 				<button
 					style={{float:'right'}}
@@ -389,7 +409,8 @@ export default class CollectionSettingsShell extends React.Component {
 					onRemoveField={this.props.onRemoveField}
 					onRemoveThing={this.props.onRemoveThing}
 					onCreateOption={this.props.onCreateOption}
-					onCommitValueChange={this.props.onCommitValueChange} />
+					onCommitValueChange={this.props.onCommitValueChange}
+					readOnly={this.props.readOnly} />
 			</div>
 		);
 	}
