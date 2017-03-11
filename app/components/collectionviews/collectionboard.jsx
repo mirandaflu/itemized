@@ -16,7 +16,9 @@ class CollectionBoard extends React.Component {
 			dragging: null,
 			dragID: null,
 			dragStartX: 0,
-			dragStartY: 0
+			dragStartY: 0,
+			dropAttribute: null,
+			dropSwimlaneAttribute: null
 		};
 	}
 	addList() {
@@ -31,7 +33,7 @@ class CollectionBoard extends React.Component {
 			autoScroll: true,
 			onstart: this._handleListDragStart.bind(this),
 			onmove: this._handleListMove.bind(this),
-			onend: this._handleDragEnd.bind(this)
+			onend: this._handleListDragEnd.bind(this)
 		});
 		interact('#board .listdropzone').dropzone({
 			accept: '.list',
@@ -42,12 +44,11 @@ class CollectionBoard extends React.Component {
 			autoScroll: true,
 			onstart: this._handleCardDragStart.bind(this),
 			onmove: this._handleCardMove.bind(this),
-			onend: this._handleDragEnd.bind(this)
+			onend: this._handleCardDragEnd.bind(this)
 		});
 		interact('#board .carddropzone').dropzone({
 			accept: '.card',
-			ondragenter: this._handleCardOverList.bind(this),
-			ondrop: this._handleCardDroppedOnList.bind(this)
+			ondragenter: this._handleCardOverList.bind(this)
 		});
 		interact('#board .listheader').dropzone({
 			accept: '.card',
@@ -301,6 +302,9 @@ class CollectionBoard extends React.Component {
 			.patch(this.state.boardField._id, {options: this.state.boardField.options})
 			.catch(console.error);
 	}
+	_handleListDragEnd(event) {
+		this._handleDragEnd(event);
+	}
 	_handleCardDragStart(event) {
 		let rect = event.target.getBoundingClientRect();
 		this.setState({
@@ -316,12 +320,18 @@ class CollectionBoard extends React.Component {
 		this._handleElementMove(event, this.refs.cardplaceholder, rotate);
 	}
 	_handleCardOverList(event) {
-		let aO = Object.assign(this.state.attributesObject);
+		let aO = Object.assign(this.state.attributesObject), s = {};
 		aO[event.relatedTarget.dataset.attributeindex].value = event.target.dataset.option;
+		s.dropAttribute = { id: event.relatedTarget.dataset.attributeid, value: event.target.dataset.option };
 		if (event.target.dataset.swimlane) {
 			aO[event.relatedTarget.dataset.swimlaneattributeindex].value = event.target.dataset.swimlane;
+			s.dropSwimlaneAttribute = { id: event.relatedTarget.dataset.swimlaneattributeid, value: event.target.dataset.swimlane };
 		}
-		this.setState({attributesObject:aO});
+		else {
+			s.dropSwimlaneAttribute = null;
+		}
+		s.attributesObject = aO;
+		this.setState(s);
 	}
 	_handleCardOverListHeader(event) {
 		let dragged = event.relatedTarget;
@@ -331,22 +341,21 @@ class CollectionBoard extends React.Component {
 		let dragged = event.relatedTarget;
 		this._setThingPosition(dragged.dataset.thingid, this.state.things.length);
 	}
-	_handleCardDroppedOnList(event) {
-		feathers_app.service('attributes')
-			.patch(event.relatedTarget.dataset.attributeid, {value:event.target.dataset.option})
-			.then(result => { console.log(result); })
-			.catch(console.error);
-		if (event.target.dataset.swimlane) {
-			feathers_app.service('attributes')
-				.patch(event.relatedTarget.dataset.swimlaneattributeid, {value:event.target.dataset.swimlane})
-				.then(result => { console.log(result); })
-				.catch(console.error);
-		}
-	}
 	_handleCardOverCard(event) {
 		let dragged = event.relatedTarget, dropzone = event.target;
 		if (dragged.dataset.thingid == dropzone.dataset.thingid) return;
 		this._setThingPosition(dragged.dataset.thingid, parseInt(dropzone.dataset.listposition) + 0.5);
+	}
+	_handleCardDragEnd(event) {
+		feathers_app.service('attributes')
+			.patch(this.state.dropAttribute.id, {value:this.state.dropAttribute.value})
+			.catch(console.error);
+		if (this.state.dropSwimlaneAttribute) {
+			feathers_app.service('attributes')
+				.patch(this.state.dropSwimlaneAttribute.id, {value:this.state.dropSwimlaneAttribute.value})
+				.catch(console.error);
+		}
+		this._handleDragEnd(event);
 	}
 	_handleDragEnd(event) {
 		this.setListPositions(this.props, this.state.things);
