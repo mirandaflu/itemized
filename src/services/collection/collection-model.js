@@ -18,6 +18,7 @@ const collectionSchema = new Schema({
 	viewType: { type: String, required: true, default: 'Table' },
 	boardField: { type: Schema.ObjectId, ref: 'field' },
 	cardField: { type: Schema.ObjectId, ref: 'field' },
+	swimLane: { type: Schema.ObjectId, ref: 'field' },
 
 	createdAt: { type: Date, 'default': Date.now },
 	updatedAt: { type: Date, 'default': Date.now }

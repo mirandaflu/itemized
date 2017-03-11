@@ -16,7 +16,8 @@ module.exports = {
 		controls: {
 			filter: true,
 			listby: true,
-			cardname: true
+			cardname: true,
+			swimlane: true
 		}
 	}
 };
