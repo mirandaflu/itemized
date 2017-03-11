@@ -112,6 +112,7 @@ class WorkspaceList extends React.Component {
 					<WorkspaceItem
 						key={workspace._id}
 						workspace={workspace}
+						readOnly={true}
 						onChange={that.editWorkspace.bind(that)}
 						onDelete={that.deleteWorkspace.bind(that)} />
 				) );

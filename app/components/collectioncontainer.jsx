@@ -23,7 +23,7 @@ class CollectionContainer extends React.Component {
 			name: name,
 			coll: this.state.id,
 			position: this.state.fields.length
-		}).catch(this.showMessage);
+		}).catch(this.showMessage.bind(this));
 	}
 	moveField(e, data) {
 		let move = (data.move == 'right')? 1: -1;
@@ -32,33 +32,33 @@ class CollectionContainer extends React.Component {
 			position: data.field.position + move
 		}}).then(result => {
 			feathers_app.service('fields').patch(data.field._id, {$inc: {position: move}})
-				.catch(this.showMessage);
-		}).catch(this.showMessage);
+				.catch(this.showMessage.bind(this));
+		}).catch(this.showMessage.bind(this));
 	}
 	renameField(e, data) {
 		let name = prompt('Name?');
 		if (!name) return;
-		feathers_app.service('fields').patch(data.field._id, {name: name}).catch(this.showMessage);
+		feathers_app.service('fields').patch(data.field._id, {name: name}).catch(this.showMessage.bind(this));
 	}
 	changeFieldType(e, data) {
 		let type = prompt('Type?');
 		if (!fieldTypes[type]) { alert('invalid'); return; }
 		feathers_app.service('fields').patch(data.field._id, {type: type, options: []})
-			.catch(this.showMessage);
+			.catch(this.showMessage.bind(this));
 	}
 	addFieldOption(e, data) {
 		let option = prompt('Option?');
 		if (!option) return;
 		feathers_app.service('fields').patch(data.field._id, {$push: {options: option}})
-			.catch(this.showMessage);
+			.catch(this.showMessage.bind(this));
 	}
 	handleCreateOption(field, option) {
 		feathers_app.service('fields').patch(field, {$push: {options: option}})
-			.catch(this.showMessage);
+			.catch(this.showMessage.bind(this));
 	}
 	removeField(e, data) {
 		if (!confirm('Are you sure?')) return;
-		feathers_app.service('fields').remove(data.field._id).catch(this.showMessage);
+		feathers_app.service('fields').remove(data.field._id).catch(this.showMessage.bind(this));
 	}
 	handleCreatedField(field) {
 		if (field.coll != this.state.id) return;
@@ -87,11 +87,11 @@ class CollectionContainer extends React.Component {
 		}
 	}
 	addThing() {
-		feathers_app.service('things').create({coll: this.state.id}).catch(this.showMessage);
+		feathers_app.service('things').create({coll: this.state.id}).catch(this.showMessage.bind(this));
 	}
 	removeThing(e, data) {
 		if (!confirm('Are you sure?')) return;
-		feathers_app.service('things').remove(data.thing._id).catch(this.showMessage);
+		feathers_app.service('things').remove(data.thing._id).catch(this.showMessage.bind(this));
 	}
 	handleCreatedThing(thing) {
 		if (thing.coll != this.state.id) return;
@@ -126,11 +126,11 @@ class CollectionContainer extends React.Component {
 			value: e.target.value
 		};
 		if (attribute == null) {
-			feathers_app.service('attributes').create(newAttribute).catch(this.showMessage);
+			feathers_app.service('attributes').create(newAttribute).catch(this.showMessage.bind(this));
 		}
 		else if (newAttribute.value != attribute.value) {
 			feathers_app.service('attributes').patch(attribute._id, {value: newAttribute.value})
-				.catch(this.showMessage);
+				.catch(this.showMessage.bind(this));
 		}
 	}
 	handleCreatedAttribute(attribute) {
@@ -248,12 +248,14 @@ class CollectionContainer extends React.Component {
 					onRemoveField={this.removeField.bind(this)}
 					onRemoveThing={this.removeThing.bind(this)}
 					onCreateOption={this.handleCreateOption.bind(this)}
-					onCommitValueChange={this.commitValueChange.bind(this)} />
+					onCommitValueChange={this.commitValueChange.bind(this)}
+					readOnly={this.props.readOnly} />
 				{ React.Children.map(this.props.children, child => React.cloneElement(child, {
 					attributesObject: attributesObject,
 					fields: this.state.fields,
 					onCreateOption: this.handleCreateOption.bind(this),
-					onCommitValueChange: this.commitValueChange.bind(this)
+					onCommitValueChange: this.commitValueChange.bind(this),
+					readOnly: this.props.readOnly
 				})) }
 			</div>
 		);

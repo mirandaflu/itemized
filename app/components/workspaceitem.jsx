@@ -19,11 +19,13 @@ class WorkspaceItem extends React.Component {
 				<Link to={'/workspace/'+this.props.workspace._id}>
 					<div className="card withshadow hovershadow">
 
-						<button style={{marginTop:'-5.5px'}}
-							className="pure-button button-small"
-							onClick={this.configureWorkspace.bind(this)}>
-							<i className="fa fa-edit" />
-						</button>
+						{!this.props.readOnly &&
+							<button style={{marginTop:'-5.5px'}}
+								className="pure-button button-small"
+								onClick={this.configureWorkspace.bind(this)}>
+								<i className="fa fa-edit" />
+							</button>
+						}
 
 						{this.props.workspace.name}
 
