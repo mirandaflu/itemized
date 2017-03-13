@@ -22,6 +22,7 @@ class CollectionBoard extends React.Component {
 		};
 	}
 	addList() {
+		if (!this.state.boardField._id) return alert('Please select a field to list things by before trying to create a list.')
 		let name = prompt('Name?');
 		if (!name) return;
 		feathers_app.service('fields')
