@@ -172,9 +172,15 @@ export default class CollectionCalendar extends React.Component {
 			draggedEl.style.msTransform = transform;
 	}
 	_handleCardOverDay(event) {
-		let aO = Object.assign(this.state.attributesObject), s = {};
-		aO[event.relatedTarget.dataset.dateattributeindex].value = event.target.dataset.date;
-		s.dropAttribute = { id: event.relatedTarget.dataset.dateattributeid, value: event.target.dataset.date };
+		let aO = Object.assign(this.state.attributesObject), s = {},
+			currentdate = this.state.attributesObject[event.relatedTarget.dataset.dateattributeindex].value,
+			newdate = event.target.dataset.date,
+			time = moment(currentdate).diff(moment(currentdate).startOf('day'));
+		if (time != 0) {
+			newdate = moment(newdate).add(time, 'ms').format();
+		}
+		aO[event.relatedTarget.dataset.dateattributeindex].value = newdate;
+		s.dropAttribute = { id: event.relatedTarget.dataset.dateattributeid, value: newdate };
 		s.attributesObject = aO;
 		this.setState(s);
 	}

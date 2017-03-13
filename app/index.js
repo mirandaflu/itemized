@@ -20,6 +20,7 @@ import CollectionContainer from './components/collectioncontainer.jsx';
 import ConfigureWorkspace from './components/configureworkspace.jsx';
 import ConfigureCollection from './components/configurecollection.jsx';
 import ConfigureThing from './components/configurething.jsx';
+import ConfigureField from './components/configurefield.jsx';
 
 import Skeleton from './components/skeleton.jsx';
 import Signup from './pages/signup.jsx';
@@ -78,6 +79,7 @@ class Root extends React.Component {
 						<Route path="collection/:collection" component={CollectionContainer}>
 							<Route path="configure" component={ConfigureCollection} />
 							<Route path="thing/:thing" component={ConfigureThing} />
+							<Route path="field/:field" component={ConfigureField} />
 						</Route>
 					</Route>
 					<Route path="account" component={Account} onEnter={requireAuth} />
