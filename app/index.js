@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from 'react-dom';
+import ReactDOM from 'react-dom';
 import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 
 import feathers from 'feathers-client';
@@ -95,7 +95,7 @@ class Root extends React.Component {
 feathers_app.authenticate().catch(error => {
 	console.error('Error authenticating!', error);
 }).then(result => {
-	render( <Root />, document.getElementById('app') );
+	ReactDOM.render( <Root />, document.getElementById('app') );
 	feathers_app.service('users').on('patched', function(user) {
 		if (user._id == feathers_app.get('user')._id) {
 			feathers_app.set('user', user);
