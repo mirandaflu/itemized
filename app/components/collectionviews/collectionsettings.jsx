@@ -58,6 +58,7 @@ export default class CollectionSettingsShell extends React.Component {
 			case 'viewType':
 			case 'boardField':
 			case 'cardField':
+			case 'dateField':
 				s[type] = value.value;
 				feathers_app.service('collections').patch(this.props.collection._id, s).catch(console.error);
 				break;
@@ -256,6 +257,9 @@ export default class CollectionSettingsShell extends React.Component {
 		let cardOptions = this.props.fields
 			.map(function(field) { return {value: field._id, label: field.name}; });
 		let swimLaneOptions = boardOptions;
+		let dateFieldOptions = this.props.fields
+			.filter(function(field) { return field.type.indexOf('Date') != -1; })
+			.map(function(field) { return {value: field._id, label: field.name}; });
 
 		return (
 			<div>
@@ -323,6 +327,17 @@ export default class CollectionSettingsShell extends React.Component {
 								options={this.props.fields.map(function(field){ return { value: field._id, label: field.name }; })}
 								onChange={this.handleControlChange.bind(this, 'sort')} />
 							<i className="fa fa-sort" onClick={this.toggleAscDesc.bind(this)} />
+						</div>
+					}
+					{CollectionControls.dateby &&
+						<div className={this.state.controlDivClassName}>
+							<Select
+								placeholder="Date by"
+								value={this.props.collection.dateField}
+								options={dateFieldOptions}
+								clearable={false}
+								onChange={this.handleControlChange.bind(this, 'dateField')} />
+							<i className="fa fa-calendar" />
 						</div>
 					}
 					<div className={this.state.controlDivClassName}>

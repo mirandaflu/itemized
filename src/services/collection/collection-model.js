@@ -19,6 +19,7 @@ const collectionSchema = new Schema({
 	boardField: { type: Schema.ObjectId, ref: 'field' },
 	cardField: { type: Schema.ObjectId, ref: 'field' },
 	swimLane: { type: Schema.ObjectId, ref: 'field' },
+	dateField: { type: Schema.ObjectId, ref: 'field' },
 
 	createdAt: { type: Date, 'default': Date.now },
 	updatedAt: { type: Date, 'default': Date.now }
