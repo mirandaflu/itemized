@@ -1,5 +1,6 @@
 import CollectionTable from './collectiontable.jsx';
 import CollectionBoard from './collectionboard.jsx';
+import CollectionCalendar from './collectioncalendar.jsx';
 
 module.exports = {
 	"Table": {
@@ -18,6 +19,14 @@ module.exports = {
 			listby: true,
 			cardname: true,
 			swimlane: true
+		}
+	},
+	"Calendar": {
+		component: CollectionCalendar,
+		controls: {
+			filter: true,
+			cardname: true,
+			dateby: true
 		}
 	}
 };
