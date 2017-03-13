@@ -392,22 +392,26 @@ export default class CollectionSettingsShell extends React.Component {
 						</div>
 					}
 				</div>
-				<button
-					style={{float:'right'}}
-					className="pure-button button-small"
-					onClick={this.toggleControls.bind(this)}>
-					{this.state.controlsVisible &&
-						<div>
-							<i className="fa fa-gear" /> <i className="fa fa-caret-up" />
-						</div>
-					}
-					{!this.state.controlsVisible &&
-						<div title={activeFilterCount+' active filter(s)'}>
-							{(activeFilterCount > 0)?activeFilterCount+' ':''}
-							<i className="fa fa-gear" /> <i className="fa fa-caret-down" />
-						</div>
-					}
-				</button>
+				<div className="pure-g">
+					<div className="pure-u-1">
+						<button
+							style={{float:'right'}}
+							className="pure-button button-small"
+							onClick={this.toggleControls.bind(this)}>
+							{this.state.controlsVisible &&
+								<div>
+									<i className="fa fa-gear" /> <i className="fa fa-caret-up" />
+								</div>
+							}
+							{!this.state.controlsVisible &&
+								<div title={activeFilterCount+' active filter(s)'}>
+									{(activeFilterCount > 0)?activeFilterCount+' ':''}
+									<i className="fa fa-gear" /> <i className="fa fa-caret-down" />
+								</div>
+							}
+						</button>
+					</div>
+				</div>
 				<CollectionComponent
 					collection={this.props.collection}
 					fields={fields}

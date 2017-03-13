@@ -163,3 +163,17 @@ input {
 	-ms-user-select: none;
 	user-select: none;
 }
+
+.calendar .weekday {
+	text-align: center;
+	padding: 8pt;
+}
+.calendar .day {
+	min-height: 200px;
+	border-left: 1pt solid black;
+	border-top: 1pt solid black;
+	padding: 8pt;
+}
+.calendar .day .date {
+	text-align: right;
+}
