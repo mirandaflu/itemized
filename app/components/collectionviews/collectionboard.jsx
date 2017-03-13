@@ -208,7 +208,7 @@ class CollectionBoard extends React.Component {
 
 											<Link style={{float:'right'}}
 												to={'/workspace/'+that.props.collection.workspace+'/collection/'+that.props.collection._id+'/thing/'+thing._id}>
-												<i className="fa fa-expand" style={{color:'grey'}} />
+												<i className="fa fa-expand" />
 											</Link>
 
 											{cardName}

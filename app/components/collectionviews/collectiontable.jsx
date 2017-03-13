@@ -43,7 +43,7 @@ export default class CollectionTable extends React.Component {
 								<tr key={thing._id}>
 									<td>
 										<Link to={'/workspace/'+that.props.collection.workspace+'/collection/'+that.props.collection._id+'/thing/'+thing._id}>
-											<i className="fa fa-expand" style={{color:'grey'}} />
+											<i className="fa fa-expand" />
 										</Link>
 									</td>
 									{fields.map(function(field){

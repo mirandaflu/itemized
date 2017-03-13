@@ -1,6 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 import interact from 'interact.js';
+import { Link } from 'react-router';
 
 export default class CollectionCalendar extends React.Component {
 	constructor(props) {
@@ -64,67 +65,81 @@ export default class CollectionCalendar extends React.Component {
 		return (
 			<div>
 				<div className="pure-g">
-					<div className="pure-u-1 pure-u-sm-7-8">
+					<div className="pure-u-7-8">
+
 						<button className="pure-button" style={{float:'left'}} onClick={e => {
-							this.setState({month:moment(this.state.month).subtract(1, 'months')}); }}>
+							this.setState({month:moment(this.state.month).subtract(1,'months')}); }}>
 							<i className="fa fa-arrow-left" />
 						</button>
 						<button className="pure-button" style={{float:'right'}} onClick={e => {
-							this.setState({month:moment(this.state.month).add(1, 'months')}); }}>
+							this.setState({month:moment(this.state.month).add(1,'months')}); }}>
 							<i className="fa fa-arrow-right" />
 						</button>
 						<h2 style={{textAlign:'center'}}>
 							{moment(this.state.month).format('MMMM')}
 						</h2>
+						
 					</div>
 				</div>
 				<div className="pure-g calendar">
 					<div ref="cardplaceholder"
 						style={{display:'none', fontFamily: "'Open Sans', sans-serif"}}
-						className="card withshadow hovershadow pure-u-1 pure-u-sm-1-8" />
-					{['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'].map(weekday => {
+						className="card withshadow hovershadow pure-u-1-8" />
+					{['Sunday','Monday','Tuesday','Wednesday',
+					'Thursday','Friday','Saturday'].map(weekday => {
 						return (
-							<div key={weekday} className="pure-u-1 pure-u-sm-1-8 dark weekday">
+							<div key={weekday} className="pure-u-1-8 dark weekday">
 								{weekday}
 							</div>
 						);
 					})}
-					<div className="pure-u-1 pure-u-sm-1-8" />
+					<div className="pure-u-1-8" />
 					{days.map(day => {
 						return(
-							<div key={day.key} className={(day.weekday == 'Sat')?
-								'pure-u-1 pure-u-sm-1-4 pure-g':'pure-u-1 pure-u-sm-1-8 pure-g'}>
+							<div key={day.key} className={'pure-g'
+								+((day.weekday == 'Sat')?' pure-u-1-4':' pure-u-1-8')}>
 								
-								<div className={(day.weekday == 'Sat')?
-									'pure-u-1 pure-u-sm-1-2 medium-dark day': 'pure-u-1 medium-dark day'}
-									data-date={day.key}>
+								<div data-date={day.key} className={'medium-dark day'
+									+((day.weekday == 'Sat')?' pure-u-1-2': ' pure-u-1')}>
 
 									<div className="date">{day.date}</div>
 
 									{that.state.things.filter(function(thing) {
+
 										let i = thing._id+that.props.collection.dateField,
 											t = that.props.attributesObject[i]?
 												that.props.attributesObject[i].value: null;
+
 										return t && moment(t).isSameOrAfter(day.start) &&
 											moment(t).isBefore(day.end);
+
 									}).map(function(thing) {
+
 										let index = thing._id+that.props.collection.dateField,
 											id = that.props.attributesObject[index]._id,
 											i = thing._id+that.props.collection.cardField,
 											name = that.props.attributesObject[i].value;
+
 										return (
 											<div key={i}
-												className={'card withshadow hovershadow'
-													+((id == that.state.dragID)?' dragging':'')}
 												data-dateattributeindex={index}
-												data-dateattributeid={id}>
+												data-dateattributeid={id}
+												className={'card withshadow hovershadow'
+													+((id == that.state.dragID)?' dragging':'')}>
+
+												<Link style={{float:'right'}}
+													to={'/workspace/'+that.props.collection.workspace+'/collection/'+that.props.collection._id+'/thing/'+thing._id}>
+													<i className="fa fa-expand" />
+												</Link>
+
 												{name}
+
 											</div>
 										);
 									})}
 								</div>
 
-								{day.weekday == 'Sat' && <div className="pure-u-1 pure-u-sm-1-2" />}
+								{day.weekday == 'Sat' && <div className="pure-u-1-2" />}
 
 							</div>
 						);
