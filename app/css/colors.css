@@ -22,6 +22,13 @@ form input[type=text]:hover, form input[type=email]:hover, form input[type=passw
 	border: 1px solid #aaa;
 }
 
+a, a:active {
+	color: black;
+}
+a:hover {
+	color: #444444;
+}
+
 .pure-menu-item::after {
 	content: '';
 	display: block;

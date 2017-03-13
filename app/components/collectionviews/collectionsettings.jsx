@@ -270,6 +270,7 @@ export default class CollectionSettingsShell extends React.Component {
 							placeholder="View as"
 							value={this.props.collection.viewType}
 							options={viewOptions}
+							clearable={false}
 							onChange={this.handleControlChange.bind(this, 'viewType')} />
 						<i className="fa fa-eye" />
 					</div>

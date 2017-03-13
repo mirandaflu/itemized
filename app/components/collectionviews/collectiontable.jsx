@@ -4,7 +4,6 @@ import { Link } from 'react-router';
 
 import fieldTypes from '../attributes/index.js';
 import StatusText from '../statustext.jsx';
-import FieldHeader from './fieldheader.jsx';
 import FilterMaker from './filtermaker.jsx';
 
 export default class CollectionTable extends React.Component {
@@ -23,10 +22,9 @@ export default class CollectionTable extends React.Component {
 							{fields.map(function(field){
 								return(
 									<th key={field._id}>
-										<FieldHeader
-											fieldsLength={fields.length}
-											field={field}
-											onMove={that.props.onMoveField} />
+										<Link to={'/workspace/'+that.props.collection.workspace+'/collection/'+that.props.collection._id+'/field/'+field._id}>
+											{field.name}
+										</Link>
 									</th>
 								);
 							})}
