@@ -39,6 +39,9 @@ module.exports = {
 	},
 	"URL": {
 		component: LinkInput
+	},
+	"Reference": {
+		component: StaticText
 	}
 };
 

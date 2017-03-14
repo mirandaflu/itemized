@@ -120,15 +120,17 @@ class ConfigureField extends React.Component {
 										onChange={this.handleOptionsSelectChange.bind(this, 'options')} />
 								</div>
 							}
-							<div className="pure-control-group">
-								<label htmlFor="default">Default Value</label>
-								<FieldComponent
-									clearable={true}
-									fieldType={field.type}
-									value={field.default}
-									options={field.options}
-									onCommitChange={this.handleDefaultChange.bind(this)} />
-							</div>
+							{field.type != 'Reference' &&
+								<div className="pure-control-group">
+									<label htmlFor="default">Default Value</label>
+									<FieldComponent
+										clearable={true}
+										fieldType={field.type}
+										value={field.default}
+										options={field.options}
+										onCommitChange={this.handleDefaultChange.bind(this)} />
+								</div>
+							}
 						</fieldset>
 					</form>
 					<button className="pure-button button-error"

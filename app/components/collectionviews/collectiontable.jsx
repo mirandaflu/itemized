@@ -67,6 +67,10 @@ export default class CollectionTable extends React.Component {
 											<td className="cell" style={style} rowSpan={rowSpan} key={thing._id + field._id}>
 												<FieldComponent
 													fieldType={field.type}
+													workspace={that.props.collection.workspace}
+													collection={that.props.collection._id}
+													thing={thing._id}
+													field={field._id}
 													attribute={attribute}
 													value={value}
 													options={field.options}
