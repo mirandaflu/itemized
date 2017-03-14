@@ -18,8 +18,26 @@ export default class StaticInput extends React.Component {
 			this.setState({ value: props.value });
 		}
 	}
-	componentWillReceiveProps(nextProps) { this.setValue(nextProps); }
-	componentDidMount() { this.setValue(this.props); }
+	handlePatchedAttribute(attribute) {
+		if (this.props.value == attribute._id) {
+			this.setValue(this.props);
+		}
+	}
+	componentWillReceiveProps(nextProps) {
+		this.setValue(nextProps);
+	}
+	componentDidMount() {
+		this.setValue(this.props);
+		if (this.props.fieldType == 'Reference') {
+			this.attributePatchedListener = this.handlePatchedAttribute.bind(this);
+			feathers_app.service('attributes').on('patched', this.attributePatchedListener);
+		}
+	}
+	componentWillUnmount() {
+		if (this.props.fieldType == 'Reference') {
+			feathers_app.service('attributes').removeListener('patched', this.attributePatchedListener);
+		}
+	}
 	render() {
 		return (
 			<span>
