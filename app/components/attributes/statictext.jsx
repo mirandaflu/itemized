@@ -8,9 +8,18 @@ export default class StaticInput extends React.Component {
 			value: this.props.value
 		};
 	}
-	componentWillReceiveProps(nextProps) {
-		this.setState({ value: nextProps.value });
+	setValue(props) {
+		if (this.props.fieldType == 'Reference' && props.value) {
+			feathers_app.service('attributes').get(props.value)
+				.then(attribute => { this.setState({ value: attribute.value }); })
+				.catch(console.error);
+		}
+		else {
+			this.setState({ value: props.value });
+		}
 	}
+	componentWillReceiveProps(nextProps) { this.setValue(nextProps); }
+	componentDidMount() { this.setValue(this.props); }
 	render() {
 		return (
 			<span>
