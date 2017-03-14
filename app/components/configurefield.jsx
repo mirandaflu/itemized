@@ -32,6 +32,10 @@ class ConfigureField extends React.Component {
 		this.setState(s);
 		feathers_app.service('fields').patch(this.props.params.field, s).catch(console.error);
 	}
+	handleDefaultChange(event) {
+		let s = { default: event.target.value };
+		feathers_app.service('fields').patch(this.props.params.field, s).catch(console.error);
+	}
 	handleChange(event) {
 		let s = {};
 		s[event.target.id] = event.target.value;
@@ -74,6 +78,9 @@ class ConfigureField extends React.Component {
 		for (let o of field.options) {
 			optionOptions.push({value:o, label:o});
 		}
+		let FieldComponent = (field.type)?
+			fieldTypes[field.type].component: fieldTypes['Static'].component;
+
 		return (
 			<Modal isOpen={true} contentLabel="configurefield">
 				<div className="modalContent">
@@ -113,6 +120,15 @@ class ConfigureField extends React.Component {
 										onChange={this.handleOptionsSelectChange.bind(this, 'options')} />
 								</div>
 							}
+							<div className="pure-control-group">
+								<label htmlFor="default">Default Value</label>
+								<FieldComponent
+									clearable={true}
+									fieldType={field.type}
+									value={field.default}
+									options={field.options}
+									onCommitChange={this.handleDefaultChange.bind(this)} />
+							</div>
 						</fieldset>
 					</form>
 					<button className="pure-button button-error"

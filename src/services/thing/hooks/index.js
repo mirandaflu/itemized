@@ -36,7 +36,9 @@ exports.after = {
 	all: [],
 	find: [],
 	get: [],
-	create: [],
+	create: [
+		localHooks.createDefaultAttributes()
+	],
 	update: [],
 	patch: [],
 	remove: []

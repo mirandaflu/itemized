@@ -97,7 +97,9 @@ exports.allowWorkspaceEditorOrHigher = function(options) {
 exports.mustProvideCollection = function(options) {
 	return function(hook) {
 		return new Promise((resolve, reject) => {
-			if (!hook.params.query.coll && !hook.data.coll) reject(new Error('You must specify a collection to '+hook.method+' '+hook.service.Model.modelName+'s.'));
+			if ((hook.params.query && !hook.params.query.coll) && !hook.data.coll) {
+				reject(new Error('You must specify a collection to '+hook.method+' '+hook.service.Model.modelName+'s.'));
+			}
 			else resolve(hook);
 		});
 	};

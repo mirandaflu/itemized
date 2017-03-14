@@ -9,7 +9,11 @@ export default class SelectInput extends React.Component {
 		};
 	}
 	handleChange(value) {
-		if (this.props.fieldType == 'Single Select') {
+		if (this.props.clearable && value == null) {
+			this.props.onCommitChange({ target: {value: null} });
+			this.setState({ value: null });
+		}
+		else if (this.props.fieldType == 'Single Select') {
 			if (this.props.options.indexOf(value.value) == -1) {
 				this.props.onCreateOption(value.value);
 			}
@@ -42,6 +46,7 @@ export default class SelectInput extends React.Component {
 				value={this.state.value}
 				options={options}
 				multi={this.props.fieldType == 'Multiple Select'}
+				clearable={this.props.clearable || false}
 				onChange={this.handleChange.bind(this)} />
 		);
 	}
