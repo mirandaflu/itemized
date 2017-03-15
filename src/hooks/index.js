@@ -54,7 +54,7 @@ exports.allowWorkspaceEditorOrHigher = function(options) {
 							.catch(reject);
 					}).catch(reject);
 				}
-				else reject(new Error('Unknown error occurred while checking permissions'));
+				else reject(new Error('Unknown error occurred while checking permissions 1'));
 			}
 			else if (['attribute','field','thing'].indexOf(hook.service.Model.modelName) != -1) {
 				if (hook.method == 'create') {
@@ -87,9 +87,13 @@ exports.allowWorkspaceEditorOrHigher = function(options) {
 						}).catch(reject);
 					}).catch(reject);
 				}
-				else reject(new Error('Unknown error occurred while checking permissions'));
+				else if (hook.service.Model.modelName == 'attribute' && hook.method == 'patch' &&
+				hook.params.query.field && hook.params.query.thing) {
+					resolve(hook);
+				}
+				else reject(new Error('Unknown error occurred while checking permissions 2'));
 			}
-			else reject(new Error('Unknown error occurred while checking permissions'));
+			else reject(new Error('Unknown error occurred while checking permissions 3'));
 		});
 	};
 };
@@ -97,7 +101,8 @@ exports.allowWorkspaceEditorOrHigher = function(options) {
 exports.mustProvideCollection = function(options) {
 	return function(hook) {
 		return new Promise((resolve, reject) => {
-			if ((hook.params.query && !hook.params.query.coll) && !hook.data.coll) {
+			if ((hook.params.query && !hook.params.query.coll && !hook.params.query._id) &&
+			(hook.data && !hook.data.coll && !hook.data._id)) {
 				reject(new Error('You must specify a collection to '+hook.method+' '+hook.service.Model.modelName+'s.'));
 			}
 			else resolve(hook);
