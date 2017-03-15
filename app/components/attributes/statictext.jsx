@@ -13,11 +13,13 @@ export default class StaticInput extends React.Component {
 			this.setState({ value: null });
 		}
 		else if (this.props.fieldType == 'Reference') {
-			feathers_app.service('attributes').get(props.value)
-				.then(attribute => {
-					this.setState({ value: attribute.value });
-				})
-				.catch(console.error);
+			feathers_app.service('attributes').find({query:{
+				coll: this.props.collection,
+				_id: props.value
+			}}).then(attributes => {
+				if (attributes.length == 0) this.setState({ value: null });
+				else this.setState({ value: attributes[0].value });
+			}).catch();
 		}
 		else {
 			this.setState({ value: props.value });

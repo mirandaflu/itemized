@@ -40,10 +40,14 @@ class ConfigureReference extends React.Component {
 			}
 			else {
 				this.setState({ attribute: attributes[0] });
-				feathers_app.service('attributes').get(attributes[0].value)
-					.then(referencedAttribute => {
-						this.setState({ referencedValue: referencedAttribute.value });
-						let referencedCollection = referencedAttribute.coll;
+				feathers_app.service('attributes').find({query:{_id:attributes[0].value}})
+					.then(referencedAttributes => {
+						let referencedAttribute = referencedAttributes[0],
+							referencedCollection = null;
+						if (referencedAttribute) {
+							this.setState({ referencedValue: referencedAttribute.value });
+							referencedCollection = referencedAttribute.coll;
+						}
 						feathers_app.service('collections').find({query:{workspace:this.props.params.workspace}})
 							.then(collections => {
 								this.setState({ collections: collections.map(collection => {
