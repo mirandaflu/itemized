@@ -3,6 +3,10 @@
 	font-family: 'Open Sans', sans-serif;
 }
 
+.pure-g [class*=pure-u] {
+	font-family: 'Open Sans', sans-serif;
+}
+
 a { text-decoration: none; }
 
 input {
@@ -181,4 +185,14 @@ input {
 
 .fa-expand {
 	color: grey;
+}
+
+.pure-u-1-7 {
+	width: 14.2857143%;
+	letter-spacing: normal;
+    word-spacing: normal;
+    vertical-align: top;
+    text-rendering: auto;
+    display: inline-block;
+    zoom: 1;
 }
