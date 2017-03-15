@@ -14,11 +14,14 @@ export default class StaticInput extends React.Component {
 		}
 		else if (this.props.fieldType == 'Attribute Reference') {
 			feathers_app.service('attributes').find({query:{
-				coll: this.props.collection,
 				_id: props.value
 			}}).then(attributes => {
-				if (attributes.length == 0) this.setState({ value: null });
-				else this.setState({ value: attributes[0].value });
+				if (attributes.length == 0) {
+					this.setState({ value: null });
+				}
+				else {
+					this.setState({ value: attributes[0].value });
+				}
 			}).catch();
 		}
 		else {
@@ -47,7 +50,7 @@ export default class StaticInput extends React.Component {
 	}
 	render() {
 		return (
-			<span>
+			<span style={{padding:'4px'}}>
 				{this.props.fieldType == 'Attribute Reference' &&
 					<Link style={{float:'right'}} to={'/workspace/'+this.props.workspace+'/collection/'+this.props.collection+'/reference/'+this.props.thing+'/'+this.props.field}>
 						<i className="fa fa-edit" />

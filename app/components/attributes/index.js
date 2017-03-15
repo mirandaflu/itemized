@@ -42,6 +42,12 @@ module.exports = {
 	},
 	"Attribute Reference": {
 		component: StaticText
+	},
+	"Single Field Reference": {
+		component: SelectInput
+	},
+	"Multiple Field Reference": {
+		component: SelectInput
 	}
 };
 

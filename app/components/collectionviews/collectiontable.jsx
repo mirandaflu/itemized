@@ -89,6 +89,7 @@ export default class CollectionTable extends React.Component {
 											<td className="cell" style={style} rowSpan={rowSpan} key={thing._id + field._id}
 												onClick={that.forwardAttributeClick.bind(that, attribute)}>
 												<FieldComponent
+													clearable={true}
 													fieldType={field.type}
 													workspace={that.props.collection.workspace}
 													collection={that.props.collection._id}
