@@ -9,9 +9,14 @@ export default class StaticInput extends React.Component {
 		};
 	}
 	setValue(props) {
-		if (this.props.fieldType == 'Reference' && props.value) {
+		if (props.value == null || props.value == '') {
+			this.setState({ value: null });
+		}
+		else if (this.props.fieldType == 'Reference') {
 			feathers_app.service('attributes').get(props.value)
-				.then(attribute => { this.setState({ value: attribute.value }); })
+				.then(attribute => {
+					this.setState({ value: attribute.value });
+				})
 				.catch(console.error);
 		}
 		else {
@@ -46,7 +51,7 @@ export default class StaticInput extends React.Component {
 						<i className="fa fa-edit" />
 					</Link>
 				}
-				{this.state.value}
+				{this.props.value && this.state.value}
 			</span>
 		);
 	}

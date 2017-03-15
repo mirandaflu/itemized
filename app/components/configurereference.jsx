@@ -16,17 +16,57 @@ class ConfigureReference extends React.Component {
 			thing: null,
 			fields: [],
 			field: null,
-			attributes: []
+			attributes: [],
+			attribute: {},
+			referencedValue: null
 		};
 	}
-	loadCollections() {
-		feathers_app.service('collections').find({query:{workspace:this.props.params.workspace}})
-			.then(collections => { this.setState({ collections: collections.map(collection => {
-				return {
-					label: collection.name,
-					value: collection
-				};
-			}) }); }).catch(console.error);
+	loadData() {
+		feathers_app.service('attributes').find({query: {
+			coll: this.props.params.collection,
+			thing: this.props.params.thing,
+			field: this.props.params.field
+		}}).then(attributes => {
+			if (attributes.length == 0) {
+				feathers_app.service('collections').find({query:{workspace:this.props.params.workspace}})
+					.then(collections => {
+						this.setState({ collections: collections.map(collection => {
+							return {
+								label: collection.name,
+								value: collection
+							};
+						})});
+					}).catch(console.error);
+			}
+			else {
+				this.setState({ attribute: attributes[0] });
+				feathers_app.service('attributes').get(attributes[0].value)
+					.then(referencedAttribute => {
+						this.setState({ referencedValue: referencedAttribute.value });
+						let referencedCollection = referencedAttribute.coll;
+						feathers_app.service('collections').find({query:{workspace:this.props.params.workspace}})
+							.then(collections => {
+								this.setState({ collections: collections.map(collection => {
+									return {
+										label: collection.name,
+										value: collection
+									};
+								})});
+								for (let c of collections) {
+									if (c._id == referencedCollection) {
+										let collectionOption = {
+											label: c.name,
+											value: c
+										};
+										this.setState({ collection: collectionOption });
+										this.handleSelectChange('collection', collectionOption);
+										break;
+									}
+								}
+							}).catch(console.error);
+					}).catch(console.error);
+			}
+		}).catch(console.error);
 	}
 	loadFields(collection) {
 		feathers_app.service('fields').find({query:{coll:collection}})
@@ -56,7 +96,7 @@ class ConfigureReference extends React.Component {
 		this.setState(s);
 	}
 	handleAttributeClick(attribute) {
-		this.setState({ attribute: attribute });
+		this.setState({ referencedValue: attribute.value });
 		let query = {
 			coll: this.props.params.collection,
 			thing: this.props.params.thing,
@@ -64,6 +104,12 @@ class ConfigureReference extends React.Component {
 		};
 		feathers_app.service('attributes')
 			.patch(null, {value: attribute._id}, {query: query})
+			.catch(console.error)
+			.then(attributes => { this.setState({ attribute: attributes[0] }); });
+	}
+	clearReference() {
+		feathers_app.service('attributes').remove(this.state.attribute._id)
+			.then(result => { this.returnToCollection(); })
 			.catch(console.error);
 	}
 	returnToCollection(event) {
@@ -71,7 +117,7 @@ class ConfigureReference extends React.Component {
 		this.props.router.push('/workspace/'+this.props.params.workspace+'/collection/'+this.props.params.collection);
 	}
 	componentDidMount() {
-		this.loadCollections();
+		this.loadData();
 	}
 	render() {
 		let attributesObject = {};
@@ -99,6 +145,7 @@ class ConfigureReference extends React.Component {
 							</div>
 							{this.state.fields && this.state.things && this.state.collection && this.state.collection.value &&
 								<CollectionTable
+									clickedAttribute={this.state.attribute.value}
 									collection={this.state.collection.value}
 									fields={this.state.fields}
 									things={this.state.things}
@@ -110,10 +157,11 @@ class ConfigureReference extends React.Component {
 							<div className="pure-control-group">
 								<label htmlFor="type">Value</label>
 								<input placeholder={(!this.state.collection)?'Select a collection...':'... and click an attribute'}
-									value={this.state.attribute && this.state.attribute.value} disabled />
+									value={this.state.referencedValue} disabled />
 							</div>
 						</fieldset>
 					</form>
+					<button className="pure-button" onClick={this.clearReference.bind(this)}>Clear Reference</button>
 				</div>
 			</Modal>
 		);

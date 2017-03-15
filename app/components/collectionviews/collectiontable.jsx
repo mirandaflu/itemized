@@ -7,8 +7,19 @@ import StatusText from '../statustext.jsx';
 import FilterMaker from './filtermaker.jsx';
 
 export default class CollectionTable extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			clickedAttribute: this.props.clickedAttribute
+		};
+	}
 	forwardAttributeClick(attribute) {
-		if (this.props.onAttributeClick) this.props.onAttributeClick(attribute);
+		if (this.props.onAttributeClick) {
+			this.props.onAttributeClick(attribute);
+		}
+	}
+	componentWillReceiveProps(nextProps) {
+		this.setState({ clickedAttribute: nextProps.clickedAttribute });
 	}
 	render() {
 		let that = this;
@@ -70,8 +81,13 @@ export default class CollectionTable extends React.Component {
 										if (that.props.readOnly) {
 											FieldComponent = fieldTypes['Static'].component;
 										}
+										if (that.state.clickedAttribute != null && attribute != null &&
+										that.state.clickedAttribute == attribute._id) {
+											style.backgroundColor = 'lightgrey';
+										}
 										return (
-											<td className="cell" style={style} rowSpan={rowSpan} key={thing._id + field._id} onClick={that.forwardAttributeClick.bind(that, attribute)}>
+											<td className="cell" style={style} rowSpan={rowSpan} key={thing._id + field._id}
+												onClick={that.forwardAttributeClick.bind(that, attribute)}>
 												<FieldComponent
 													fieldType={field.type}
 													workspace={that.props.collection.workspace}
