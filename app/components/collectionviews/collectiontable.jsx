@@ -7,6 +7,20 @@ import StatusText from '../statustext.jsx';
 import FilterMaker from './filtermaker.jsx';
 
 export default class CollectionTable extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			clickedAttribute: this.props.clickedAttribute
+		};
+	}
+	forwardAttributeClick(attribute) {
+		if (this.props.onAttributeClick) {
+			this.props.onAttributeClick(attribute);
+		}
+	}
+	componentWillReceiveProps(nextProps) {
+		this.setState({ clickedAttribute: nextProps.clickedAttribute });
+	}
 	render() {
 		let that = this;
 		let things = this.props.things,
@@ -18,7 +32,7 @@ export default class CollectionTable extends React.Component {
 				<table className="pure-table animated fadeIn">
 					<thead>
 						<tr>
-							<th></th>
+							{!this.props.onlyForSelectingReference && <th></th>}
 							{fields.map(function(field){
 								return(
 									<th key={field._id}>
@@ -28,22 +42,26 @@ export default class CollectionTable extends React.Component {
 									</th>
 								);
 							})}
-							<th>
-								<button className="pure-button button-secondary" onClick={this.props.onCreateField} disabled={this.props.readOnly}>
-									Add Field
-								</button>
-							</th>
+							{!this.props.onlyForSelectingReference && 
+								<th>
+									<button className="pure-button button-secondary" onClick={this.props.onCreateField} disabled={this.props.readOnly}>
+										Add Field
+									</button>
+								</th>
+							}
 						</tr>
 					</thead>
 					<tbody>
 						{things.map(function(thing){
 							return(
 								<tr key={thing._id}>
-									<td>
-										<Link to={'/workspace/'+that.props.collection.workspace+'/collection/'+that.props.collection._id+'/thing/'+thing._id}>
-											<i className="fa fa-expand" />
-										</Link>
-									</td>
+									{!that.props.onlyForSelectingReference && 
+										<td>
+											<Link to={'/workspace/'+that.props.collection.workspace+'/collection/'+that.props.collection._id+'/thing/'+thing._id}>
+												<i className="fa fa-expand" />
+											</Link>
+										</td>
+									}
 									{fields.map(function(field){
 										let value = '', attribute = null, style = {},
 											FieldComponent = fieldTypes[field.type].component;
@@ -63,15 +81,25 @@ export default class CollectionTable extends React.Component {
 										if (that.props.readOnly) {
 											FieldComponent = fieldTypes['Static'].component;
 										}
+										if (that.state.clickedAttribute != null && attribute != null &&
+										that.state.clickedAttribute == attribute._id) {
+											style.backgroundColor = 'lightgrey';
+										}
 										return (
-											<td className="cell" style={style} rowSpan={rowSpan} key={thing._id + field._id}>
+											<td className="cell" style={style} rowSpan={rowSpan} key={thing._id + field._id}
+												onClick={that.forwardAttributeClick.bind(that, attribute)}>
 												<FieldComponent
+													clearable={true}
 													fieldType={field.type}
+													workspace={that.props.collection.workspace}
+													collection={that.props.collection._id}
+													thing={thing._id}
+													field={field._id}
 													attribute={attribute}
 													value={value}
 													options={field.options}
-													onCreateOption={that.props.onCreateOption.bind(that, field._id)}
-													onCommitChange={that.props.onCommitValueChange.bind(that, thing._id, field._id, attribute)} />
+													onCreateOption={that.props.onCreateOption && that.props.onCreateOption.bind(that, field._id)}
+													onCommitChange={that.props.onCommitValueChange && that.props.onCommitValueChange.bind(that, thing._id, field._id, attribute)} />
 											</td>
 										);
 									})}
@@ -80,9 +108,11 @@ export default class CollectionTable extends React.Component {
 						})}
 					</tbody>
 				</table>
-				<button className="pure-button button-secondary" style={{marginTop:'8px'}} onClick={this.props.onAddThing} disabled={this.props.readOnly}>
-					Add Thing
-				</button>
+				{!this.props.onlyForSelectingReference &&
+					<button className="pure-button button-secondary" style={{marginTop:'8px'}} onClick={this.props.onAddThing} disabled={this.props.readOnly}>
+						Add Thing
+					</button>
+				}
 				{this.props.children}
 			</div>
 		);

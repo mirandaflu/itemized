@@ -15,7 +15,10 @@ const fieldSchema = new Schema({
 	name: { type: String, required: true },
 	type: { type: String, default: 'Text' },
 	options: { type: Array, default: [] },
+	default: { type: Schema.Types.Mixed },
 	position: { type: Number, required: true },
+	collectionReference : { type: Schema.ObjectId, ref: 'collection' },
+	fieldReference : { type: Schema.ObjectId, ref: 'field' },
 
 	createdAt: { type: Date, 'default': Date.now },
 	updatedAt: { type: Date, 'default': Date.now }

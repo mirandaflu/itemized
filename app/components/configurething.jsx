@@ -51,7 +51,12 @@ class ConfigureThing extends React.Component {
 									<div key={field._id} className="pure-control-group">
 										<label>{field.name}</label>
 										<FieldComponent
+											clearable={true}
 											fieldType={field.type}
+											workspace={that.props.params.workspace}
+											collection={that.props.params.collection}
+											thing={that.props.params.thing}
+											field={field._id}
 											attribute={attribute}
 											value={value}
 											options={field.options}

@@ -6,7 +6,7 @@ export default class DateInput extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			value: moment(this.props.value),
+			value: (this.props.value && this.props.value != '')? moment(this.props.value): null,
 			tempValue: null
 		};
 	}
@@ -35,16 +35,16 @@ export default class DateInput extends React.Component {
 		}
 	}
 	componentWillReceiveProps(nextProps) {
-		this.setState({ value: moment(nextProps.value) });
+		this.setState({
+			value: (nextProps.value && nextProps.value != '')? moment(nextProps.value): null
+		});
 	}
 	render() {
 		return (
 			<Datetime
 				value={this.state.value}
-				dateFormat={(this.props.fieldType.indexOf('Date') != -1)?
-					'YYYY-MM-DD': false}
-				timeFormat={(this.props.fieldType.indexOf('Time') != -1)?
-					'hh:mm:ss a': false}
+				dateFormat={(this.props.fieldType.indexOf('Date') != -1)? 'YYYY-MM-DD': false}
+				timeFormat={(this.props.fieldType.indexOf('Time') != -1)? 'hh:mm:ss a': false}
 				onFocus={this.setTemp.bind(this)}
 				onBlur={this.clearIfNotValid.bind(this)}
 				onChange={this.handleChange.bind(this)} />

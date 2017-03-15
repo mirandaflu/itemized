@@ -4,6 +4,8 @@ const globalHooks = require('../../../hooks');
 const hooks = require('feathers-hooks');
 const auth = require('feathers-authentication').hooks;
 
+const localHooks = require('./hooks.js');
+
 exports.before = {
 	all: [
 		auth.verifyToken(),
@@ -22,7 +24,8 @@ exports.before = {
 		globalHooks.allowWorkspaceEditorOrHigher()
 	],
 	patch: [
-		globalHooks.allowWorkspaceEditorOrHigher()
+		globalHooks.allowWorkspaceEditorOrHigher(),
+		localHooks.createIfNotExists()
 	],
 	remove: [
 		globalHooks.allowWorkspaceEditorOrHigher()

@@ -21,6 +21,7 @@ import ConfigureWorkspace from './components/configureworkspace.jsx';
 import ConfigureCollection from './components/configurecollection.jsx';
 import ConfigureThing from './components/configurething.jsx';
 import ConfigureField from './components/configurefield.jsx';
+import ConfigureReference from './components/configurereference.jsx';
 
 import Skeleton from './components/skeleton.jsx';
 import Signup from './pages/signup.jsx';
@@ -80,6 +81,7 @@ class Root extends React.Component {
 							<Route path="configure" component={ConfigureCollection} />
 							<Route path="thing/:thing" component={ConfigureThing} />
 							<Route path="field/:field" component={ConfigureField} />
+							<Route path="reference/:thing/:field" component={ConfigureReference} />
 						</Route>
 					</Route>
 					<Route path="account" component={Account} onEnter={requireAuth} />
