@@ -75,7 +75,7 @@ class ConfigureReference extends React.Component {
 	loadFields(collection) {
 		feathers_app.service('fields').find({query:{coll:collection}})
 			.then(fields => { this.setState({ fields: fields.filter(field => {
-				return field.type != 'Reference';
+				return field.type != 'Attribute Reference';
 			}) }); })
 			.catch(console.error);
 	}

@@ -40,7 +40,7 @@ module.exports = {
 	"URL": {
 		component: LinkInput
 	},
-	"Reference": {
+	"Attribute Reference": {
 		component: StaticText
 	}
 };

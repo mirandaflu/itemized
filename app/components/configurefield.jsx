@@ -120,7 +120,7 @@ class ConfigureField extends React.Component {
 										onChange={this.handleOptionsSelectChange.bind(this, 'options')} />
 								</div>
 							}
-							{field.type != 'Reference' &&
+							{field.type != 'Attribute Reference' &&
 								<div className="pure-control-group">
 									<label htmlFor="default">Default Value</label>
 									<FieldComponent
