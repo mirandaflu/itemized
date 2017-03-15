@@ -64,9 +64,8 @@ export default class CollectionCalendar extends React.Component {
 		let that = this;
 		return (
 			<div>
-				<div className="pure-g">
-					<div className="pure-u-7-8">
-
+				<div className="pure-g" style={{marginTop:'8pt'}}>
+					<div className="pure-u-1">
 						<button className="pure-button" style={{float:'left'}} onClick={e => {
 							this.setState({month:moment(this.state.month).subtract(1,'months')}); }}>
 							<i className="fa fa-arrow-left" />
@@ -84,23 +83,20 @@ export default class CollectionCalendar extends React.Component {
 				<div className="pure-g calendar">
 					<div ref="cardplaceholder"
 						style={{display:'none', fontFamily: "'Open Sans', sans-serif"}}
-						className="card withshadow hovershadow pure-u-1-8" />
+						className="card withshadow hovershadow pure-u-1-7" />
 					{['Sunday','Monday','Tuesday','Wednesday',
 					'Thursday','Friday','Saturday'].map(weekday => {
 						return (
-							<div key={weekday} className="pure-u-1-8 dark weekday">
+							<div key={weekday} className="pure-u-1-7 dark weekday">
 								{weekday}
 							</div>
 						);
 					})}
-					<div className="pure-u-1-8" />
 					{days.map(day => {
 						return(
-							<div key={day.key} className={'pure-g'
-								+((day.weekday == 'Sat')?' pure-u-1-4':' pure-u-1-8')}>
+							<div key={day.key} className="pure-g pure-u-1-7">
 								
-								<div data-date={day.key} className={'medium-dark day'
-									+((day.weekday == 'Sat')?' pure-u-1-2': ' pure-u-1')}>
+								<div data-date={day.key} className="medium-dark day pure-u-1">
 
 									<div className="date">{day.date}</div>
 
@@ -138,9 +134,6 @@ export default class CollectionCalendar extends React.Component {
 										);
 									})}
 								</div>
-
-								{day.weekday == 'Sat' && <div className="pure-u-1-2" />}
-
 							</div>
 						);
 					})}
