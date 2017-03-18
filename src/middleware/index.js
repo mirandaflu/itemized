@@ -26,7 +26,7 @@ module.exports = function() {
 		if (request.url == '/index_bundle.js') {
 			response.sendFile(path.resolve(__dirname, '../../dist', 'index_bundle.js'));
 		}
-		else if (request.url == '/index_bundle.js') {
+		else if (request.url == '/index_bundle.js.map') {
 			response.sendFile(path.resolve(__dirname, '../../dist', 'index_bundle.js.map'));
 		}
 		else if (request.url == '/manifest.json') {
