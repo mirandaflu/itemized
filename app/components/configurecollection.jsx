@@ -5,12 +5,9 @@ import { Link, withRouter } from 'react-router';
 import MessageBanner from './messagebanner.jsx';
 
 class ConfigureCollection extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			name: null,
-			collection: {}
-		};
+	state = {
+		name: null,
+		collection: {}
 	}
 	loadCollection = () => {
 		feathers_app.service('collections').get(this.props.params.collection)

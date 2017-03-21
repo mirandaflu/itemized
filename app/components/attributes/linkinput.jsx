@@ -1,12 +1,9 @@
 import React from 'react';
 
 export default class LinkInput extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			value: this.props.value,
-			editVisible: false
-		};
+	state = {
+		value: this.props.value,
+		editVisible: false
 	}
 	toggleEditMode = () => this.setState({ editVisible: !this.state.editVisible });
 	handleEditStart = (event) => this.setState({ editVisible: true });

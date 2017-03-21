@@ -4,18 +4,15 @@ import interact from 'interact.js';
 import { Link } from 'react-router';
 
 export default class CollectionCalendar extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			things: this.props.things,
-			month: moment().startOf('month').format(),
-			attributesObject: this.props.attributesObject,
-			dragging: null,
-			dragID: null,
-			dragStartX: 0,
-			dragStartY: 0,
-			dropAttribute: null
-		};
+	state = {
+		things: this.props.things,
+		month: moment().startOf('month').format(),
+		attributesObject: this.props.attributesObject,
+		dragging: null,
+		dragID: null,
+		dragStartX: 0,
+		dragStartY: 0,
+		dropAttribute: null
 	}
 	setUpDragDrop = () => {
 		interact('.calendar .card').draggable({

@@ -6,12 +6,9 @@ import fieldTypes from './attributes/index.js';
 import MessageBanner from './messagebanner.jsx';
 
 class ConfigureThing extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			attributesObject: {},
-			fields: []
-		}
+	state = {
+		attributesObject: {},
+		fields: []
 	}
 	returnToCollection = (event) => {
 		if (event) event.preventDefault();

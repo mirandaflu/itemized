@@ -3,12 +3,9 @@ import Datetime from 'react-datetime';
 import moment from 'moment';
 
 export default class DateInput extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			value: (this.props.value && this.props.value != '')? moment(this.props.value): null,
-			tempValue: null
-		};
+	state = {
+		value: (this.props.value && this.props.value != '')? moment(this.props.value): null,
+		tempValue: null
 	}
 	setTemp = () =>	this.setState({ tempValue: this.state.value });
 	handleChange = (value) => {

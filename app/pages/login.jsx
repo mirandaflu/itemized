@@ -5,12 +5,9 @@ import GoogleButton from '../components/googlebutton.jsx';
 import MessageBanner from '../components/messagebanner.jsx';
 
 class Login extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			email: '',
-			password: ''
-		};
+	state = {
+		email: '',
+		password: ''
 	}
 	handleChange = (event) => {
 		let s = {};

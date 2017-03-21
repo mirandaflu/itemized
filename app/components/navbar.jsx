@@ -2,12 +2,9 @@ import React from 'react';
 import { Link, withRouter } from 'react-router';
 
 export default class Navbar extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			workspaceName: '',
-			workspace: {}
-		};
+	state = {
+		workspaceName: '',
+		workspace: {}
 	}
 	loadWorkspaceName = (id) => {
 		if (!id) return;

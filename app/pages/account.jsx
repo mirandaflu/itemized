@@ -5,13 +5,10 @@ import { Link } from 'react-router';
 import MessageBanner from '../components/messagebanner.jsx';
 
 export default class Account extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			username: null,
-			border: 'lightgreen',
-			modalOpen: false
-		};
+	state = {
+		username: null,
+		border: 'lightgreen',
+		modalOpen: false
 	}
 	explainUsername = () => { this.setState({ modalOpen: true }); }
 	closeModal = () => { this.setState({ modalOpen: false }); }

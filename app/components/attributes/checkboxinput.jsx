@@ -1,12 +1,7 @@
 import React from 'react';
 
 export default class TextInput extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			value: this.props.value
-		};
-	}
+	state = { value: this.props.value }
 	handleChange = (event) => {
 		let newValue = !this.state.value;
 		this.props.onCommitChange({ target: {value: newValue }});

@@ -2,12 +2,7 @@ import React from 'react';
 import { Link } from 'react-router';
 
 export default class StaticInput extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			value: this.props.value
-		};
-	}
+	state = { value: this.props.value }
 	setValue = (props) => {
 		if (props.value == null || props.value == '') {
 			this.setState({ value: null });

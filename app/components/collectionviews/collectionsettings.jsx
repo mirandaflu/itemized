@@ -7,19 +7,16 @@ import filterTypes from './filterTypes.js';
 import FilterMaker from './filtermaker.jsx';
 
 export default class CollectionSettingsShell extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			hide: [],
-			sort: [],
-			group: null,
-			filters: [],
-			filterModalOpen: false,
-			matchAll: true,
-			asc: true,
-			controlsVisible: false,
-			controlDivClassName: 'pure-u-1 pure-u-sm-1-2 pure-u-md-1-4 pure-u-lg-1-5'
-		};
+	state = {
+		hide: [],
+		sort: [],
+		group: null,
+		filters: [],
+		filterModalOpen: false,
+		matchAll: true,
+		asc: true,
+		controlsVisible: false,
+		controlDivClassName: 'pure-u-1 pure-u-sm-1-2 pure-u-md-1-4 pure-u-lg-1-5'
 	}
 	closeFilterModal = () => this.setState({filterModalOpen: false});
 	toggleAscDesc = () => {

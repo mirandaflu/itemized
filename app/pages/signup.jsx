@@ -5,13 +5,10 @@ import GoogleButton from '../components/googlebutton.jsx';
 import MessageBanner from '../components/messagebanner.jsx';
 
 class Signup extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			email: '',
-			password1: '',
-			password2: ''
-		};
+	state = {
+		email: '',
+		password1: '',
+		password2: ''
 	}
 	handleChange = (event) => {
 		let s = {};

@@ -9,15 +9,12 @@ import MessageBanner from '../components/messagebanner.jsx';
 import StatusText from '../components/statustext.jsx';
 
 class Workspace extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			id: this.props.routeParams.workspace,
-			workspace: {},
-			collectionsLoaded: false,
-			collectionsError: false,
-			collections: []
-		};
+	state = {
+		id: this.props.routeParams.workspace,
+		workspace: {},
+		collectionsLoaded: false,
+		collectionsError: false,
+		collections: []
 	}
 	getData = () => {
 		feathers_app.service('workspaces').get(this.state.id).then(result => {

@@ -7,17 +7,14 @@ import UserSelect from './userselect.jsx';
 import MessageBanner from './messagebanner.jsx';
 
 class ConfigureWorkspace extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			name: null,
-			workspace: {
-				admins: [],
-				editors: [],
-				viewers: []
-			},
-			usernameIndex: {}
-		};
+	state = {
+		name: null,
+		workspace: {
+			admins: [],
+			editors: [],
+			viewers: []
+		},
+		usernameIndex: {}
 	}
 	loadWorkspace = () => {
 		feathers_app.service('workspaces').get(this.props.params.workspace)

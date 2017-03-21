@@ -2,12 +2,7 @@ import React from 'react';
 import Select from 'react-select';
 
 export default class UserSelect extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			value: this.props.value
-		};
-	}
+	state = { value: this.props.value }
 	loadUsers = (input, callback) => {
 		if (!input) return Promise.resolve({ options: [] });
 		let query = {username: {$regex: input, $options: 'i'}};

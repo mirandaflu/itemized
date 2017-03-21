@@ -5,13 +5,10 @@ import WorkspaceItem from './workspaceitem.jsx';
 import StatusText from './statustext.jsx';
 
 class WorkspaceList extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			workspacesLoaded: false,
-			workspacesError: false,
-			workspaces: []
-		};
+	state = {
+		workspacesLoaded: false,
+		workspacesError: false,
+		workspaces: []
 	}
 	loadWorkspaces = () => {
 		feathers_app.service('workspaces').find().then(result => {

@@ -1,12 +1,7 @@
 import React from 'react';
 
 export default class NumberInput extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			value: this.props.value
-		};
-	}
+	state = { value: this.props.value }
 	handleChange = (event) => this.setState({ value: event.target.value });
 	componentWillReceiveProps(nextProps) {
 		this.setState({ value: nextProps.value });

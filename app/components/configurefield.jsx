@@ -7,14 +7,11 @@ import fieldTypes from './attributes/index.js';
 import MessageBanner from './messagebanner.jsx';
 
 class ConfigureField extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			options: [],
-			fieldOptions: [],
-			collectionOptions: [],
-			collection: {}
-		};
+	state = {
+		options: [],
+		fieldOptions: [],
+		collectionOptions: [],
+		collection: {}
 	}
 	loadField = () => {
 		feathers_app.service('fields').get(this.props.params.field)

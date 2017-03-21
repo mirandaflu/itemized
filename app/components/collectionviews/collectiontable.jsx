@@ -7,12 +7,7 @@ import StatusText from '../statustext.jsx';
 import FilterMaker from './filtermaker.jsx';
 
 export default class CollectionTable extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			clickedAttribute: this.props.clickedAttribute
-		};
-	}
+	state = { clickedAttribute: this.props.clickedAttribute }
 	forwardAttributeClick = (attribute) => {
 		if (this.props.onAttributeClick) {
 			this.props.onAttributeClick(attribute);

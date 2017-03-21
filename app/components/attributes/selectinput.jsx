@@ -2,12 +2,9 @@ import React from 'react';
 import Select from 'react-select';
 
 export default class SelectInput extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			value: this.props.value,
-			options: []
-		};
+	state = {
+		value: this.props.value,
+		options: []
 	}
 	loadOptions = () => {
 		feathers_app.service('fields').get(this.props.field).then(field => {

@@ -7,19 +7,16 @@ import MessageBanner from './messagebanner.jsx';
 import CollectionTable from './collectionviews/collectiontable.jsx';
 
 class ConfigureReference extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			collections: [],
-			collection: null,
-			things: [],
-			thing: null,
-			fields: [],
-			field: null,
-			attributes: [],
-			attribute: {},
-			referencedValue: null
-		};
+	state = {
+		collections: [],
+		collection: null,
+		things: [],
+		thing: null,
+		fields: [],
+		field: null,
+		attributes: [],
+		attribute: {},
+		referencedValue: null
 	}
 	loadData = () => {
 		feathers_app.service('attributes').find({query: {

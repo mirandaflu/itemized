@@ -2,12 +2,9 @@ import React from 'react';
 import { Link, withRouter } from 'react-router';
 
 class WorkspaceItem extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			name: this.props.workspace.name,
-			modalOpen: false
-		}
+	state = {
+		name: this.props.workspace.name,
+		modalOpen: false
 	}
 	configureWorkspace = (event) => {
 		event.preventDefault();

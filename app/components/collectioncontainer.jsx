@@ -6,15 +6,12 @@ import CollectionSettingsShell from './collectionviews/collectionsettings.jsx'
 import StatusText from '../components/statustext.jsx';
 
 class CollectionContainer extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			id: this.props.routeParams.collection,
-			collection: { viewType: 'Table' },
-			fields: [],
-			things: [],
-			attributes: []
-		};
+	state = {
+		id: this.props.routeParams.collection,
+		collection: { viewType: 'Table' },
+		fields: [],
+		things: [],
+		attributes: []
 	}
 	createField = () => {
 		let name = prompt('Name?');
