@@ -17,7 +17,7 @@ export default class CollectionCalendar extends React.Component {
 			dropAttribute: null
 		};
 	}
-	setUpDragDrop() {
+	setUpDragDrop = () => {
 		interact('.calendar .card').draggable({
 			autoScroll: true,
 			onstart: this._handleDragStart.bind(this),
@@ -29,7 +29,7 @@ export default class CollectionCalendar extends React.Component {
 			ondragenter: this._handleCardOverDay.bind(this)
 		});
 	}
-	getField(props, id) {
+	getField = (props, id) => {
 		let field = null, sourceProp = 'fields';
 		for (let i in props[sourceProp]) {
 			if (props[sourceProp][i]._id == id) {

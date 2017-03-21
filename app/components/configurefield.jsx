@@ -16,7 +16,7 @@ class ConfigureField extends React.Component {
 			collection: {}
 		};
 	}
-	loadField() {
+	loadField = () => {
 		feathers_app.service('fields').get(this.props.params.field)
 			.then(result => {
 				this.setState(result);
@@ -24,7 +24,7 @@ class ConfigureField extends React.Component {
 			})
 			.catch(console.error);
 	}
-	loadCollections() {
+	loadCollections = () => {
 		feathers_app.service('collections').find({query:{workspace:this.props.params.workspace}})
 			.then(collections => {
 				this.setState({ collectionOptions: collections.map(collection => {
@@ -35,7 +35,7 @@ class ConfigureField extends React.Component {
 				})});
 			}).catch(console.error);
 	}
-	loadFields(collection) {
+	loadFields = (collection) => {
 		feathers_app.service('fields').find({query:{coll:collection}})
 			.then(fields => {
 				this.setState({fieldOptions:fields.map(field => {
@@ -46,7 +46,7 @@ class ConfigureField extends React.Component {
 				})});
 			})
 	}
-	handleOptionsSelectChange(property, values) {
+	handleOptionsSelectChange = (property, values) => {
 		let value = values.value;
 		if (values.length) value = values.map(function(v) { return v.value; });
 		let s = {};
@@ -54,54 +54,53 @@ class ConfigureField extends React.Component {
 		this.setState(s);
 		feathers_app.service('fields').patch(this.props.params.field, s).catch(console.error);
 	}
-	handleSelectCollection(value) {
+	handleSelectCollection = (value) => {
 		this.setState({ collection: value });
 		feathers_app.service('fields').patch(this.props.params.field, {collectionReference:value.value}).catch(console.error);
 		this.loadFields(value.value);
 	}
-	handleSelectChange(property, value) {
+	handleSelectChange = (property, value) => {
 		let s = {};
 		if (value != null) s[property] = value.value;
 		else s[property] = value;
 		this.setState(s);
 		feathers_app.service('fields').patch(this.props.params.field, s).catch(console.error);
 	}
-	handleDefaultChange(event) {
+	handleDefaultChange = (event) => {
 		let s = { default: event.target.value };
 		feathers_app.service('fields').patch(this.props.params.field, s).catch(console.error);
 	}
-	handleChange(event) {
+	handleChange = (event) => {
 		let s = {};
 		s[event.target.id] = event.target.value;
 		this.setState(s);
 	}
-	commitChange(event) {
+	commitChange = (event) => {
 		let s = {};
 		s[event.target.id] = event.target.value;
 		feathers_app.service('fields').patch(this.props.params.field, s).catch(console.error);
 	}
-	handleDeleteClick() {
+	handleDeleteClick = () => {
 		if (!confirm('Are you sure?')) return;
 		feathers_app.service('fields').remove(this.props.params.field).catch(console.error);
 		this.returnToCollection();
 	}
-	handlePatchedField(field) {
+	handlePatchedField = (field) => {
 		if (field._id == this.state._id) {
 			this.setState(field);
 		}
 	}
-	returnToCollection(event) {
+	returnToCollection = (event) => {
 		if (event) event.preventDefault();
 		this.props.router.push('/workspace/'+this.props.params.workspace+'/collection/'+this.props.params.collection);
 	}
 	componentDidMount() {
 		this.loadField();
 		this.loadCollections();
-		this.fieldPatchedListener = this.handlePatchedField.bind(this);
-		feathers_app.service('fields').on('patched', this.fieldPatchedListener);
+		feathers_app.service('fields').on('patched', this.handlePatchedField);
 	}
 	componentWillUnmount() {
-		feathers_app.service('fields').removeListener('patched', this.fieldPatchedListener);
+		feathers_app.service('fields').removeListener('patched', this.handlePatchedField);
 	}
 	render() {
 		let that = this,
@@ -137,18 +136,18 @@ class ConfigureField extends React.Component {
 					<MessageBanner ref="messageBanner" />
 					<button
 						className="pure-button button-small"
-						onClick={this.returnToCollection.bind(this)}>
+						onClick={this.returnToCollection}>
 						<i className="fa fa-close" />
 					</button>
-					<form className="pure-form pure-form-aligned" onSubmit={this.returnToCollection.bind(this)}>
+					<form className="pure-form pure-form-aligned" onSubmit={this.returnToCollection}>
 						<fieldset>
 							<div className="pure-control-group">
 								<label htmlFor="name">Name</label>
 								<input id="name"
 									type="text"
 									value={field.name}
-									onChange={this.handleChange.bind(this)}
-									onBlur={this.commitChange.bind(this)} />
+									onChange={this.handleChange}
+									onBlur={this.commitChange} />
 							</div>
 							<div className="pure-control-group">
 								<label htmlFor="type">Type</label>
@@ -177,7 +176,7 @@ class ConfigureField extends React.Component {
 										<Select
 											value={collectionReferenceOption}
 											options={this.state.collectionOptions}
-											onChange={this.handleSelectCollection.bind(this)} />
+											onChange={this.handleSelectCollection} />
 									</div>
 									<div className="pure-control-group">
 										<label htmlFor="field">Field</label>
@@ -196,7 +195,7 @@ class ConfigureField extends React.Component {
 										fieldType={field.type}
 										value={field.default}
 										options={field.options}
-										onCommitChange={this.handleDefaultChange.bind(this)} />
+										onCommitChange={this.handleDefaultChange} />
 								</div>
 							}
 						</fieldset>

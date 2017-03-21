@@ -8,7 +8,7 @@ export default class UserSelect extends React.Component {
 			value: this.props.value
 		};
 	}
-	loadUsers(input, callback) {
+	loadUsers = (input, callback) => {
 		if (!input) return Promise.resolve({ options: [] });
 		let query = {username: {$regex: input, $options: 'i'}};
 		return feathers_app.service('users').find({query:query}).then(result => {
@@ -18,7 +18,7 @@ export default class UserSelect extends React.Component {
 			return { options: options };
 		}).catch(console.error);
 	}
-	handleChange(value) {
+	handleChange = (value) => {
 		this.setState({ value: value });
 		this.props.onChange(value);
 	}
@@ -31,7 +31,7 @@ export default class UserSelect extends React.Component {
 				value={this.state.value}
 				multi={this.props.multi}
 				loadOptions={this.loadUsers}
-				onChange={this.handleChange.bind(this)} />
+				onChange={this.handleChange} />
 		);
 	}
 }

@@ -13,15 +13,15 @@ export default class Account extends React.Component {
 			modalOpen: false
 		};
 	}
-	explainUsername() { this.setState({ modalOpen: true }); }
-	closeModal() { this.setState({ modalOpen: false }); }
-	handleUsernameChange() {
+	explainUsername = () => { this.setState({ modalOpen: true }); }
+	closeModal = () => { this.setState({ modalOpen: false }); }
+	handleUsernameChange = () => {
 		this.setState({
 			username: this.refs.username.value,
 			border: 'orange'
 		});
 	}
-	updateUserName(event) {
+	updateUserName = (event)  => {
 		event.preventDefault();
 		if (this.refs.username.value == '') {
 			feathers_app.service('users').patch(feathers_app.get('user')._id, { $unset: { username: 1 } })
@@ -62,10 +62,10 @@ export default class Account extends React.Component {
 		return (
 			<div className="workspace">
 				<MessageBanner ref="messageBanner" />
-				<form className="pure-form pure-form-aligned" onSubmit={this.updateUserName.bind(this)}>
+				<form className="pure-form pure-form-aligned" onSubmit={this.updateUserName}>
 					<legend>
 						Set a username to enable sharing
-						&nbsp;<i className="fa fa-question-circle-o" onClick={this.explainUsername.bind(this)} />
+						&nbsp;<i className="fa fa-question-circle-o" onClick={this.explainUsername} />
 					</legend>
 					<fieldset>
 						<div className="pure-control-group">
@@ -73,7 +73,7 @@ export default class Account extends React.Component {
 							<input ref="username" type="text" placeholder="Username"
 								style={{border:'1px solid '+this.state.border}}
 								value={this.state.username}
-								onChange={this.handleUsernameChange.bind(this)} />
+								onChange={this.handleUsernameChange} />
 						</div>
 						<div className="pure-controls" style={{marginTop:0}}>
 							<button type="submit" className="pure-button button-secondary">Set</button>
@@ -83,7 +83,7 @@ export default class Account extends React.Component {
 				<Link to="/logout" className="pure-button button-error">Log out</Link>
 				<Modal contentLabel="explainUsername" isOpen={this.state.modalOpen}>
 					<div className="modalContent">
-						<button className="pure-button button-small" onClick={this.closeModal.bind(this)}>
+						<button className="pure-button button-small" onClick={this.closeModal}>
 							<i className="fa fa-close" />
 						</button>
 						<h3>About Usernames</h3>

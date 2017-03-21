@@ -26,17 +26,12 @@ export default class MessageBanner extends React.Component {
 			messageText: null
 		};
 	}
-	clearMessage() {
-		this.setState({messageText:null});
-	}
-	showMessage(message) {
-		this.clearMessage();
-		this.setState({messageText:message});
-	}
+	clearMessage = () => this.setState({messageText:null});
+	showMessage = (message) => this.setState({messageText:message});
 	render() {
 		return (
 			<div className="messagebanner">
-				{this.state.messageText && <Banner text={this.state.messageText} closeClick={this.clearMessage.bind(this)} />}
+				{this.state.messageText && <Banner text={this.state.messageText} closeClick={this.clearMessage} />}
 			</div>
 		);
 	}

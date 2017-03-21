@@ -8,7 +8,7 @@ export default class StaticInput extends React.Component {
 			value: this.props.value
 		};
 	}
-	setValue(props) {
+	setValue = (props) => {
 		if (props.value == null || props.value == '') {
 			this.setState({ value: null });
 		}
@@ -28,7 +28,7 @@ export default class StaticInput extends React.Component {
 			this.setState({ value: props.value });
 		}
 	}
-	handlePatchedAttribute(attribute) {
+	handlePatchedAttribute = (attribute) => {
 		if (this.props.value == attribute._id) {
 			this.setValue(this.props);
 		}

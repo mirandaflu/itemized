@@ -10,27 +10,23 @@ export default class DateInput extends React.Component {
 			tempValue: null
 		};
 	}
-	setTemp() {
-		this.setState({ tempValue: this.state.value });
-	}
-	handleChange(v) {
-		if (v._isAMomentObject) {
-			this.setState({ value: v });
-			v = new Date(v._d);
-			this.props.onCommitChange({ target: {value: v} });
+	setTemp = () =>	this.setState({ tempValue: this.state.value });
+	handleChange = (value) => {
+		if (value._isAMomentObject) {
+			this.setState({ value: value });
+			value = new Date(value._d);
+			this.props.onCommitChange({ target: {value: value} });
 		}
 	}
-	clearIfNotValid(v) {
-		if (!v._isAMomentObject) {
-			if (v == '') {
+	clearIfNotValid = (value) => {
+		if (!value._isAMomentObject) {
+			if (value == '') {
 				this.setState({ value: null });
 				this.props.onCommitChange({target: {value: null} });
 			}
 			else {
 				this.setState({ value: this.state.tempValue });
-				this.props.onCommitChange({target:
-					{value: new Date(this.state.tempValue)}
-				});
+				this.props.onCommitChange({target: {value: new Date(this.state.tempValue)} });
 			}
 		}
 	}
@@ -45,9 +41,9 @@ export default class DateInput extends React.Component {
 				value={this.state.value}
 				dateFormat={(this.props.fieldType.indexOf('Date') != -1)? 'YYYY-MM-DD': false}
 				timeFormat={(this.props.fieldType.indexOf('Time') != -1)? 'hh:mm:ss a': false}
-				onFocus={this.setTemp.bind(this)}
-				onBlur={this.clearIfNotValid.bind(this)}
-				onChange={this.handleChange.bind(this)} />
+				onFocus={this.setTemp}
+				onBlur={this.clearIfNotValid}
+				onChange={this.handleChange} />
 		);
 	}
 }

@@ -21,16 +21,14 @@ export default class CollectionSettingsShell extends React.Component {
 			controlDivClassName: 'pure-u-1 pure-u-sm-1-2 pure-u-md-1-4 pure-u-lg-1-5'
 		};
 	}
-	closeFilterModal() { this.setState({filterModalOpen: false}); }
-	toggleAscDesc() {
+	closeFilterModal = () => this.setState({filterModalOpen: false});
+	toggleAscDesc = () => {
 		let s = {asc: !this.state.asc};
 		this.setState(s);
 		this.updateStoredFilters(s);
 	}
-	toggleControls() {
-		this.setState({ controlsVisible: !this.state.controlsVisible });
-	}
-	moveCollection(direction) {
+	toggleControls = () => this.setState({ controlsVisible: !this.state.controlsVisible });
+	moveCollection = (direction) => {
 		let move = (direction == 'right')? 1: -1;
 		feathers_app.service('collections').patch(null, {$inc: {position: -move}}, {query: {
 			workspace: this.state.id,
@@ -39,7 +37,7 @@ export default class CollectionSettingsShell extends React.Component {
 			feathers_app.service('collections').patch(this.props.collection._id, {$inc: {position: move}}).catch(console.error);
 		}).catch(console.error);
 	}
-	handleFilterChange(index, patch) {
+	handleFilterChange = (index, patch) => {
 		let filters = this.state.filters;
 		if (!filters[index]) filters[index] = {};
 		filters[index] = Object.assign(filters[index], patch);
@@ -47,12 +45,12 @@ export default class CollectionSettingsShell extends React.Component {
 		this.setState(s);
 		this.updateStoredFilters(s);
 	}
-	handleFilterAnyAll() {
+	handleFilterAnyAll = () => {
 		let s = {matchAll:!this.state.matchAll};
 		this.setState(s);
 		this.updateStoredFilters(s);
 	}
-	handleControlChange(type, value) {
+	handleControlChange = (type, value) => {
 		let newFilter = false, s = {};
 		switch(type) {
 			case 'viewType':
@@ -89,7 +87,7 @@ export default class CollectionSettingsShell extends React.Component {
 		}
 		
 	}
-	updateStoredFilters(stateUpdate) {
+	updateStoredFilters = (stateUpdate) => {
 		let id = 'filtersortgroup' + this.props.collection._id;
 		let record = {
 			data: {
@@ -103,7 +101,7 @@ export default class CollectionSettingsShell extends React.Component {
 		};
 		feathers_app.service('localdata').patch(id, record).catch(console.error);
 	}
-	getStoredFilters(props) {
+	getStoredFilters = (props) => {
 		if (!props.collection._id) return;
 		let id = 'filtersortgroup' + props.collection._id;
 		feathers_app.service('localdata').get(id).then(result => {
@@ -327,7 +325,7 @@ export default class CollectionSettingsShell extends React.Component {
 								value={this.state.sort}
 								options={this.props.fields.map(function(field){ return { value: field._id, label: field.name }; })}
 								onChange={this.handleControlChange.bind(this, 'sort')} />
-							<i className="fa fa-sort" onClick={this.toggleAscDesc.bind(this)} />
+							<i className="fa fa-sort" onClick={this.toggleAscDesc} />
 						</div>
 					}
 					{CollectionControls.dateby &&
@@ -352,9 +350,9 @@ export default class CollectionSettingsShell extends React.Component {
 						<FilterMaker
 							filters={filters}
 							isOpen={this.state.filterModalOpen}
-							onClose={this.closeFilterModal.bind(this)}
-							onChange={this.handleFilterChange.bind(this)}
-							onToggleAnyAll={this.handleFilterAnyAll.bind(this)}
+							onClose={this.closeFilterModal}
+							onChange={this.handleFilterChange}
+							onToggleAnyAll={this.handleFilterAnyAll}
 							matchAll={this.state.matchAll}
 							fields={this.props.fields}
 							attributes={this.props.attributes} />
@@ -398,7 +396,7 @@ export default class CollectionSettingsShell extends React.Component {
 						<button
 							style={{float:'right'}}
 							className="pure-button button-small"
-							onClick={this.toggleControls.bind(this)}>
+							onClick={this.toggleControls}>
 							{this.state.controlsVisible &&
 								<div>
 									<i className="fa fa-gear" /> <i className="fa fa-caret-up" />

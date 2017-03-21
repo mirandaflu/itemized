@@ -21,7 +21,7 @@ class CollectionBoard extends React.Component {
 			dropSwimlaneAttribute: null
 		};
 	}
-	addList() {
+	addList = () => {
 		if (!this.state.boardField._id) return alert('Please select a field to list things by before trying to create a list.')
 		let name = prompt('Name?');
 		if (!name) return;
@@ -29,7 +29,7 @@ class CollectionBoard extends React.Component {
 			.patch(this.state.boardField._id, {options: this.state.boardField.options.concat(name)})
 			.catch(console.error);
 	}
-	setUpDragDrop() {
+	setUpDragDrop = () => {
 		interact('#board .list').draggable({
 			autoScroll: true,
 			onstart: this._handleListDragStart.bind(this),
@@ -64,7 +64,7 @@ class CollectionBoard extends React.Component {
 			ondragenter: this._handleCardOverCard.bind(this)
 		});
 	}
-	setListPositions(props, things) {
+	setListPositions = (props, things) => {
 		things = Object.assign(things);
 		let boardField = this.getField(props, props.collection.boardField),
 			attributesObject = props.attributesObject,
@@ -94,7 +94,7 @@ class CollectionBoard extends React.Component {
 			}
 		}
 	}
-	addThing(event) {
+	addThing = (event) => {
 		let cardFieldName = '', fields = this.props.fields;
 		for (let i in fields) {
 			if (fields[i]._id == this.props.collection.cardField) {
@@ -135,7 +135,7 @@ class CollectionBoard extends React.Component {
 			}
 		}).catch(console.error);
 	}
-	getField(props, id) {
+	getField = (props, id) => {
 		let field = null, sourceProp = 'fields';
 		for (let i in props[sourceProp]) {
 			if (props[sourceProp][i]._id == id) {
@@ -222,7 +222,7 @@ class CollectionBoard extends React.Component {
 									data-listvalue={option}
 									data-swimlane={options.swimLaneOption}
 									style={{width:'100%'}}
-									onClick={that.addThing.bind(that)}>
+									onClick={that.addThing}>
 									<i className="fa fa-plus" />
 								</button>
 							</div>
@@ -256,7 +256,7 @@ class CollectionBoard extends React.Component {
 				})}
 				{!swimLane && boardField && boardField.options.map(renderBoardNodes())}
 				<div className="list pure-u-1 pure-u-sm-1-4 pure-u-md-1-5 pure-u-lg-1-6">
-					<button className="pure-button button-secondary" onClick={this.addList.bind(this)}>
+					<button className="pure-button button-secondary" onClick={this.addList}>
 						<i className="fa fa-plus" /> Add List
 					</button>
 				</div>

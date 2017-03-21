@@ -12,13 +12,13 @@ class Login extends React.Component {
 			password: ''
 		};
 	}
-	handleChange(e) {
+	handleChange = (event) => {
 		let s = {};
-		s[e.target.id] = e.target.value;
+		s[e.target.id] = event.target.value;
 		this.setState(s);
 	}
-	handleSubmit(e) {
-		e.preventDefault();
+	handleSubmit = (event) => {
+		event.preventDefault();
 		if (this.state.password1 != this.state.password2) {
 			return this.refs.messageBanner.showMessage('Passwords don\'t match');
 		}
@@ -30,8 +30,8 @@ class Login extends React.Component {
 		feathers_app.authenticate(auth)
 			.then(result => { this.props.router.push('/'); })
 			.catch(error => {
-				console.error(error);
 				this.refs.messageBanner.showMessage('Error authenticating: ' + error.message);
+				console.error(error);
 			});
 	}
 	render() { return (
@@ -52,16 +52,16 @@ class Login extends React.Component {
 						send password reset emails.
 					</p>
 					{window.location.host == 'localhost:3030' &&
-						<form className="pure-form pure-form-stacked" onSubmit={this.handleSubmit.bind(this)}>
+						<form className="pure-form pure-form-stacked" onSubmit={this.handleSubmit}>
 							<fieldset>
 								<legend>Log in</legend>
 								<div className="pure-control-group">
 									<label htmlFor="email">Email Address</label>
-									<input id="email" type="email" placeholder="Email Address" onChange={this.handleChange.bind(this)} />
+									<input id="email" type="email" placeholder="Email Address" onChange={this.handleChange} />
 								</div>
 								<div className="pure-control-group">
 									<label htmlFor="password">Password</label>
-									<input id="password" type="password" placeholder="Password" onChange={this.handleChange.bind(this)} />
+									<input id="password" type="password" placeholder="Password" onChange={this.handleChange} />
 								</div>
 								<div className="pure-controls">
 									<button className="pure-button pure-button-primary" type="submit">Log in</button>

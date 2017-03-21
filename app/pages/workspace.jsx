@@ -19,7 +19,7 @@ class Workspace extends React.Component {
 			collections: []
 		};
 	}
-	getData() {
+	getData = () => {
 		feathers_app.service('workspaces').get(this.state.id).then(result => {
 			document.title = result.name + ' | Itemized';
 			this.setState({workspace:result});
@@ -39,10 +39,8 @@ class Workspace extends React.Component {
 			});
 		});
 	}
-	goToCollection(o) {
-		this.props.router.push('/workspace/'+this.state.id+'/collection/'+o.value);
-	}
-	createCollection() {
+	goToCollection = (option) => this.props.router.push('/workspace/'+this.state.id+'/collection/'+option.value);
+	createCollection = () => {
 		let name = 'New Collection';
 		let collection = {
 			workspace: this.state.id,
@@ -53,7 +51,7 @@ class Workspace extends React.Component {
 			this.props.router.push('/workspace/' + this.state.id + '/collection/' + result._id + '/configure')
 		}).catch(console.error);
 	}
-	moveCollection(e, data) {
+	moveCollection = (event, data) => {
 		let move = (data.move == 'right')? 1: -1;
 		feathers_app.service('collections').patch(null, {$inc: {position: -move}}, {query: {
 			workspace: this.state.id,
@@ -62,20 +60,18 @@ class Workspace extends React.Component {
 			feathers_app.service('collections').patch(data.collection._id, {$inc: {position: move}}).catch(console.error);
 		}).catch(console.error);
 	}
-	editCollection(id, patch) {
-		feathers_app.service('collections').patch(id, patch).catch(console.error);
-	}
-	deleteCollection(id) {
+	editCollection = (id, patch) => feathers_app.service('collections').patch(id, patch).catch(console.error);
+	deleteCollection = (id) => {
 		if (!confirm('Are you sure?')) return;
 		feathers_app.service('collections').remove(id).then(result => {
 			this.props.router.push('/workspace/' + this.state.id);
 		}).catch(console.error);
 	}
-	handleCreatedCollection(collection) {
+	handleCreatedCollection = (collection) => {
 		if (collection.workspace != this.state.id) return;
 		this.setState({ collections: this.state.collections.concat(collection) });
 	}
-	handlePatchedCollection(collection) {
+	handlePatchedCollection = (collection) => {
 		for (let i in this.state.collections) {
 			if (this.state.collections[i]._id == collection._id) {
 				let newCollections = this.state.collections;
@@ -86,7 +82,7 @@ class Workspace extends React.Component {
 			}
 		}
 	}
-	handleRemovedCollection(collection) {
+	handleRemovedCollection = (collection) => {
 		for (let i in this.state.collections) {
 			if (this.state.collections[i]._id == collection._id) {
 				let newCollections = this.state.collections;
@@ -96,30 +92,26 @@ class Workspace extends React.Component {
 			}
 		}
 	}
-	handlePatchedWorkspace(workspace) {
+	handlePatchedWorkspace = (workspace) => {
 		if (workspace._id == this.state.id) {
 			this.setState({workspace:workspace});
 		}
 	}
 	bindEventListeners() {
-		this.collectionCreatedListener = this.handleCreatedCollection.bind(this);
-		this.collectionPatchedListener = this.handlePatchedCollection.bind(this);
-		this.collectionRemovedListener = this.handleRemovedCollection.bind(this);
-		feathers_app.service('collections').on('created', this.collectionCreatedListener);
-		feathers_app.service('collections').on('patched', this.collectionPatchedListener);
-		feathers_app.service('collections').on('removed', this.collectionRemovedListener);
-		this.workspacePatchedListener = this.handlePatchedWorkspace.bind(this);
-		feathers_app.service('workspaces').on('patched', this.workspacePatchedListener);
+		feathers_app.service('collections').on('created', this.handleCreatedCollection);
+		feathers_app.service('collections').on('patched', this.handlePatchedCollection);
+		feathers_app.service('collections').on('removed', this.handleRemovedCollection);
+		feathers_app.service('workspaces').on('patched', this.handlePatchedWorkspace);
 	}
 	componentDidMount() {
 		this.getData();
 		this.bindEventListeners();
 	}
 	componentWillUnmount() {
-		feathers_app.service('collections').removeListener('created', this.collectionCreatedListener);
-		feathers_app.service('collections').removeListener('patched', this.collectionPatchedListener);
-		feathers_app.service('collections').removeListener('removed', this.collectionRemovedListener);
-		feathers_app.service('workspaces').removeListener('patched', this.workspacePatchedListener);
+		feathers_app.service('collections').removeListener('created', this.handleCreatedCollection);
+		feathers_app.service('collections').removeListener('patched', this.handlePatchedCollection);
+		feathers_app.service('collections').removeListener('removed', this.handleRemovedCollection);
+		feathers_app.service('workspaces').removeListener('patched', this.handlePatchedWorkspace);
 	}
 	render() {
 		let that = this,
@@ -157,7 +149,7 @@ class Workspace extends React.Component {
 						</ul>
 						<div className="pure-menu-heading" style={{padding:0, paddingLeft:'15px'}}>
 							<button className="pure-button button-secondary button-small"
-								onClick={this.createCollection.bind(this)} disabled={readOnly}>
+								onClick={this.createCollection} disabled={readOnly}>
 								<i className="fa fa-plus" />
 							</button>
 						</div>
@@ -168,9 +160,9 @@ class Workspace extends React.Component {
 						options={this.state.collections.map(function(collection) {
 							return {label: collection.name, value: collection._id}
 						})}
-						onChange={this.goToCollection.bind(this)}
+						onChange={this.goToCollection}
 						style={{}} />
-					<button className="pure-button button-secondary button-small" onClick={this.createCollection.bind(this)}>
+					<button className="pure-button button-secondary button-small" onClick={this.createCollection}>
 						<i className="fa fa-plus" />
 					</button>
 				</div>

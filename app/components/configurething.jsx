@@ -13,16 +13,16 @@ class ConfigureThing extends React.Component {
 			fields: []
 		}
 	}
-	returnToCollection(event) {
+	returnToCollection = (event) => {
 		if (event) event.preventDefault();
 		this.props.router.push('/workspace/' + this.props.params.workspace + '/collection/' + this.props.params.collection);
 	}
-	handleDeleteClick() {
+	handleDeleteClick = () => {
 		if (!confirm('Are you sure?')) return;
 		feathers_app.service('things').remove(this.props.params.thing).catch(console.error);
 		this.returnToCollection();
 	}
-	updateState(props) {
+	updateState = (props) => {
 		this.setState({
 			attributesObject: props.attributesObject,
 			fields: props.fields
@@ -38,10 +38,10 @@ class ConfigureThing extends React.Component {
 					<MessageBanner ref="messageBanner" />
 					<button
 						className="pure-button button-small"
-						onClick={this.returnToCollection.bind(this)}>
+						onClick={this.returnToCollection}>
 						<i className="fa fa-close" />
 					</button>
-					<form className="pure-form pure-form-aligned" onSubmit={this.returnToCollection.bind(this)}>
+					<form className="pure-form pure-form-aligned" onSubmit={this.returnToCollection}>
 						<fieldset>
 							{this.props.fields.map(function(field) {
 								let FieldComponent = fieldTypes[field.type].component,

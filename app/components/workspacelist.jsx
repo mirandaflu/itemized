@@ -13,7 +13,7 @@ class WorkspaceList extends React.Component {
 			workspaces: []
 		};
 	}
-	loadWorkspaces() {
+	loadWorkspaces = () => {
 		feathers_app.service('workspaces').find().then(result => {
 			this.setState({
 				workspacesLoaded: true,
@@ -29,23 +29,23 @@ class WorkspaceList extends React.Component {
 			});
 		});
 	}
-	createWorkspace() {
+	createWorkspace = () => {
 		let name = 'New Workspace';
 		feathers_app.service('workspaces').create({name:name}).then(result => {
 			this.props.router.push('/workspace/' + result._id + '/configure');
 		}).catch(console.error);
 	}
-	editWorkspace(id, patch) {
+	editWorkspace = (id, patch) => {
 		feathers_app.service('workspaces').patch(id, patch).catch(console.error);
 	}
-	deleteWorkspace(workspace) {
+	deleteWorkspace = (workspace) => {
 		if (!confirm('Are you sure?')) return;
 		feathers_app.service('workspaces').remove(workspace._id).catch(console.error);
 	}
-	handleCreatedWorkspace(workspace) {
+	handleCreatedWorkspace = (workspace) => {
 		this.setState({ workspaces: this.state.workspaces.concat(workspace) });
 	}
-	handlePatchedWorkspace(workspace) {
+	handlePatchedWorkspace = (workspace) => {
 		for (let i in this.state.workspaces) {
 			if (this.state.workspaces[i]._id == workspace._id) {
 				let newWorkspaces = this.state.workspaces;
@@ -55,7 +55,7 @@ class WorkspaceList extends React.Component {
 			}
 		}
 	}
-	handleRemovedWorkspace(workspace) {
+	handleRemovedWorkspace = (workspace) => {
 		for (let i in this.state.workspaces) {
 			if (this.state.workspaces[i]._id == workspace._id) {
 				let newWorkspaces = this.state.workspaces;
@@ -65,22 +65,16 @@ class WorkspaceList extends React.Component {
 			}
 		}
 	}
-	bindEventListeners() {
-		this.workspaceCreatedListener = this.handleCreatedWorkspace.bind(this);
-		this.workspacePatchedListener = this.handlePatchedWorkspace.bind(this);
-		this.workspaceRemovedListener = this.handleRemovedWorkspace.bind(this);
-		feathers_app.service('workspaces').on('created', this.workspaceCreatedListener);
-		feathers_app.service('workspaces').on('patched', this.workspacePatchedListener);
-		feathers_app.service('workspaces').on('removed', this.workspaceRemovedListener);
-	}
 	componentDidMount() {
 		this.loadWorkspaces();
-		this.bindEventListeners();
+		feathers_app.service('workspaces').on('created', this.handleCreatedWorkspace);
+		feathers_app.service('workspaces').on('patched', this.handlePatchedWorkspace);
+		feathers_app.service('workspaces').on('removed', this.handleRemovedWorkspace);
 	}
 	componentWillUnmount() {
-		feathers_app.service('workspaces').removeListener('created', this.workspaceCreatedListener);
-		feathers_app.service('workspaces').removeListener('patched', this.workspacePatchedListener);
-		feathers_app.service('workspaces').removeListener('removed', this.workspaceRemovedListener);
+		feathers_app.service('workspaces').removeListener('created', this.handleCreatedWorkspace);
+		feathers_app.service('workspaces').removeListener('patched', this.handlePatchedWorkspace);
+		feathers_app.service('workspaces').removeListener('removed', this.handleRemovedWorkspace);
 	}
 	render() {
 		let that = this;
@@ -94,8 +88,8 @@ class WorkspaceList extends React.Component {
 					<WorkspaceItem
 						key={workspace._id}
 						workspace={workspace}
-						onChange={that.editWorkspace.bind(that)}
-						onDelete={that.deleteWorkspace.bind(that)} />
+						onChange={that.editWorkspace}
+						onDelete={that.deleteWorkspace} />
 				) );
 			}
 			else if (workspace.editors.indexOf(userID) != -1) {
@@ -103,8 +97,8 @@ class WorkspaceList extends React.Component {
 					<WorkspaceItem
 						key={workspace._id}
 						workspace={workspace}
-						onChange={that.editWorkspace.bind(that)}
-						onDelete={that.deleteWorkspace.bind(that)} />
+						onChange={that.editWorkspace}
+						onDelete={that.deleteWorkspace} />
 				) );
 			}
 			else if (workspace.viewers.indexOf(userID) != -1) {
@@ -113,8 +107,8 @@ class WorkspaceList extends React.Component {
 						key={workspace._id}
 						workspace={workspace}
 						readOnly={true}
-						onChange={that.editWorkspace.bind(that)}
-						onDelete={that.deleteWorkspace.bind(that)} />
+						onChange={that.editWorkspace}
+						onDelete={that.deleteWorkspace} />
 				) );
 			}
 		}
@@ -130,7 +124,7 @@ class WorkspaceList extends React.Component {
 				<div className="pure-g">
 					{yourWorkspaceNodes}
 					<div className="pure-u-1" style={{margin:'15px', textAlign:'center'}}>
-						<button className="pure-button button-secondary" onClick={this.createWorkspace.bind(this)}>
+						<button className="pure-button button-secondary" onClick={this.createWorkspace}>
 							<i className="fa fa-plus" />&nbsp;&nbsp;&nbsp;Create Workspace
 						</button>
 					</div>

@@ -12,15 +12,13 @@ class ConfigureCollection extends React.Component {
 			collection: {}
 		};
 	}
-	loadCollection() {
+	loadCollection = () => {
 		feathers_app.service('collections').get(this.props.params.collection)
 			.then(result => { this.setState({ collection: result, name: result.name }); })
 			.catch(this.showMessage.bind(this));
 	}
-	handleNameChange(event) {
-		this.setState({ name: event.target.value });
-	}
-	commitNameChange() {
+	handleNameChange = (event) => this.setState({ name: event.target.value });
+	commitNameChange = () => {
 		if (this.state.name == '') this.refs.messageBanner.showMessage('Name cannot be blank');
 		else {
 			feathers_app.service('collections')
@@ -28,32 +26,31 @@ class ConfigureCollection extends React.Component {
 				.catch(this.showMessage.bind(this));
 		}
 	}
-	handleDeleteClick() {
+	handleDeleteClick = () => {
 		if (!confirm('Are you sure?')) return;
 		feathers_app.service('collections').remove(this.props.params.collection).then(result => {
 			this.props.router.push('/workspace/'+this.props.params.workspace);
 		});
 	}
-	handlePatchedCollection(collection) {
+	handlePatchedCollection = (collection) => {
 		if (collection._id == this.state.collection._id) {
 			this.setState({ collection: collection, name: collection.name });
 		}
 	}
-	returnToCollection(event) {
+	returnToCollection = (event) => {
 		event.preventDefault();
 		this.commitNameChange();
 		this.props.router.push('/workspace/' + this.props.params.workspace + '/collection/' + this.props.params.collection);
 	}
-	showMessage(error) {
+	showMessage = (error) => {
 		if (this.refs.messageBanner) this.refs.messageBanner.showMessage(error.message);
 	}
 	componentDidMount() {
 		this.loadCollection();
-		this.collectionPatchedListener = this.handlePatchedCollection.bind(this);
-		feathers_app.service('collections').on('patched', this.collectionPatchedListener);
+		feathers_app.service('collections').on('patched', this.handlePatchedCollection);
 	}
 	componentWillUnmount() {
-		feathers_app.service('collections').removeListener('patched', this.collectionPatchedListener);
+		feathers_app.service('collections').removeListener('patched', this.handlePatchedCollection);
 	}
 	render() {
 		return (
@@ -62,23 +59,23 @@ class ConfigureCollection extends React.Component {
 					<MessageBanner ref="messageBanner" />
 					<button
 						className="pure-button button-small"
-						onClick={this.returnToCollection.bind(this)}>
+						onClick={this.returnToCollection}>
 						<i className="fa fa-close" />
 					</button>
-					<form className="pure-form pure-form-aligned" onSubmit={this.returnToCollection.bind(this)}>
+					<form className="pure-form pure-form-aligned" onSubmit={this.returnToCollection}>
 						<fieldset>
 							<div className="pure-control-group">
 								<label htmlFor="name">Collection Name</label>
 								<input id="name" type="text"
 									ref="nameInput"
 									value={this.state.name}
-									onChange={this.handleNameChange.bind(this)}
-									onBlur={this.commitNameChange.bind(this)} />
+									onChange={this.handleNameChange}
+									onBlur={this.commitNameChange} />
 							</div>
 						</fieldset>
 					</form>
 					<button className="pure-button button-error"
-						onClick={this.handleDeleteClick.bind(this)}>
+						onClick={this.handleDeleteClick}>
 						Delete Collection
 					</button>
 

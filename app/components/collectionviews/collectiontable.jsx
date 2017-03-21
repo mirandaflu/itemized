@@ -13,7 +13,7 @@ export default class CollectionTable extends React.Component {
 			clickedAttribute: this.props.clickedAttribute
 		};
 	}
-	forwardAttributeClick(attribute) {
+	forwardAttributeClick = (attribute) => {
 		if (this.props.onAttributeClick) {
 			this.props.onAttributeClick(attribute);
 		}

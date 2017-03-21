@@ -21,7 +21,7 @@ class ConfigureReference extends React.Component {
 			referencedValue: null
 		};
 	}
-	loadData() {
+	loadData = () => {
 		feathers_app.service('attributes').find({query: {
 			coll: this.props.params.collection,
 			thing: this.props.params.thing,
@@ -72,24 +72,24 @@ class ConfigureReference extends React.Component {
 			}
 		}).catch(console.error);
 	}
-	loadFields(collection) {
+	loadFields = (collection) => {
 		feathers_app.service('fields').find({query:{coll:collection}})
 			.then(fields => { this.setState({ fields: fields.filter(field => {
 				return field.type != 'Attribute Reference';
 			}) }); })
 			.catch(console.error);
 	}
-	loadThings(collection) {
+	loadThings = (collection) => {
 		feathers_app.service('things').find({query:{coll:collection}})
 			.then(things => { this.setState({ things: things.data }); })
 			.catch(console.error);
 	}
-	loadAttributes(collection) {
+	loadAttributes = (collection) => {
 		feathers_app.service('attributes').find({query:{coll:collection}})
 			.then(attributes => { this.setState({ attributes: attributes }); })
 			.catch(console.error);
 	}
-	handleSelectChange(key, value) {
+	handleSelectChange = (key, value) => {
 		if (key == 'collection' && value != null) {
 			this.loadFields(value.value);
 			this.loadThings(value.value);
@@ -99,7 +99,7 @@ class ConfigureReference extends React.Component {
 		s[key] = value;
 		this.setState(s);
 	}
-	handleAttributeClick(attribute) {
+	handleAttributeClick = (attribute) => {
 		this.setState({ referencedValue: attribute.value });
 		let query = {
 			coll: this.props.params.collection,
@@ -111,12 +111,12 @@ class ConfigureReference extends React.Component {
 			.catch(console.error)
 			.then(attributes => { this.setState({ attribute: attributes[0] }); });
 	}
-	clearReference() {
+	clearReference = () => {
 		feathers_app.service('attributes').remove(this.state.attribute._id)
 			.then(result => { this.returnToCollection(); })
 			.catch(console.error);
 	}
-	returnToCollection(event) {
+	returnToCollection = (event) => {
 		if (event) event.preventDefault();
 		this.props.router.push('/workspace/'+this.props.params.workspace+'/collection/'+this.props.params.collection);
 	}
@@ -134,10 +134,10 @@ class ConfigureReference extends React.Component {
 					<MessageBanner ref="messageBanner" />
 					<button
 						className="pure-button button-small"
-						onClick={this.returnToCollection.bind(this)}>
+						onClick={this.returnToCollection}>
 						<i className="fa fa-close" />
 					</button>
-					<form className="pure-form pure-form-aligned" onSubmit={this.returnToCollection.bind(this)}>
+					<form className="pure-form pure-form-aligned" onSubmit={this.returnToCollection}>
 						<fieldset>
 							<div className="pure-control-group">
 								<label htmlFor="type">Collection</label>
@@ -155,7 +155,7 @@ class ConfigureReference extends React.Component {
 									things={this.state.things}
 									attributesObject={attributesObject}
 									onlyForSelectingReference={true}
-									onAttributeClick={this.handleAttributeClick.bind(this)}
+									onAttributeClick={this.handleAttributeClick}
 									readOnly={true} />
 							}
 							<div className="pure-control-group">
@@ -165,7 +165,7 @@ class ConfigureReference extends React.Component {
 							</div>
 						</fieldset>
 					</form>
-					<button className="pure-button" onClick={this.clearReference.bind(this)}>Clear Reference</button>
+					<button className="pure-button" onClick={this.clearReference}>Clear Reference</button>
 				</div>
 			</Modal>
 		);

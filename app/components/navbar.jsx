@@ -9,13 +9,13 @@ export default class Navbar extends React.Component {
 			workspace: {}
 		};
 	}
-	loadWorkspaceName(id) {
+	loadWorkspaceName = (id) => {
 		if (!id) return;
 		feathers_app.service('workspaces').get(id)
 			.then(result => { this.setState({workspaceName: result.name, workspace: result}); })
 			.catch(console.error);
 	}
-	handlePatchedWorkspace(workspace) {
+	handlePatchedWorkspace = (workspace) => {
 		if (workspace._id == this.props.workspace) {
 			this.setState({ workspaceName: workspace.name });
 		}
@@ -25,11 +25,10 @@ export default class Navbar extends React.Component {
 	}
 	componentDidMount() {
 		this.loadWorkspaceName(this.props.workspace);
-		this.workspacePatchedListener = this.handlePatchedWorkspace.bind(this);
-		feathers_app.service('workspaces').on('patched', this.workspacePatchedListener);
+		feathers_app.service('workspaces').on('patched', this.handlePatchedWorkspace);
 	}
 	componentWillUnmount() {
-		feathers_app.service('workspaces').removeListener('patched', this.workspacePatchedListener);
+		feathers_app.service('workspaces').removeListener('patched', this.handlePatchedWorkspace);
 	}
 	render() {
 		let user = feathers_app.get('user');

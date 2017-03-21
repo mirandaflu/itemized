@@ -9,7 +9,7 @@ class WorkspaceItem extends React.Component {
 			modalOpen: false
 		}
 	}
-	configureWorkspace(event) {
+	configureWorkspace = (event) => {
 		event.preventDefault();
 		this.props.router.push('/workspace/'+this.props.workspace._id+'/configure');
 	}
@@ -22,7 +22,7 @@ class WorkspaceItem extends React.Component {
 						{!this.props.readOnly &&
 							<button style={{marginTop:'-5.5px'}}
 								className="pure-button button-small"
-								onClick={this.configureWorkspace.bind(this)}>
+								onClick={this.configureWorkspace}>
 								<i className="fa fa-edit" />
 							</button>
 						}

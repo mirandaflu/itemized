@@ -19,12 +19,12 @@ class ConfigureWorkspace extends React.Component {
 			usernameIndex: {}
 		};
 	}
-	loadWorkspace() {
+	loadWorkspace = () => {
 		feathers_app.service('workspaces').get(this.props.params.workspace)
 			.then(result => { this.setState({ workspace: result, name: result.name }); })
 			.catch(console.error);
 	}
-	indexUsernames() {
+	indexUsernames = () => {
 		feathers_app.service('users').find({query:{username:{$exists:true}}})
 			.then(result => {
 				let index = {};
@@ -34,36 +34,36 @@ class ConfigureWorkspace extends React.Component {
 				this.setState({ usernameIndex: index });
 			});
 	}
-	userToOption(id) {
+	userToOption = (id) => {
 		return {
 			label: this.state.usernameIndex[id] || id,
 			value: id
 		};
 	} 
-	handleNameChange(event) {
+	handleNameChange = (event) => {
 		this.setState({ name: event.target.value });
 	}
-	commitNameChange() {
+	commitNameChange = () => {
 		if (this.state.name == '') this.refs.messageBanner.showMessage('Name cannot be blank');
 		else feathers_app.service('workspaces').patch(this.props.params.workspace, {name:this.state.name}).catch(console.error);
 	}
-	handleSelectChange(role, options) {
+	handleSelectChange = (role, options) => {
 		let patch = {};
 		patch[role] = options.map(function(option) { return option.value; });
 		feathers_app.service('workspaces').patch(this.state.workspace._id, patch).catch(console.error);
 	}
-	returnToWorkspace(event) {
+	returnToWorkspace = (event) => {
 		event.preventDefault();
 		this.commitNameChange();
 		this.props.router.push('/workspace/' + this.props.params.workspace);
 	}
-	handleDeleteClick() {
+	handleDeleteClick = () => {
 		if (!confirm('Are you sure?')) return;
 		feathers_app.service('workspaces').remove(this.state.workspace._id).then(result => {
 			this.props.router.push('/');
 		});
 	}
-	handlePatchedWorkspace(workspace) {
+	handlePatchedWorkspace = (workspace) => {
 		if (workspace._id == this.state.workspace._id) {
 			this.setState({ workspace: workspace, name: workspace.name });
 		}
@@ -71,11 +71,10 @@ class ConfigureWorkspace extends React.Component {
 	componentDidMount() {
 		this.loadWorkspace();
 		this.indexUsernames();
-		this.workspacePatchedListener = this.handlePatchedWorkspace.bind(this);
-		feathers_app.service('workspaces').on('patched', this.workspacePatchedListener);
+		feathers_app.service('workspaces').on('patched', this.handlePatchedWorkspace);
 	}
 	componentWillUnmount() {
-		feathers_app.service('workspaces').removeListener('patched', this.workspacePatchedListener);
+		feathers_app.service('workspaces').removeListener('patched', this.handlePatchedWorkspace);
 	}
 	render() {
 		let that = this;
@@ -84,23 +83,23 @@ class ConfigureWorkspace extends React.Component {
 				<Modal contentLabel="configureworkspace" isOpen={true}>
 					<div className="modalContent">
 						<MessageBanner ref="messageBanner" />
-						<button className="pure-button button-small" onClick={this.returnToWorkspace.bind(this)}>
+						<button className="pure-button button-small" onClick={this.returnToWorkspace}>
 							<i className="fa fa-close" />
 						</button>
-						<form onSubmit={this.returnToWorkspace.bind(this)} className="pure-form pure-form-aligned">
+						<form onSubmit={this.returnToWorkspace} className="pure-form pure-form-aligned">
 							<fieldset>
 								<div className="pure-control-group">
 									<label htmlFor="name">Workspace Name</label>
 									<input id="name" type="text"
 										ref="nameInput"
 										value={this.state.name}
-										onChange={this.handleNameChange.bind(this)}
-										onBlur={this.commitNameChange.bind(this)} />
+										onChange={this.handleNameChange}
+										onBlur={this.commitNameChange} />
 								</div>
 							</fieldset>
 							<div className="pure-controls">
 								<button className="pure-button button-error"
-									onClick={this.handleDeleteClick.bind(this)}>
+									onClick={this.handleDeleteClick}>
 									Delete Workspace
 								</button>
 							</div>
@@ -118,7 +117,7 @@ class ConfigureWorkspace extends React.Component {
 									<UserSelect
 										multi={true}
 										value={this.state.workspace.admins &&
-											this.state.workspace.admins.map(this.userToOption.bind(this))}
+											this.state.workspace.admins.map(this.userToOption)}
 										onChange={this.handleSelectChange.bind(this, 'admins')} />
 								</div>
 								<div className="pure-control-group">
@@ -126,7 +125,7 @@ class ConfigureWorkspace extends React.Component {
 									<UserSelect
 										multi={true}
 										value={this.state.workspace.editors &&
-											this.state.workspace.editors.map(this.userToOption.bind(this))}
+											this.state.workspace.editors.map(this.userToOption)}
 										onChange={this.handleSelectChange.bind(this, 'editors')} />
 								</div>
 								<div className="pure-control-group">
@@ -134,7 +133,7 @@ class ConfigureWorkspace extends React.Component {
 									<UserSelect
 										multi={true}
 										value={this.state.workspace.viewers && 
-											this.state.workspace.viewers.map(this.userToOption.bind(this))}
+											this.state.workspace.viewers.map(this.userToOption)}
 										onChange={this.handleSelectChange.bind(this, 'viewers')} />
 								</div>
 							</fieldset>

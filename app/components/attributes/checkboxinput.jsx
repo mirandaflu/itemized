@@ -7,7 +7,7 @@ export default class TextInput extends React.Component {
 			value: this.props.value
 		};
 	}
-	handleChange(e) {
+	handleChange = (event) => {
 		let newValue = !this.state.value;
 		this.props.onCommitChange({ target: {value: newValue }});
 		this.setState({ value: newValue });
@@ -18,6 +18,6 @@ export default class TextInput extends React.Component {
 	render() { return (
 		<input type="checkbox"
 			checked={this.state.value}
-			onChange={this.handleChange.bind(this)} />
+			onChange={this.handleChange} />
 	);}
 }
