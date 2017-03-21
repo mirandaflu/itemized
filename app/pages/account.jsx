@@ -6,7 +6,7 @@ import MessageBanner from '../components/messagebanner.jsx';
 
 export default class Account extends React.Component {
 	state = {
-		username: null,
+		username: '',
 		border: 'lightgreen',
 		modalOpen: false
 	}

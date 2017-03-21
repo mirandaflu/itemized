@@ -45,7 +45,7 @@ class ConfigureThing extends React.Component {
 									attribute = that.state.attributesObject[that.props.params.thing + field._id],
 									value = (attribute)? attribute.value: null;
 								return (
-									<div key={field._id} className="pure-control-group">
+									<div key={field._id} className="pure-control-group" style={{maxWidth:'380px'}}>
 										<label>{field.name}</label>
 										<FieldComponent
 											clearable={true}

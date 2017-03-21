@@ -45,7 +45,7 @@ export default class StaticInput extends React.Component {
 	}
 	render() {
 		return (
-			<span style={{padding:'4px'}}>
+			<span className="staticInput" style={{padding:'4px'}}>
 				{this.props.fieldType == 'Attribute Reference' &&
 					<Link style={{float:'right'}} to={'/workspace/'+this.props.workspace+'/collection/'+this.props.collection+'/reference/'+this.props.thing+'/'+this.props.field}>
 						<i className="fa fa-edit" />
