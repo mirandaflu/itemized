@@ -28,6 +28,6 @@ module.exports = function() {
 	// Set up our after hooks
 	thingService.after(hooks.after);
 
-	// Filter socket events: only users currently viewing the collection get updates
+	// Filter socket events: viewers/editors/admins of the workspace get updates
 	thingService.filter(byCheckingWorkspace);
 };

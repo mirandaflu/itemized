@@ -15,11 +15,7 @@ const collectionSchema = new Schema({
 	name: { type: String, required: true },
 	position: { type: Number, required: true },
 
-	viewType: { type: String, required: true, default: 'Table' },
-	boardField: { type: Schema.ObjectId, ref: 'field' },
-	cardField: { type: Schema.ObjectId, ref: 'field' },
-	swimLane: { type: Schema.ObjectId, ref: 'field' },
-	dateField: { type: Schema.ObjectId, ref: 'field' },
+	defaultView: { type: Schema.ObjectId, ref: 'view' },
 
 	createdAt: { type: Date, 'default': Date.now },
 	updatedAt: { type: Date, 'default': Date.now }

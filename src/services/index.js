@@ -1,4 +1,5 @@
 'use strict';
+const view = require('./view');
 const field = require('./field');
 const attribute = require('./attribute');
 const thing = require('./thing');
@@ -21,4 +22,5 @@ module.exports = function() {
 	app.configure(thing);
 	app.configure(attribute);
 	app.configure(field);
+	app.configure(view);
 };
