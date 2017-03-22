@@ -2,14 +2,11 @@ import React from 'react';
 import Select from 'react-select';
 
 export default class SelectInput extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			value: this.props.value,
-			options: []
-		};
+	state = {
+		value: this.props.value,
+		options: []
 	}
-	loadOptions() {
+	loadOptions = () => {
 		feathers_app.service('fields').get(this.props.field).then(field => {
 			feathers_app.service('fields').get(field.fieldReference).then(field => {
 				feathers_app.service('attributes').find({query:{
@@ -26,7 +23,7 @@ export default class SelectInput extends React.Component {
 			}).catch(console.error);
 		}).catch(console.error);
 	}
-	handleChange(value) {
+	handleChange = (value) => {
 		if (this.props.clearable && value == null) {
 			this.props.onCommitChange({ target: {value: null} });
 			this.setState({ value: null });
@@ -77,7 +74,7 @@ export default class SelectInput extends React.Component {
 				options={options}
 				multi={this.props.fieldType.indexOf('Multiple') != -1}
 				clearable={this.props.clearable || false}
-				onChange={this.handleChange.bind(this)} />
+				onChange={this.handleChange} />
 		);
 	}
 }

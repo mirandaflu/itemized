@@ -7,13 +7,8 @@ import StatusText from '../statustext.jsx';
 import FilterMaker from './filtermaker.jsx';
 
 export default class CollectionTable extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			clickedAttribute: this.props.clickedAttribute
-		};
-	}
-	forwardAttributeClick(attribute) {
+	state = { clickedAttribute: this.props.clickedAttribute }
+	forwardAttributeClick = (attribute) => {
 		if (this.props.onAttributeClick) {
 			this.props.onAttributeClick(attribute);
 		}
@@ -52,25 +47,25 @@ export default class CollectionTable extends React.Component {
 						</tr>
 					</thead>
 					<tbody>
-						{things.map(function(thing){
+						{things.map(thing => {
 							return(
 								<tr key={thing._id}>
-									{!that.props.onlyForSelectingReference && 
+									{!this.props.onlyForSelectingReference && 
 										<td>
-											<Link to={'/workspace/'+that.props.collection.workspace+'/collection/'+that.props.collection._id+'/thing/'+thing._id}>
+											<Link to={'/workspace/'+this.props.collection.workspace+'/collection/'+that.props.collection._id+'/thing/'+thing._id}>
 												<i className="fa fa-expand" />
 											</Link>
 										</td>
 									}
-									{fields.map(function(field){
+									{fields.map(field => {
 										let value = '', attribute = null, style = {},
 											FieldComponent = fieldTypes[field.type].component;
-										if (that.props.attributesObject[thing._id + field._id]) {
-											attribute = that.props.attributesObject[thing._id + field._id];
+										if (this.props.attributesObject[thing._id + field._id]) {
+											attribute = this.props.attributesObject[thing._id + field._id];
 											value = attribute.value;
 										}
 										let rowSpan = 1;
-										if (that.props.group && that.props.group.value == field._id) {
+										if (this.props.group && this.props.group.value == field._id) {
 											if (thing.rowSpan > 0) {
 												rowSpan = thing.rowSpan;
 												FieldComponent = fieldTypes['Static'].component;
@@ -78,28 +73,28 @@ export default class CollectionTable extends React.Component {
 											}
 											else return null;
 										}
-										if (that.props.readOnly) {
+										if (this.props.readOnly) {
 											FieldComponent = fieldTypes['Static'].component;
 										}
-										if (that.state.clickedAttribute != null && attribute != null &&
-										that.state.clickedAttribute == attribute._id) {
+										if (this.state.clickedAttribute != null && attribute != null &&
+										this.state.clickedAttribute == attribute._id) {
 											style.backgroundColor = 'lightgrey';
 										}
 										return (
 											<td className="cell" style={style} rowSpan={rowSpan} key={thing._id + field._id}
-												onClick={that.forwardAttributeClick.bind(that, attribute)}>
+												onClick={this.forwardAttributeClick.bind(this, attribute)}>
 												<FieldComponent
 													clearable={true}
 													fieldType={field.type}
-													workspace={that.props.collection.workspace}
-													collection={that.props.collection._id}
+													workspace={this.props.collection.workspace}
+													collection={this.props.collection._id}
 													thing={thing._id}
 													field={field._id}
 													attribute={attribute}
 													value={value}
 													options={field.options}
-													onCreateOption={that.props.onCreateOption && that.props.onCreateOption.bind(that, field._id)}
-													onCommitChange={that.props.onCommitValueChange && that.props.onCommitValueChange.bind(that, thing._id, field._id, attribute)} />
+													onCreateOption={this.props.onCreateOption && that.props.onCreateOption.bind(that, field._id)}
+													onCommitChange={this.props.onCommitValueChange && that.props.onCommitValueChange.bind(that, thing._id, field._id, attribute)} />
 											</td>
 										);
 									})}

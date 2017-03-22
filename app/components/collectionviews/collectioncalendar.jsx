@@ -4,20 +4,17 @@ import interact from 'interact.js';
 import { Link } from 'react-router';
 
 export default class CollectionCalendar extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			things: this.props.things,
-			month: moment().startOf('month').format(),
-			attributesObject: this.props.attributesObject,
-			dragging: null,
-			dragID: null,
-			dragStartX: 0,
-			dragStartY: 0,
-			dropAttribute: null
-		};
+	state = {
+		things: this.props.things,
+		month: moment().startOf('month').format(),
+		attributesObject: this.props.attributesObject,
+		dragging: null,
+		dragID: null,
+		dragStartX: 0,
+		dragStartY: 0,
+		dropAttribute: null
 	}
-	setUpDragDrop() {
+	setUpDragDrop = () => {
 		interact('.calendar .card').draggable({
 			autoScroll: true,
 			onstart: this._handleDragStart.bind(this),
@@ -29,7 +26,7 @@ export default class CollectionCalendar extends React.Component {
 			ondragenter: this._handleCardOverDay.bind(this)
 		});
 	}
-	getField(props, id) {
+	getField = (props, id) => {
 		let field = null, sourceProp = 'fields';
 		for (let i in props[sourceProp]) {
 			if (props[sourceProp][i]._id == id) {
@@ -42,8 +39,8 @@ export default class CollectionCalendar extends React.Component {
 		this.setState({
 			things: nextProps.things,
 			attributesObject: nextProps.attributesObject,
-			dateField: this.getField(nextProps, this.props.collection.dateField),
-			swimLane: this.getField(nextProps, this.props.collection.swimLane)
+			dateField: this.getField(nextProps, this.props.view.dateField),
+			swimLane: this.getField(nextProps, this.props.view.swimLane)
 		});
 	}
 	componentDidMount() {
@@ -102,7 +99,7 @@ export default class CollectionCalendar extends React.Component {
 
 									{that.state.things.filter(function(thing) {
 
-										let i = thing._id+that.props.collection.dateField,
+										let i = thing._id+that.props.view.dateField,
 											t = that.props.attributesObject[i]?
 												that.props.attributesObject[i].value: null;
 
@@ -111,9 +108,9 @@ export default class CollectionCalendar extends React.Component {
 
 									}).map(function(thing) {
 
-										let index = thing._id+that.props.collection.dateField,
+										let index = thing._id+that.props.view.dateField,
 											id = that.props.attributesObject[index]._id,
-											i = thing._id+that.props.collection.cardField,
+											i = thing._id+that.props.view.cardField,
 											name = that.props.attributesObject[i].value;
 
 										return (

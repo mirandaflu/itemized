@@ -1,29 +1,20 @@
 import React from 'react';
 
 export default class LinkInput extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			value: this.props.value,
-			editVisible: false
-		};
+	state = {
+		value: this.props.value,
+		editVisible: false
 	}
-	toggleEditMode() {
-		this.setState({ editVisible: !this.state.editVisible });
-	}
-	handleEditStart(e) {
-		this.setState({ editVisible: true });
-	}
-	handleKeyDown(e) {
-		if (e.key === 'Enter') {
-			this.handleCommitChange(e);
+	toggleEditMode = () => this.setState({ editVisible: !this.state.editVisible });
+	handleEditStart = (event) => this.setState({ editVisible: true });
+	handleKeyDown = (event) => {
+		if (event.key === 'Enter') {
+			this.handleCommitChange(event);
 		}
 	}
-	handleChange(e) {
-		this.setState({ value: e.target.value });
-	}
-	handleCommitChange(e) {
-		this.props.onCommitChange(e);
+	handleChange = (event) => this.setState({ value: event.target.value });
+	handleCommitChange = (event) => {
+		this.props.onCommitChange(event);
 		this.setState({ editVisible: false });
 	}
 	componentWillReceiveProps(nextProps) {
@@ -45,7 +36,7 @@ export default class LinkInput extends React.Component {
 					<div>
 						<a target="_blank" href={actualLink}>{this.state.value}</a>
 						<button className="pure-button button-xsmall"
-							onClick={this.toggleEditMode.bind(this)}>
+							onClick={this.toggleEditMode}>
 							<i className="fa fa-pencil" />
 						</button>
 					</div>
@@ -53,10 +44,10 @@ export default class LinkInput extends React.Component {
 				{(this.state.editVisible || this.state.value == '') &&
 					<input type="text"
 						value={this.state.value}
-						onFocus={this.handleEditStart.bind(this)}
-						onKeyDown={this.handleKeyDown.bind(this)}
-						onChange={this.handleChange.bind(this)}
-						onBlur={this.handleCommitChange.bind(this)} />
+						onFocus={this.handleEditStart}
+						onKeyDown={this.handleKeyDown}
+						onChange={this.handleChange}
+						onBlur={this.handleCommitChange} />
 				}
 			</div>
 		);

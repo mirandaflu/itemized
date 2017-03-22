@@ -20,23 +20,13 @@ class Banner extends React.Component {
 }
 
 export default class MessageBanner extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			messageText: null
-		};
-	}
-	clearMessage() {
-		this.setState({messageText:null});
-	}
-	showMessage(message) {
-		this.clearMessage();
-		this.setState({messageText:message});
-	}
+	state = { messageText: null }
+	clearMessage = () => this.setState({messageText:null});
+	showMessage = (message) => this.setState({messageText:message});
 	render() {
 		return (
 			<div className="messagebanner">
-				{this.state.messageText && <Banner text={this.state.messageText} closeClick={this.clearMessage.bind(this)} />}
+				{this.state.messageText && <Banner text={this.state.messageText} closeClick={this.clearMessage} />}
 			</div>
 		);
 	}

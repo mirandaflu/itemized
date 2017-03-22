@@ -6,23 +6,20 @@ import fieldTypes from './attributes/index.js';
 import MessageBanner from './messagebanner.jsx';
 
 class ConfigureThing extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			attributesObject: {},
-			fields: []
-		}
+	state = {
+		attributesObject: {},
+		fields: []
 	}
-	returnToCollection(event) {
+	returnToCollection = (event) => {
 		if (event) event.preventDefault();
 		this.props.router.push('/workspace/' + this.props.params.workspace + '/collection/' + this.props.params.collection);
 	}
-	handleDeleteClick() {
+	handleDeleteClick = () => {
 		if (!confirm('Are you sure?')) return;
 		feathers_app.service('things').remove(this.props.params.thing).catch(console.error);
 		this.returnToCollection();
 	}
-	updateState(props) {
+	updateState = (props) => {
 		this.setState({
 			attributesObject: props.attributesObject,
 			fields: props.fields
@@ -38,17 +35,17 @@ class ConfigureThing extends React.Component {
 					<MessageBanner ref="messageBanner" />
 					<button
 						className="pure-button button-small"
-						onClick={this.returnToCollection.bind(this)}>
+						onClick={this.returnToCollection}>
 						<i className="fa fa-close" />
 					</button>
-					<form className="pure-form pure-form-aligned" onSubmit={this.returnToCollection.bind(this)}>
+					<form className="pure-form pure-form-aligned" onSubmit={this.returnToCollection}>
 						<fieldset>
 							{this.props.fields.map(function(field) {
 								let FieldComponent = fieldTypes[field.type].component,
 									attribute = that.state.attributesObject[that.props.params.thing + field._id],
 									value = (attribute)? attribute.value: null;
 								return (
-									<div key={field._id} className="pure-control-group">
+									<div key={field._id} className="pure-control-group" style={{maxWidth:'380px'}}>
 										<label>{field.name}</label>
 										<FieldComponent
 											clearable={true}

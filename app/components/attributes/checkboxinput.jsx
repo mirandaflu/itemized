@@ -1,13 +1,8 @@
 import React from 'react';
 
 export default class TextInput extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			value: this.props.value
-		};
-	}
-	handleChange(e) {
+	state = { value: this.props.value }
+	handleChange = (event) => {
 		let newValue = !this.state.value;
 		this.props.onCommitChange({ target: {value: newValue }});
 		this.setState({ value: newValue });
@@ -18,6 +13,6 @@ export default class TextInput extends React.Component {
 	render() { return (
 		<input type="checkbox"
 			checked={this.state.value}
-			onChange={this.handleChange.bind(this)} />
+			onChange={this.handleChange} />
 	);}
 }

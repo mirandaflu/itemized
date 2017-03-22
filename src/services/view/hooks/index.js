@@ -4,8 +4,6 @@ const globalHooks = require('../../../hooks');
 const hooks = require('feathers-hooks');
 const auth = require('feathers-authentication').hooks;
 
-const localHooks = require('./hooks.js');
-
 exports.before = {
 	all: [
 		auth.verifyToken(),
@@ -13,11 +11,11 @@ exports.before = {
 		auth.restrictToAuthenticated()
 	],
 	find: [
-		localHooks.mustProvideWorkspace()
+		globalHooks.mustProvideCollection()
 	],
 	get: [],
 	create: [
-		localHooks.mustProvideWorkspace(),
+		globalHooks.mustProvideCollection(),
 		globalHooks.allowWorkspaceEditorOrHigher()
 	],
 	update: [
@@ -27,8 +25,7 @@ exports.before = {
 		globalHooks.allowWorkspaceEditorOrHigher()
 	],
 	remove: [
-		globalHooks.allowWorkspaceEditorOrHigher(),
-		localHooks.removeAssociated()
+		globalHooks.allowWorkspaceEditorOrHigher()
 	]
 };
 
@@ -36,12 +33,8 @@ exports.after = {
 	all: [],
 	find: [],
 	get: [],
-	create: [
-		localHooks.createDefaultView()
-	],
+	create: [],
 	update: [],
 	patch: [],
-	remove: [
-		localHooks.updateCollectionPositions()
-	]
+	remove: []
 };

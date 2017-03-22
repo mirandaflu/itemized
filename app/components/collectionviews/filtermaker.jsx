@@ -21,7 +21,7 @@ class FilterRow extends React.Component {
 			value: this.props.value || null
 		}
 	}
-	handleSelectChange(type, value) {
+	handleSelectChange = (type, value) => {
 		let s = {};
 		s[type] = value;
 		this.setState(s);
@@ -78,12 +78,8 @@ export default class FilterMaker extends React.Component {
 			value: null
 		};
 	}
-	addFilter() {
-		this.props.onChange(this.props.filters.length, this.defaultFilter());
-	}
-	closeModal() {
-		this.props.onClose();
-	}
+	addFilter = () => this.props.onChange(this.props.filters.length, this.defaultFilter());
+	closeModal = () => this.props.onClose();
 	componentWillReceiveProps(nextProps) {
 		if (nextProps.isOpen && this.props.filters.length == 0) {
 			this.addFilter();
@@ -94,7 +90,7 @@ export default class FilterMaker extends React.Component {
 		return (
 			<Modal isOpen={this.props.isOpen} contentLabel="Modal-FilterMaker">
 				<div className="modalContent">
-					<button className="pure-button" onClick={this.closeModal.bind(this)}><i className="fa fa-close" /></button>
+					<button className="pure-button" onClick={this.closeModal}><i className="fa fa-close" /></button>
 					
 					<form className="pure-form">
 						<label htmlFor="all" className="pure-radio">
@@ -122,7 +118,7 @@ export default class FilterMaker extends React.Component {
 						);
 					})}
 					<br />
-					<button style={{float:'none'}} className="pure-button" onClick={this.addFilter.bind(this)}>Add Filter</button>
+					<button style={{float:'none'}} className="pure-button" onClick={this.addFilter}>Add Filter</button>
 				</div>
 			</Modal>
 		);

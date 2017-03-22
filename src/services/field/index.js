@@ -25,6 +25,6 @@ module.exports = function() {
 	// Set up our after hooks
 	fieldService.after(hooks.after);
 
-	// Filter socket events: only users currently viewing the collection get updates
+	// Filter socket events: viewers/editors/admins of the workspace get updates
 	fieldService.filter(byCheckingWorkspace);
 };

@@ -13,6 +13,12 @@ input {
 	border-radius: 0 !important;
 	box-shadow: none !important;
 }
+input[type="checkbox"] {
+	max-height: 24px;
+}
+.rdt { /* react datetime */
+	display: inline-block;
+}
 
 .bold { font-weight: bold; }
 

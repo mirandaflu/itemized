@@ -2,13 +2,8 @@ import React from 'react';
 import { Link } from 'react-router';
 
 export default class StaticInput extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			value: this.props.value
-		};
-	}
-	setValue(props) {
+	state = { value: this.props.value }
+	setValue = (props) => {
 		if (props.value == null || props.value == '') {
 			this.setState({ value: null });
 		}
@@ -28,7 +23,7 @@ export default class StaticInput extends React.Component {
 			this.setState({ value: props.value });
 		}
 	}
-	handlePatchedAttribute(attribute) {
+	handlePatchedAttribute = (attribute) => {
 		if (this.props.value == attribute._id) {
 			this.setValue(this.props);
 		}
@@ -50,7 +45,7 @@ export default class StaticInput extends React.Component {
 	}
 	render() {
 		return (
-			<span style={{padding:'4px'}}>
+			<span className="staticInput" style={{padding:'4px'}}>
 				{this.props.fieldType == 'Attribute Reference' &&
 					<Link style={{float:'right'}} to={'/workspace/'+this.props.workspace+'/collection/'+this.props.collection+'/reference/'+this.props.thing+'/'+this.props.field}>
 						<i className="fa fa-edit" />

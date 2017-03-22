@@ -2,14 +2,11 @@ import React from 'react';
 import { Link, withRouter } from 'react-router';
 
 class WorkspaceItem extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			name: this.props.workspace.name,
-			modalOpen: false
-		}
+	state = {
+		name: this.props.workspace.name,
+		modalOpen: false
 	}
-	configureWorkspace(event) {
+	configureWorkspace = (event) => {
 		event.preventDefault();
 		this.props.router.push('/workspace/'+this.props.workspace._id+'/configure');
 	}
@@ -22,7 +19,7 @@ class WorkspaceItem extends React.Component {
 						{!this.props.readOnly &&
 							<button style={{marginTop:'-5.5px'}}
 								className="pure-button button-small"
-								onClick={this.configureWorkspace.bind(this)}>
+								onClick={this.configureWorkspace}>
 								<i className="fa fa-edit" />
 							</button>
 						}

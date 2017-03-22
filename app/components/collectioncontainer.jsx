@@ -6,17 +6,14 @@ import CollectionSettingsShell from './collectionviews/collectionsettings.jsx'
 import StatusText from '../components/statustext.jsx';
 
 class CollectionContainer extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			id: this.props.routeParams.collection,
-			collection: { viewType: 'Table' },
-			fields: [],
-			things: [],
-			attributes: []
-		};
+	state = {
+		id: this.props.routeParams.collection,
+		collection: { viewType: 'Table' },
+		fields: [],
+		things: [],
+		attributes: []
 	}
-	createField() {
+	createField = () => {
 		let name = prompt('Name?');
 		if (!name) return;
 		feathers_app.service('fields').create({
@@ -25,7 +22,7 @@ class CollectionContainer extends React.Component {
 			position: this.state.fields.length
 		}).catch(this.showMessage.bind(this));
 	}
-	moveField(e, data) {
+	moveField = (event, data) => {
 		let move = (data.move == 'right')? 1: -1;
 		feathers_app.service('fields').patch(null, {$inc: {position: -move}}, {query: {
 			coll: this.state.id,
@@ -35,37 +32,36 @@ class CollectionContainer extends React.Component {
 				.catch(this.showMessage.bind(this));
 		}).catch(this.showMessage.bind(this));
 	}
-	renameField(e, data) {
+	renameField = (event, data) => {
 		let name = prompt('Name?');
 		if (!name) return;
 		feathers_app.service('fields').patch(data.field._id, {name: name}).catch(this.showMessage.bind(this));
 	}
-	changeFieldType(e, data) {
+	changeFieldType = (event, data) => {
 		let type = prompt('Type?');
 		if (!fieldTypes[type]) { alert('invalid'); return; }
 		feathers_app.service('fields').patch(data.field._id, {type: type, options: []})
 			.catch(this.showMessage.bind(this));
 	}
-	addFieldOption(e, data) {
+	addFieldOption = (event, data) => {
 		let option = prompt('Option?');
 		if (!option) return;
 		feathers_app.service('fields').patch(data.field._id, {$push: {options: option}})
 			.catch(this.showMessage.bind(this));
 	}
-	handleCreateOption(field, option) {
+	handleCreateOption = (field, option) => {
 		feathers_app.service('fields').patch(field, {$push: {options: option}})
 			.catch(this.showMessage.bind(this));
 	}
-	removeField(e, data) {
+	removeField = (event, data) => {
 		if (!confirm('Are you sure?')) return;
 		feathers_app.service('fields').remove(data.field._id).catch(this.showMessage.bind(this));
 	}
-	handleCreatedField(field) {
+	handleCreatedField = (field) => {
 		if (field.coll != this.state.id) return;
 		this.setState({ fields: this.state.fields.concat(field) });
 	}
-	handlePatchedField(field) {
-		if (!this._mounted) return;
+	handlePatchedField = (field) => {
 		for (let i in this.state.fields) {
 			if (this.state.fields[i]._id == field._id) {
 				let newFields = this.state.fields;
@@ -76,7 +72,7 @@ class CollectionContainer extends React.Component {
 			}
 		}
 	}
-	handleRemovedField(field) {
+	handleRemovedField = (field) => {
 		for (let i in this.state.fields) {
 			if (this.state.fields[i]._id == field._id) {
 				let newFields = this.state.fields;
@@ -86,19 +82,16 @@ class CollectionContainer extends React.Component {
 			}
 		}
 	}
-	addThing() {
-		feathers_app.service('things').create({coll: this.state.id}).catch(this.showMessage.bind(this));
-	}
-	removeThing(e, data) {
+	addThing = () => feathers_app.service('things').create({coll: this.state.id}).catch(this.showMessage.bind(this));
+	removeThing = (event, data) => {
 		if (!confirm('Are you sure?')) return;
 		feathers_app.service('things').remove(data.thing._id).catch(this.showMessage.bind(this));
 	}
-	handleCreatedThing(thing) {
+	handleCreatedThing = (thing) => {
 		if (thing.coll != this.state.id) return;
 		this.setState({things: this.state.things.concat(thing)});
 	}
-	handlePatchedThing(thing) {
-		if (!this._mounted) return;
+	handlePatchedThing = (thing) => {
 		for (let i in this.state.things) {
 			if (this.state.things[i]._id == thing._id) {
 				let newThings = Object.assign(this.state.things);
@@ -108,7 +101,7 @@ class CollectionContainer extends React.Component {
 			}
 		}
 	}
-	handleRemovedThing(thing) {
+	handleRemovedThing = (thing) => {
 		for (let i in this.state.things) {
 			if (this.state.things[i]._id == thing._id) {
 				let newThings = this.state.things;
@@ -118,12 +111,12 @@ class CollectionContainer extends React.Component {
 			}
 		}
 	}
-	commitValueChange(thing, field, attribute, e) {
+	commitValueChange = (thing, field, attribute, event) => {
 		let newAttribute = {
 			coll: this.state.id,
 			thing: thing,
 			field: field,
-			value: e.target.value
+			value: event.target.value
 		};
 		if (attribute == null) {
 			feathers_app.service('attributes').create(newAttribute).catch(this.showMessage.bind(this));
@@ -133,12 +126,11 @@ class CollectionContainer extends React.Component {
 				.catch(this.showMessage.bind(this));
 		}
 	}
-	handleCreatedAttribute(attribute) {
+	handleCreatedAttribute = (attribute) => {
 		if (attribute.coll != this.state.id) return;
 		this.setState({ attributes: this.state.attributes.concat(attribute) });
 	}
-	handlePatchedAttribute(attribute) {
-		if (!this._mounted) return;
+	handlePatchedAttribute = (attribute) => {
 		for (let i in this.state.attributes) {
 			if (this.state.attributes[i]._id == attribute._id) {
 				let newAttributes = this.state.attributes;
@@ -148,7 +140,7 @@ class CollectionContainer extends React.Component {
 			}
 		}
 	}
-	handleRemovedAttribute(attribute) {
+	handleRemovedAttribute = (attribute) => {
 		for (let i in this.state.attributes) {
 			if (this.state.attributes[i]._id == attribute._id) {
 				let newAttributes = this.state.attributes;
@@ -158,16 +150,13 @@ class CollectionContainer extends React.Component {
 			}
 		}
 	}
-	handlePatchedCollection(collection) {
-		if (!this._mounted) return;
+	handlePatchedCollection = (collection) => {
 		if (collection._id == this.state.collection._id) {
 			this.setState({ collection: collection });
 		}
 	}
-	showMessage(error) {
-		this.props.messageBanner.showMessage(error.message);
-	}
-	loadData(collection) {
+	showMessage = (error) => this.props.messageBanner.showMessage(error.message);
+	loadData = (collection) => {
 		if (typeof collection == 'undefined') {
 			collection = this.state.id;
 		}
@@ -180,49 +169,37 @@ class CollectionContainer extends React.Component {
 		feathers_app.service('attributes').find({query: {coll: collection}})
 			.then(result => { this.setState({attributes: result}); });
 	}
-	bindEventListeners() {
-		this.fieldCreatedListener = this.handleCreatedField.bind(this);
-		this.fieldPatchedListener = this.handlePatchedField.bind(this);
-		this.fieldRemovedListener = this.handleRemovedField.bind(this);
-		feathers_app.service('fields').on('created', this.fieldCreatedListener);
-		feathers_app.service('fields').on('patched', this.fieldPatchedListener);
-		feathers_app.service('fields').on('removed', this.fieldRemovedListener);
-		this.thingCreatedListener = this.handleCreatedThing.bind(this);
-		this.thingPatchedListener = this.handlePatchedThing.bind(this);
-		this.thingRemovedListener = this.handleRemovedThing.bind(this);
-		feathers_app.service('things').on('created', this.thingCreatedListener);
-		feathers_app.service('things').on('patched', this.thingPatchedListener);
-		feathers_app.service('things').on('removed', this.thingRemovedListener);
-		this.attributeCreatedListener = this.handleCreatedAttribute.bind(this);
-		this.attributePatchedListener = this.handlePatchedAttribute.bind(this);
-		this.attributeRemovedListener = this.handleRemovedAttribute.bind(this);
-		feathers_app.service('attributes').on('created', this.attributeCreatedListener);
-		feathers_app.service('attributes').on('patched', this.attributePatchedListener);
-		feathers_app.service('attributes').on('removed', this.attributeRemovedListener);
-		this.collectionPatchedListener = this.handlePatchedCollection.bind(this);
-		feathers_app.service('collections').on('patched', this.collectionPatchedListener);
+	bindEventListeners = () => {
+		feathers_app.service('fields').on('created', this.handleCreatedField);
+		feathers_app.service('fields').on('patched', this.handlePatchedField);
+		feathers_app.service('fields').on('removed', this.handleRemovedField);
+		feathers_app.service('things').on('created', this.handleCreatedThing);
+		feathers_app.service('things').on('patched', this.handlePatchedThing);
+		feathers_app.service('things').on('removed', this.handleRemovedThing);
+		feathers_app.service('attributes').on('created', this.handleCreatedAttribute);
+		feathers_app.service('attributes').on('patched', this.handlePatchedAttribute);
+		feathers_app.service('attributes').on('removed', this.handleRemovedAttribute);
+		feathers_app.service('collections').on('patched', this.handlePatchedCollection);
 	}
 	componentWillReceiveProps(nextProps) {
 		this.setState({id: nextProps.routeParams.collection});
 		this.loadData(nextProps.routeParams.collection);
 	}
 	componentDidMount() {
-		this._mounted = true;
 		this.loadData();
 		this.bindEventListeners();
 	}
 	componentWillUnmount() {
-		feathers_app.service('fields').removeListener('created', this.fieldCreatedListener);
-		feathers_app.service('fields').removeListener('patched', this.fieldPatchedListener);
-		feathers_app.service('fields').removeListener('removed', this.fieldRemovedListener);
-		feathers_app.service('things').removeListener('created', this.thingCreatedListener);
-		feathers_app.service('things').removeListener('patched', this.thingPatchedListener);
-		feathers_app.service('things').removeListener('removed', this.thingRemovedListener);
-		feathers_app.service('attributes').removeListener('created', this.attributeCreatedListener);
-		feathers_app.service('attributes').removeListener('patched', this.attributePatchedListener);
-		feathers_app.service('attributes').removeListener('removed', this.attributeRemovedListener);
-		feathers_app.service('collections').removeListener('patched', this.collectionPatchedListener);
-		this._mounted = false;
+		feathers_app.service('fields').removeListener('created', this.handleCreatedField);
+		feathers_app.service('fields').removeListener('patched', this.handlePatchedField);
+		feathers_app.service('fields').removeListener('removed', this.handleRemovedField);
+		feathers_app.service('things').removeListener('created', this.handleCreatedThing);
+		feathers_app.service('things').removeListener('patched', this.handlePatchedThing);
+		feathers_app.service('things').removeListener('removed', this.handleRemovedThing);
+		feathers_app.service('attributes').removeListener('created', this.handleCreatedAttribute);
+		feathers_app.service('attributes').removeListener('patched', this.handlePatchedAttribute);
+		feathers_app.service('attributes').removeListener('removed', this.handleRemovedAttribute);
+		feathers_app.service('collections').removeListener('patched', this.handlePatchedCollection);
 	}
 	render() {
 		let that = this;
@@ -239,22 +216,22 @@ class CollectionContainer extends React.Component {
 					things={this.state.things}
 					attributes={this.state.attributes}
 					attributesObject={attributesObject}
-					onCreateField={this.createField.bind(this)}
-					onAddThing={this.addThing.bind(this)}
-					onChangeFieldType={this.changeFieldType.bind(this)}
-					onAddFieldOption={this.addFieldOption.bind(this)}
-					onMoveField={this.moveField.bind(this)}
-					onRenameField={this.renameField.bind(this)}
-					onRemoveField={this.removeField.bind(this)}
-					onRemoveThing={this.removeThing.bind(this)}
-					onCreateOption={this.handleCreateOption.bind(this)}
-					onCommitValueChange={this.commitValueChange.bind(this)}
+					onCreateField={this.createField}
+					onAddThing={this.addThing}
+					onChangeFieldType={this.changeFieldType}
+					onAddFieldOption={this.addFieldOption}
+					onMoveField={this.moveField}
+					onRenameField={this.renameField}
+					onRemoveField={this.removeField}
+					onRemoveThing={this.removeThing}
+					onCreateOption={this.handleCreateOption}
+					onCommitValueChange={this.commitValueChange}
 					readOnly={this.props.readOnly} />
 				{ React.Children.map(this.props.children, child => React.cloneElement(child, {
 					attributesObject: attributesObject,
 					fields: this.state.fields,
-					onCreateOption: this.handleCreateOption.bind(this),
-					onCommitValueChange: this.commitValueChange.bind(this),
+					onCreateOption: this.handleCreateOption,
+					onCommitValueChange: this.commitValueChange,
 					readOnly: this.props.readOnly
 				})) }
 			</div>

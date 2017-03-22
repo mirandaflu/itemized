@@ -1,7 +1,7 @@
 'use strict';
 
 const service = require('feathers-mongoose');
-const attribute = require('./attribute-model');
+const view = require('./view-model');
 const hooks = require('./hooks');
 const byCheckingWorkspace = require('../../filters/bycheckingworkspace.js');
 
@@ -9,22 +9,22 @@ module.exports = function() {
 	const app = this;
 
 	const options = {
-		Model: attribute,
+		Model: view,
 		paginate: false
 	};
 
 	// Initialize our service with any options it requires
-	app.use('/attributes', service(options));
+	app.use('/views', service(options));
 
 	// Get our initialize service to that we can bind hooks
-	const attributeService = app.service('/attributes');
+	const viewService = app.service('/views');
 
 	// Set up our before hooks
-	attributeService.before(hooks.before);
+	viewService.before(hooks.before);
 
 	// Set up our after hooks
-	attributeService.after(hooks.after);
+	viewService.after(hooks.after);
 
 	// Filter socket events: viewers/editors/admins of the workspace get updates
-	attributeService.filter(byCheckingWorkspace);
+	viewService.filter(byCheckingWorkspace);
 };
