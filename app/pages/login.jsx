@@ -11,7 +11,7 @@ class Login extends React.Component {
 	}
 	handleChange = (event) => {
 		let s = {};
-		s[e.target.id] = event.target.value;
+		s[event.target.id] = event.target.value;
 		this.setState(s);
 	}
 	handleSubmit = (event) => {
