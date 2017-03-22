@@ -8,6 +8,13 @@ import FilterMaker from './filtermaker.jsx';
 
 export default class CollectionSettingsShell extends React.Component {
 	state = {
+		viewType: null,
+		boardField: null,
+		cardField: null,
+		swimLane: null,
+		dateField: null,
+		views: [],
+		preset: null,
 		hide: [],
 		sort: [],
 		group: null,
@@ -50,16 +57,28 @@ export default class CollectionSettingsShell extends React.Component {
 	handleControlChange = (type, value) => {
 		let newFilter = false, s = {};
 		switch(type) {
+			case 'preset':
+				this.setState({
+					preset: value,
+					viewType: value.value.viewType || null,
+					boardField: value.value.boardField || null,
+					cardField: value.value.cardField || null,
+					swimLane: value.value.swimLane || null,
+					dateField: value.value.dateField || null
+				});
+				break;
 			case 'viewType':
 			case 'boardField':
 			case 'cardField':
 			case 'dateField':
 				s[type] = value.value;
-				feathers_app.service('collections').patch(this.props.collection._id, s).catch(console.error);
+				this.setState(s);
+				feathers_app.service('views').patch(this.state.preset.value._id, s).catch(console.error);
 				break;
 			case 'swimLane':
 				s[type] = (value == null)? null: value.value;
-				feathers_app.service('collections').patch(this.props.collection._id, s).catch(console.error);
+				this.setState(s);
+				feathers_app.service('views').patch(this.state.preset.value._id, s).catch(console.error);
 				break;
 			case 'filters':
 				for (let i in value) {
@@ -98,6 +117,30 @@ export default class CollectionSettingsShell extends React.Component {
 		};
 		feathers_app.service('localdata').patch(id, record).catch(console.error);
 	}
+	getPresets = (props) => {
+		if (!props.collection._id) return;
+		feathers_app.service('views').find({query:{ coll: props.collection._id }}).then(views => {
+			let s = {};
+			s.views = views;
+			let defaultView = views.filter(view => { return view.default == true })[0];
+			if (defaultView) {
+				s.preset = { value: defaultView, label: defaultView.name };
+				['viewType','boardField','cardField','swimLane','dateField'].map(p => {
+					s[p] = defaultView[p];
+				});
+			}
+			this.setState(s);
+		}).catch(console.error);
+	}
+	savePreset = () => {
+		let name = prompt('Name?');
+		if (!name) return;
+		let preset = { name: name, coll: this.props.collection._id };
+		['viewType','boardField','cardField','swimLane','dateField'].map(p => {
+			if (this.state[p]) preset[p] = this.state[p];
+		});
+		feathers_app.service('views').create(preset).catch(console.error);
+	}
 	getStoredFilters = (props) => {
 		if (!props.collection._id) return;
 		let id = 'filtersortgroup' + props.collection._id;
@@ -122,14 +165,52 @@ export default class CollectionSettingsShell extends React.Component {
 			});
 		});
 	}
-	componentDidMount() { this.getStoredFilters(this.props); }
-	componentWillReceiveProps(nextProps) { this.getStoredFilters(this.props); }
+	handleCreatedView = (view) => {
+		if (view.coll != this.props.collection._id) return;
+		this.setState({ views: this.state.views.concat(view) });
+	}
+	handlePatchedView = (view) => {
+		for (let i in this.state.views) {
+			if (this.state.views[i]._id == view._id) {
+				let newViews = this.state.views;
+				newViews[i] = Object.assign({}, view);
+				this.setState({ views: newViews });
+				break;
+			}
+		}
+	}
+	handleRemovedView = (view) => {
+		for (let i in this.state.views) {
+			if (this.state.views[i]._id == view._id) {
+				let newViews = this.state.views;
+				newViews.splice(i, 1);
+				this.setState({ views: newViews });
+				break;
+			}
+		}
+	}
+	componentDidMount() {
+		this.getPresets(this.props);
+		this.getStoredFilters(this.props);
+		feathers_app.service('views').on('created', this.handleCreatedView);
+		feathers_app.service('views').on('patched', this.handlePatchedView);
+		feathers_app.service('views').on('removed', this.handleRemovedView);
+	}
+	componentWillReceiveProps(nextProps) {
+		this.getPresets(nextProps);
+		this.getStoredFilters(nextProps);
+	}
+	componentWillUnmount() {
+		feathers_app.service('views').removeListener('created', this.handleCreatedView);
+		feathers_app.service('views').removeListener('patched', this.handlePatchedView);
+		feathers_app.service('views').removeListener('removed', this.handleRemovedView);
+	}
 	render() {
-		let CollectionComponent = (collectionViews[this.props.collection.viewType])?
-			collectionViews[this.props.collection.viewType].component:
+		let CollectionComponent = (collectionViews[this.state.viewType])?
+			collectionViews[this.state.viewType].component:
 			collectionViews['Table'].component;
-		let CollectionControls = (collectionViews[this.props.collection.viewType])?
-			collectionViews[this.props.collection.viewType].controls:
+		let CollectionControls = (collectionViews[this.state.viewType])?
+			collectionViews[this.state.viewType].controls:
 			collectionViews['Table'].controls;
 
 		let that = this;
@@ -247,23 +328,57 @@ export default class CollectionSettingsShell extends React.Component {
 			viewOptions.push({'value':o, 'label':o});
 		}
 		let boardOptions = this.props.fields
-			.filter(function(field) { return field.type == 'Single Select'; })
-			.map(function(field) { return {value: field._id, label: field.name}; });
+			.filter(field => { return field.type == 'Single Select'; })
+			.map(field => { return {value: field._id, label: field.name}; });
 		let cardOptions = this.props.fields
-			.map(function(field) { return {value: field._id, label: field.name}; });
+			.map(field => { return {value: field._id, label: field.name}; });
 		let swimLaneOptions = boardOptions;
 		let dateFieldOptions = this.props.fields
-			.filter(function(field) { return field.type.indexOf('Date') != -1; })
-			.map(function(field) { return {value: field._id, label: field.name}; });
+			.filter(field => { return field.type.indexOf('Date') != -1; })
+			.map(field => { return {value: field._id, label: field.name}; });
+		let presetOptions = this.state.views
+			.map(view => { return {value: view, label: view.name}; });
 
 		return (
 			<div>
 				<div className="sortfiltergroup pure-g"
 					style={{display:(this.state.controlsVisible)?'inherit':'none'}}>
+					{!this.props.readOnly &&
+						<div className={this.state.controlDivClassName} style={{textAlign:'center'}}>
+							<button className="pure-button button-small"
+								disabled={this.props.collection.position == 0}
+								onClick={this.moveCollection.bind(this, 'left')}>
+								<i className="fa fa-arrow-left" />
+							</button>
+							<button className="pure-button button-small" disabled="true">Reorder</button>
+							<button className="pure-button button-small"
+								disabled={this.props.collection.position == this.props.collectionsLength - 1}
+								onClick={this.moveCollection.bind(this, 'right')}>
+								<i className="fa fa-arrow-right" />
+							</button>
+						</div>
+					}
+					{!this.props.readOnly &&
+						<div className={this.state.controlDivClassName} style={{textAlign:'center'}}>
+							<Link className="pure-button button-small"
+								to={'/workspace/'+this.props.collection.workspace+'/collection/'+this.props.collection._id+'/configure'}>
+								Edit Collection
+							</Link>
+						</div>
+					}
+					<div className={this.state.controlDivClassName}>
+						<Select
+							placeholder="Preset"
+							value={this.state.preset}
+							options={presetOptions}
+							clearable={false}
+							onChange={this.handleControlChange.bind(this, 'preset')} />
+						<i className="fa fa-bookmark" />
+					</div>
 					<div className={this.state.controlDivClassName}>
 						<Select
 							placeholder="View as"
-							value={this.props.collection.viewType}
+							value={this.state.viewType}
 							options={viewOptions}
 							clearable={false}
 							onChange={this.handleControlChange.bind(this, 'viewType')} />
@@ -273,7 +388,7 @@ export default class CollectionSettingsShell extends React.Component {
 						<div className={this.state.controlDivClassName}>
 							<Select
 								placeholder="List by"
-								value={this.props.collection.boardField}
+								value={this.state.boardField}
 								options={boardOptions}
 								clearable={false}
 								onChange={this.handleControlChange.bind(this, 'boardField')} />
@@ -284,7 +399,7 @@ export default class CollectionSettingsShell extends React.Component {
 						<div className={this.state.controlDivClassName}>
 							<Select
 								placeholder="Card name"
-								value={this.props.collection.cardField}
+								value={this.state.cardField}
 								options={cardOptions}
 								clearable={false}
 								onChange={this.handleControlChange.bind(this, 'cardField')} />
@@ -295,13 +410,33 @@ export default class CollectionSettingsShell extends React.Component {
 						<div className={this.state.controlDivClassName}>
 							<Select
 								placeholder="Swim lane"
-								value={this.props.collection.swimLane}
+								value={this.state.swimLane}
 								options={swimLaneOptions}
 								clearable={true}
 								onChange={this.handleControlChange.bind(this, 'swimLane')} />
 							<i className="fa fa-tasks" />
 						</div>
 					}
+					{CollectionControls.dateby &&
+						<div className={this.state.controlDivClassName}>
+							<Select
+								placeholder="Date by"
+								value={this.state.dateField}
+								options={dateFieldOptions}
+								clearable={false}
+								onChange={this.handleControlChange.bind(this, 'dateField')} />
+							<i className="fa fa-calendar" />
+						</div>
+					}
+					{!this.props.readOnly &&
+						<div className={this.state.controlDivClassName} style={{textAlign:'center'}}>
+							<button className="pure-button button-small" onClick={this.savePreset}>
+								Save Preset
+							</button>
+						</div>
+					}
+				</div>
+				<div className="sortfiltergroup pure-g">
 					{CollectionControls.hide &&
 						<div className={this.state.controlDivClassName}>
 							<Select
@@ -323,17 +458,6 @@ export default class CollectionSettingsShell extends React.Component {
 								options={this.props.fields.map(function(field){ return { value: field._id, label: field.name }; })}
 								onChange={this.handleControlChange.bind(this, 'sort')} />
 							<i className="fa fa-sort" onClick={this.toggleAscDesc} />
-						</div>
-					}
-					{CollectionControls.dateby &&
-						<div className={this.state.controlDivClassName}>
-							<Select
-								placeholder="Date by"
-								value={this.props.collection.dateField}
-								options={dateFieldOptions}
-								clearable={false}
-								onChange={this.handleControlChange.bind(this, 'dateField')} />
-							<i className="fa fa-calendar" />
 						</div>
 					}
 					<div className={this.state.controlDivClassName}>
@@ -364,29 +488,6 @@ export default class CollectionSettingsShell extends React.Component {
 							<i className="fa fa-object-group" />
 						</div>
 					}
-					{!this.props.readOnly &&
-						<div className={this.state.controlDivClassName} style={{textAlign:'center'}}>
-							<button className="pure-button button-small"
-								disabled={this.props.collection.position == 0}
-								onClick={this.moveCollection.bind(this, 'left')}>
-								<i className="fa fa-arrow-left" />
-							</button>
-							<button className="pure-button button-small" disabled="true">Reorder</button>
-							<button className="pure-button button-small"
-								disabled={this.props.collection.position == this.props.collectionsLength - 1}
-								onClick={this.moveCollection.bind(this, 'right')}>
-								<i className="fa fa-arrow-right" />
-							</button>
-						</div>
-					}
-					{!this.props.readOnly &&
-						<div className={this.state.controlDivClassName} style={{textAlign:'center'}}>
-							<Link className="pure-button button-small"
-								to={'/workspace/'+this.props.collection.workspace+'/collection/'+this.props.collection._id+'/configure'}>
-								Edit Collection
-							</Link>
-						</div>
-					}
 				</div>
 				<div className="pure-g">
 					<div className="pure-u-1">
@@ -409,6 +510,13 @@ export default class CollectionSettingsShell extends React.Component {
 					</div>
 				</div>
 				<CollectionComponent
+					view={{
+						viewType: this.state.viewType,
+						boardField: this.state.boardField,
+						cardField: this.state.cardField,
+						swimLane: this.state.swimLane,
+						dateField: this.state.dateField
+					}}
 					collection={this.props.collection}
 					fields={fields}
 					things={things}

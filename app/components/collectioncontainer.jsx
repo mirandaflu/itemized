@@ -62,7 +62,6 @@ class CollectionContainer extends React.Component {
 		this.setState({ fields: this.state.fields.concat(field) });
 	}
 	handlePatchedField = (field) => {
-		if (!this._mounted) return;
 		for (let i in this.state.fields) {
 			if (this.state.fields[i]._id == field._id) {
 				let newFields = this.state.fields;
@@ -112,12 +111,12 @@ class CollectionContainer extends React.Component {
 			}
 		}
 	}
-	commitValueChange = (thing, field, attribute, e) => {
+	commitValueChange = (thing, field, attribute, event) => {
 		let newAttribute = {
 			coll: this.state.id,
 			thing: thing,
 			field: field,
-			value: e.target.value
+			value: event.target.value
 		};
 		if (attribute == null) {
 			feathers_app.service('attributes').create(newAttribute).catch(this.showMessage.bind(this));

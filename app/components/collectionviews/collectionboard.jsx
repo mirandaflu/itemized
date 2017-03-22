@@ -11,8 +11,8 @@ class CollectionBoard extends React.Component {
 		this.state = {
 			things: this.props.things,
 			attributesObject: this.props.attributesObject,
-			boardField: this.getField(this.props, this.props.collection.boardField),
-			swimLane: this.getField(this.props, this.props.collection.swimLane),
+			boardField: this.getField(this.props, this.props.view.boardField),
+			swimLane: this.getField(this.props, this.props.view.swimLane),
 			dragging: null,
 			dragID: null,
 			dragStartX: 0,
@@ -66,7 +66,7 @@ class CollectionBoard extends React.Component {
 	}
 	setListPositions = (props, things) => {
 		things = Object.assign(things);
-		let boardField = this.getField(props, props.collection.boardField),
+		let boardField = this.getField(props, props.view.boardField),
 			attributesObject = props.attributesObject,
 			needsUpdate = [];
 		let listMapping = {};
@@ -76,7 +76,7 @@ class CollectionBoard extends React.Component {
 				things.map(function(thing) {
 					if (!attributesObject[thing._id + boardField._id]) return;
 					if (attributesObject[thing._id + boardField._id].value == option) {
-						let nameIndex = thing._id + props.collection.cardField,
+						let nameIndex = thing._id + props.view.cardField,
 							cardName = (attributesObject[nameIndex])?
 								attributesObject[nameIndex].value:
 								null;
@@ -97,7 +97,7 @@ class CollectionBoard extends React.Component {
 	addThing = (event) => {
 		let cardFieldName = '', fields = this.props.fields;
 		for (let i in fields) {
-			if (fields[i]._id == this.props.collection.cardField) {
+			if (fields[i]._id == this.props.view.cardField) {
 				cardFieldName = fields[i].name;
 			}
 		}
@@ -114,21 +114,21 @@ class CollectionBoard extends React.Component {
 			let attr1 = {
 				coll: this.props.collection._id,
 				thing: newThing._id,
-				field: this.props.collection.cardField,
+				field: this.props.view.cardField,
 				value: s
 			}, attr2 = {
 				coll: this.props.collection._id,
 				thing: newThing._id,
-				field: this.props.collection.boardField,
+				field: this.props.view.boardField,
 				value: listvalue
 			};
 			feathers_app.service('attributes').create(attr1).catch(console.error);
 			feathers_app.service('attributes').create(attr2).catch(console.error);
-			if (this.props.collection.swimLane) {
+			if (this.props.view.swimLane) {
 				let attr3 = {
 					coll: this.props.collection._id,
 					thing: newThing._id,
-					field: this.props.collection.swimLane,
+					field: this.props.view.swimLane,
 					value: swimLane
 				}
 				feathers_app.service('attributes').create(attr3).catch(console.error);
@@ -149,9 +149,9 @@ class CollectionBoard extends React.Component {
 		things.sort(function(a,b) { return a.listPosition - b.listPosition; });
 		this.setState({
 			attributesObject: nextProps.attributesObject,
-			boardField: this.getField(nextProps, this.props.collection.boardField),
+			boardField: this.getField(nextProps, this.props.view.boardField),
 			things: things,
-			swimLane: this.getField(nextProps, this.props.collection.swimLane)
+			swimLane: this.getField(nextProps, this.props.view.swimLane)
 		});
 	}
 	componentDidMount() {
@@ -180,7 +180,7 @@ class CollectionBoard extends React.Component {
 								if (!attributesObject[thing._id + boardField._id]) return;
 								if (attributesObject[thing._id + boardField._id].value == option &&
 								(!options.swimLane || attributesObject[thing._id + options.swimLane._id].value == options.swimLaneOption)) {
-									let nameIndex = thing._id + that.props.collection.cardField,
+									let nameIndex = thing._id + that.props.view.cardField,
 										cardName = (attributesObject[nameIndex])?
 											attributesObject[nameIndex].value:
 											null;
@@ -204,7 +204,7 @@ class CollectionBoard extends React.Component {
 											data-thingid={thing._id}
 											data-thingposition={i}
 											data-listposition={thing.listPosition}
-											key={thing._id + that.props.collection.cardField}>
+											key={thing._id + that.props.view.cardField}>
 
 											<Link style={{float:'right'}}
 												to={'/workspace/'+that.props.collection.workspace+'/collection/'+that.props.collection._id+'/thing/'+thing._id}>
