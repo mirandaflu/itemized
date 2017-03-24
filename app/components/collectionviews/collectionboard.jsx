@@ -135,10 +135,9 @@ class CollectionBoard extends React.Component {
 	}
 	getField = (props, id) => {
 		let field = null;
-		const sourceProp = 'fields';
-		for (const i in props[sourceProp]) {
-			if (props[sourceProp][i]._id === id) {
-				field = props[sourceProp][i];
+		for (const i in props.fields) {
+			if (props.fields[i]._id === id) {
+				field = props.fields[i];
 				break;
 			}
 		}
@@ -149,9 +148,9 @@ class CollectionBoard extends React.Component {
 		things.sort((a, b) => { return a.listPosition - b.listPosition; });
 		this.setState({
 			attributesObject: nextProps.attributesObject,
-			boardField: this.getField(nextProps, this.props.view.boardField),
+			boardField: this.getField(nextProps, nextProps.view.boardField),
 			things: things,
-			swimLane: this.getField(nextProps, this.props.view.swimLane)
+			swimLane: this.getField(nextProps, nextProps.view.swimLane)
 		});
 	}
 	componentDidMount() {

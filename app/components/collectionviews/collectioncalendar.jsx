@@ -28,10 +28,9 @@ export default class CollectionCalendar extends React.Component {
 	}
 	getField = (props, id) => {
 		let field = null;
-		const sourceProp = 'fields';
-		for (const i in props[sourceProp]) {
-			if (props[sourceProp][i]._id === id) {
-				field = props[sourceProp][i];
+		for (const i in props.fields) {
+			if (props.fields[i]._id === id) {
+				field = props.fields[i];
 				break;
 			}
 		}
@@ -41,8 +40,8 @@ export default class CollectionCalendar extends React.Component {
 		this.setState({
 			things: nextProps.things,
 			attributesObject: nextProps.attributesObject,
-			dateField: this.getField(nextProps, this.props.view.dateField),
-			swimLane: this.getField(nextProps, this.props.view.swimLane)
+			dateField: this.getField(nextProps, nextProps.view.dateField),
+			swimLane: this.getField(nextProps, nextProps.view.swimLane)
 		});
 	}
 	componentDidMount() {
