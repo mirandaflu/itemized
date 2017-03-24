@@ -2,13 +2,13 @@ import React from 'react';
 import Modal from 'react-modal';
 import Select from 'react-select';
 
-import filterTypes from './filterTypes.js'
+import filterTypes from './filterTypes.js';
 
 class FilterRow extends React.Component {
 	constructor(props) {
 		super(props);
-		let operatorOptions = [];
-		for (let f in filterTypes) {
+		const operatorOptions = [];
+		for (const f in filterTypes) {
 			operatorOptions.push({
 				label: f,
 				value: filterTypes[f]
@@ -19,10 +19,10 @@ class FilterRow extends React.Component {
 			field: this.props.field || null,
 			operator: this.props.operator || { label: 'is', value: filterTypes.is },
 			value: this.props.value || null
-		}
+		};
 	}
 	handleSelectChange = (type, value) => {
-		let s = {};
+		const s = {};
 		s[type] = value;
 		this.setState(s);
 		this.props.onChange(s);
@@ -31,31 +31,31 @@ class FilterRow extends React.Component {
 		this.props.onChange({ operator: this.state.operator });
 	}
 	render() {
-		let that = this;
+		const that = this;
 
-		let valueOptions = this.props.attributes.filter(function(attribute) {
+		let valueOptions = this.props.attributes.filter(attribute => {
 			if (!that.state.field) return false;
-			else return attribute.field == that.state.field.value._id;
-		}).map(function(attribute) { return attribute.value; });
+			return attribute.field === that.state.field.value._id;
+		}).map(attribute => { return attribute.value; });
 		valueOptions = [ ...new Set(valueOptions)]; // remove duplicates
-		valueOptions = valueOptions.map(function(attribute) {
+		valueOptions = valueOptions.map(attribute => {
 			return { value: attribute, label: attribute };
 		});
 
 		return (
-			<div style={{marginBottom:'10px'}}>
+			<div style={{marginBottom: '10px'}}>
 				<Select
 					clearable={false}
 					value={this.state.field}
 					onChange={this.handleSelectChange.bind(this, 'field')}
-					options={this.props.fields.map(function(field){ return { value: field, label: field.name }; })} />
+					options={this.props.fields.map(field => { return { value: field, label: field.name }; })} />
 				<Select
 					clearable={false}
 					value={this.state.operator}
 					onChange={this.handleSelectChange.bind(this, 'operator')}
-					options={this.state.operatorOptions.filter(function(opt) {
+					options={this.state.operatorOptions.filter(opt => {
 						if (!that.state.field) return false;
-						else return opt.value.fieldTypes.indexOf(that.state.field.value.type) !== -1;
+						return opt.value.fieldTypes.indexOf(that.state.field.value.type) !== -1;
 					})} />
 				{!this.state.operator.noValue && <Select.Creatable
 					value={this.state.value}
@@ -81,17 +81,18 @@ export default class FilterMaker extends React.Component {
 	addFilter = () => this.props.onChange(this.props.filters.length, this.defaultFilter());
 	closeModal = () => this.props.onClose();
 	componentWillReceiveProps(nextProps) {
-		if (nextProps.isOpen && this.props.filters.length == 0) {
+		if (nextProps.isOpen && this.props.filters.length === 0) {
 			this.addFilter();
 		}
 	}
 	render() {
-		let that = this, i = -1;
+		const that = this;
+		let i = -1;
 		return (
 			<Modal isOpen={this.props.isOpen} contentLabel="Modal-FilterMaker">
 				<div className="modalContent">
 					<button className="pure-button" onClick={this.closeModal}><i className="fa fa-close" /></button>
-					
+
 					<form className="pure-form">
 						<label htmlFor="all" className="pure-radio">
 							<input type="radio" id="all" name="match" value="all"
@@ -105,7 +106,7 @@ export default class FilterMaker extends React.Component {
 
 					<br /><br />
 
-					{this.props.filters.map(function(filter) {
+					{this.props.filters.map(filter => {
 						i++;
 						return (
 							<FilterRow key={i}
@@ -118,7 +119,7 @@ export default class FilterMaker extends React.Component {
 						);
 					})}
 					<br />
-					<button style={{float:'none'}} className="pure-button" onClick={this.addFilter}>Add Filter</button>
+					<button style={{float: 'none'}} className="pure-button" onClick={this.addFilter}>Add Filter</button>
 				</div>
 			</Modal>
 		);

@@ -2,10 +2,10 @@ import React from 'react';
 
 class Banner extends React.Component {
 	componentDidMount() {
-		this.refs.banner.className = "alert animated shake";
+		this.refs.banner.className = 'alert animated shake';
 	}
 	componentWillUnmount() {
-		this.refs.banner.className = "alert";
+		this.refs.banner.className = 'alert';
 	}
 	render() {
 		return (
@@ -21,8 +21,8 @@ class Banner extends React.Component {
 
 export default class MessageBanner extends React.Component {
 	state = { messageText: null }
-	clearMessage = () => this.setState({messageText:null});
-	showMessage = (message) => this.setState({messageText:message});
+	clearMessage = () => this.setState({messageText: null});
+	showMessage = (message) => this.setState({messageText: message});
 	render() {
 		return (
 			<div className="messagebanner">

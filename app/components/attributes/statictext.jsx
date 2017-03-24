@@ -4,27 +4,24 @@ import { Link } from 'react-router';
 export default class StaticInput extends React.Component {
 	state = { value: this.props.value }
 	setValue = (props) => {
-		if (props.value == null || props.value == '') {
+		if (props.value === null || props.value === '') {
 			this.setState({ value: null });
-		}
-		else if (this.props.fieldType == 'Attribute Reference') {
-			feathers_app.service('attributes').find({query:{
+		} else if (this.props.fieldType === 'Attribute Reference') {
+			feathersApp.service('attributes').find({query: {
 				_id: props.value
 			}}).then(attributes => {
-				if (attributes.length == 0) {
+				if (attributes.length === 0) {
 					this.setState({ value: null });
-				}
-				else {
+				} else {
 					this.setState({ value: attributes[0].value });
 				}
 			}).catch();
-		}
-		else {
+		} else {
 			this.setState({ value: props.value });
 		}
 	}
 	handlePatchedAttribute = (attribute) => {
-		if (this.props.value == attribute._id) {
+		if (this.props.value === attribute._id) {
 			this.setValue(this.props);
 		}
 	}
@@ -33,21 +30,22 @@ export default class StaticInput extends React.Component {
 	}
 	componentDidMount() {
 		this.setValue(this.props);
-		if (this.props.fieldType == 'Attribute Reference') {
+		if (this.props.fieldType === 'Attribute Reference') {
 			this.attributePatchedListener = this.handlePatchedAttribute.bind(this);
-			feathers_app.service('attributes').on('patched', this.attributePatchedListener);
+			feathersApp.service('attributes').on('patched', this.attributePatchedListener);
 		}
 	}
 	componentWillUnmount() {
-		if (this.props.fieldType == 'Attribute Reference') {
-			feathers_app.service('attributes').removeListener('patched', this.attributePatchedListener);
+		if (this.props.fieldType === 'Attribute Reference') {
+			feathersApp.service('attributes').removeListener('patched', this.attributePatchedListener);
 		}
 	}
 	render() {
 		return (
-			<span className="staticInput" style={{padding:'4px'}}>
-				{this.props.fieldType == 'Attribute Reference' &&
-					<Link style={{float:'right'}} to={'/workspace/'+this.props.workspace+'/collection/'+this.props.collection+'/reference/'+this.props.thing+'/'+this.props.field}>
+			<span className="staticInput" style={{padding: '4px'}}>
+				{this.props.fieldType === 'Attribute Reference' &&
+					<Link style={{float: 'right'}}
+						to={'/workspace/' + this.props.workspace + '/collection/' + this.props.collection + '/reference/' + this.props.thing + '/' + this.props.field}>
 						<i className="fa fa-edit" />
 					</Link>
 				}

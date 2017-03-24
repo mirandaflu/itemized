@@ -7,46 +7,46 @@ import DateInput from './dateinput.jsx';
 import LinkInput from './linkinput.jsx';
 
 module.exports = {
-	"Static": {
+	'Static': {
 		component: StaticText
 	},
-	"Text": {
+	'Text': {
 		component: TextInput
 	},
-	"Number": {
+	'Number': {
 		component: NumberInput
 	},
-	"Checkbox": {
+	'Checkbox': {
 		component: CheckboxInput
 	},
-	"Single Select": {
+	'Single Select': {
 		component: SelectInput
 	},
-	"Multiple Select": {
+	'Multiple Select': {
 		component: SelectInput
 	},
-	"Date": {
+	'Date': {
 		component: DateInput
 	},
-	"Time": {
+	'Time': {
 		component: DateInput
 	},
-	"Date and Time": {
+	'Date and Time': {
 		component: DateInput
 	},
-	"Email Address": {
+	'Email Address': {
 		component: LinkInput
 	},
-	"URL": {
+	'URL': {
 		component: LinkInput
 	},
-	"Attribute Reference": {
+	'Attribute Reference': {
 		component: StaticText
 	},
-	"Single Field Reference": {
+	'Single Field Reference': {
 		component: SelectInput
 	},
-	"Multiple Field Reference": {
+	'Multiple Field Reference': {
 		component: SelectInput
 	}
 };

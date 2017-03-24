@@ -5,9 +5,9 @@ export default class UserSelect extends React.Component {
 	state = { value: this.props.value }
 	loadUsers = (input, callback) => {
 		if (!input) return Promise.resolve({ options: [] });
-		let query = {username: {$regex: input, $options: 'i'}};
-		return feathers_app.service('users').find({query:query}).then(result => {
-			let options = result.data.map(function(user) {
+		const query = {username: {$regex: input, $options: 'i'}};
+		return feathersApp.service('users').find({query: query}).then(result => {
+			const options = result.data.map(user => {
 				return { label: user.username, value: user._id };
 			});
 			return { options: options };

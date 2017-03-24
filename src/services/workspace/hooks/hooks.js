@@ -1,5 +1,5 @@
-exports.removeAssociated = function(options) {
-	return function(hook) {
+exports.removeAssociated = options => {
+	return hook => {
 		return new Promise((resolve, reject) => {
 			hook.app.service('collections').remove(null, {query: {workspace: hook.id}}).then(result => {
 				resolve(hook);
@@ -8,8 +8,8 @@ exports.removeAssociated = function(options) {
 	};
 };
 
-exports.restrictToAnyRole = function(options) {
-	return function(hook) {
+exports.restrictToAnyRole = options => {
+	return hook => {
 		return new Promise((resolve, reject) => {
 			hook.params.query = {$and: [
 				{$or: [
@@ -25,8 +25,8 @@ exports.restrictToAnyRole = function(options) {
 	};
 };
 
-exports.restrictToEditorOrHigher = function(options) {
-	return function(hook) {
+exports.restrictToEditorOrHigher = options => {
+	return hook => {
 		return new Promise((resolve, reject) => {
 			// only let owner or admin share
 			if (hook.data.owner || hook.data.admins || hook.data.editors || hook.data.viewers) {
@@ -38,9 +38,7 @@ exports.restrictToEditorOrHigher = function(options) {
 					hook.params.query
 				]};
 				resolve(hook);
-			}
-			// let owner, admin, and editor edit
-			else {
+			} else { // let owner, admin, and editor edit
 				hook.params.query = {$and: [
 					{$or: [
 						{owner: hook.params.user},
@@ -55,8 +53,8 @@ exports.restrictToEditorOrHigher = function(options) {
 	};
 };
 
-exports.restrictToAdminOrHigher = function(options) {
-	return function(hook) {
+exports.restrictToAdminOrHigher = options => {
+	return hook => {
 		return new Promise((resolve, reject) => {
 			hook.params.query = {$and: [
 				{$or: [

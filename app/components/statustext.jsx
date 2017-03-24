@@ -6,7 +6,7 @@ export default class StatusText extends React.Component {
 			<span>
 				{!this.props.loaded && !this.props.error &&
 					'Loading...'}
-				{this.props.loaded && this.props.data.length == 0 &&
+				{this.props.loaded && this.props.data.length === 0 &&
 					this.props.nodatamessage}
 				{this.props.error &&
 					'Error'}
