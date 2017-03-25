@@ -15,19 +15,24 @@ class ConfigureCollection extends React.Component {
 			.then(result => { this.setState({ collection: result, name: result.name }); })
 			.catch(this.showMessage.bind(this));
 	}
-	getViews = (props) => {
+	getViews = () => {
 		feathersApp.service('views').find({query: { coll: this.props.params.collection }}).then(views => {
 			this.setState({ views: views });
 		}).catch(console.error);
 	}
-	deleteView = (view) => {
+	makeDefaultView = view => {
+		feathersApp.service('views').patch(view, {default: true}).then(result => {
+			console.log(result);
+		}).catch(console.error);
+	}
+	deleteView = view => {
 		feathersApp.service('views').remove(view).catch(console.error);
 	}
-	handleCreatedView = (view) => {
+	handleCreatedView = view => {
 		if (view.coll !== this.props.params.collection) return;
 		this.setState({ views: this.state.views.concat(view) });
 	}
-	handlePatchedView = (view) => {
+	handlePatchedView = view => {
 		for (const i in this.state.views) {
 			if (this.state.views[i]._id === view._id) {
 				const newViews = this.state.views;
@@ -37,7 +42,7 @@ class ConfigureCollection extends React.Component {
 			}
 		}
 	}
-	handleRemovedView = (view) => {
+	handleRemovedView = view => {
 		for (const i in this.state.views) {
 			if (this.state.views[i]._id === view._id) {
 				const newViews = this.state.views;
@@ -58,7 +63,7 @@ class ConfigureCollection extends React.Component {
 	}
 	handleDeleteClick = () => {
 		if (!confirm('Are you sure?')) return;
-		feathersApp.service('collections').remove(this.props.params.collection).then(result => {
+		feathersApp.service('collections').remove(this.props.params.collection).then(() => {
 			this.props.router.push('/workspace/' + this.props.params.workspace);
 		});
 	}
@@ -118,15 +123,22 @@ class ConfigureCollection extends React.Component {
 						Delete Collection
 					</button>
 
-					<h3>Views</h3>
+					<h3>Custom Views</h3>
 					{this.state.views.map(view => {
 						return (
-							<div key={view._id} className="pure-g" style={{width: '50%'}}>
-								<div className="pure-u-1-2" style={{padding: '4pt'}}>
+							<div key={view._id} className="pure-g">
+								<div className="pure-u-1 pure-u-sm-1-3" style={{padding: '4pt'}}>
 									{view.name}
 								</div>
+								<div className="pure-u-1 pure-u-sm-1-3">
+									<button className="pure-button button-small button-secondary"
+										onClick={that.makeDefaultView.bind(that, view._id)}
+										disabled={view.default}>
+										Make Default View
+									</button>
+								</div>
 								{!view.default &&
-									<div className="pure-u-1-2">
+									<div className="pure-u-1 pure-u-sm-1-3">
 										<button className="pure-button button-small button-error"
 											onClick={that.deleteView.bind(that, view._id)}>
 											Delete View

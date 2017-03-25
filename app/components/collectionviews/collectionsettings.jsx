@@ -13,6 +13,10 @@ export default class CollectionSettingsShell extends React.Component {
 		cardField: null,
 		swimLane: null,
 		dateField: null,
+		tableView: {
+			name: 'Basic Table',
+			viewType: 'Table'
+		},
 		views: [],
 		preset: null,
 		hide: [],
@@ -73,17 +77,13 @@ export default class CollectionSettingsShell extends React.Component {
 			case 'cardField':
 			case 'dateField':
 				s[type] = value.value;
+				s.preset = null;
 				this.setState(s);
-				if (this.state.preset) {
-					feathersApp.service('views').patch(this.state.preset.value._id, s).catch(console.error);
-				}
 				break;
 			case 'swimLane':
 				s[type] = (value === null) ? null : value.value;
+				s.preset = null;
 				this.setState(s);
-				if (this.state.preset) {
-					feathersApp.service('views').patch(this.state.preset.value._id, s).catch(console.error);
-				}
 				break;
 			case 'filters':
 				for (const i in value) {
@@ -343,7 +343,7 @@ export default class CollectionSettingsShell extends React.Component {
 		const dateFieldOptions = this.props.fields
 			.filter(field => { return field.type.indexOf('Date') !== -1; })
 			.map(field => { return {value: field._id, label: field.name}; });
-		const presetOptions = this.state.views
+		const presetOptions = [this.state.tableView].concat(this.state.views)
 			.map(view => { return {value: view, label: view.name}; });
 
 		return (

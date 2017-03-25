@@ -7,7 +7,7 @@ import MessageBanner from './messagebanner.jsx';
 
 class ConfigureWorkspace extends React.Component {
 	state = {
-		name: null,
+		name: '',
 		workspace: {
 			admins: [],
 			editors: [],
