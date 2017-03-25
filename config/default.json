@@ -8,14 +8,6 @@
       "secret": "GzPgHR5c6tgeBNj/HVBZTNL24MuZnPbJlmV+/sCJDHBuQI8pzyHFAp+DD0Z8b6s9yrHPLXxHed7DC0vITKEy0g=="
     },
     "local": {},
-    "google": {
-      "clientID": "1084045989524-na7vgs6mc7tvkqetso21a15sfivnhsqt.apps.googleusercontent.com",
-      "clientSecret": "oSLzEt1znTU_nOUsmLAPgbzk",
-      "permissions": {
-        "authType": "rerequest",
-        "scope": ["profile"]
-      }
-    },
     "successRedirect": "/",
     "failureFlash": true
   }
