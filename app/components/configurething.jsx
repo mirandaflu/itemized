@@ -16,21 +16,21 @@ class ConfigureThing extends React.Component {
 	}
 	handleDeleteClick = () => {
 		if (!confirm('Are you sure?')) return;
-		feathers_app.service('things').remove(this.props.params.thing).catch(console.error);
+		feathersApp.service('things').remove(this.props.params.thing).catch(console.error);
 		this.returnToCollection();
 	}
 	updateState = (props) => {
 		this.setState({
 			attributesObject: props.attributesObject,
 			fields: props.fields
-		})
+		});
 	}
 	componentDidMount() { this.updateState(this.props); }
 	componentWillReceiveProps(nextProps) { this.updateState(nextProps); }
 	render() {
-		let that = this;
+		const that = this;
 		return (
-			<Modal isOpen={true} contentLabel="configurecollection">
+			<Modal isOpen contentLabel="configurecollection">
 				<div className="modalContent">
 					<MessageBanner ref="messageBanner" />
 					<button
@@ -40,15 +40,15 @@ class ConfigureThing extends React.Component {
 					</button>
 					<form className="pure-form pure-form-aligned" onSubmit={this.returnToCollection}>
 						<fieldset>
-							{this.props.fields.map(function(field) {
-								let FieldComponent = fieldTypes[field.type].component,
-									attribute = that.state.attributesObject[that.props.params.thing + field._id],
-									value = (attribute)? attribute.value: null;
+							{this.props.fields.map(field => {
+								const FieldComponent = fieldTypes[field.type].component;
+								const attribute = that.state.attributesObject[that.props.params.thing + field._id];
+								const value = (attribute) ? attribute.value : null;
 								return (
-									<div key={field._id} className="pure-control-group" style={{maxWidth:'380px'}}>
+									<div key={field._id} className="pure-control-group" style={{maxWidth: '380px'}}>
 										<label>{field.name}</label>
 										<FieldComponent
-											clearable={true}
+											clearable
 											fieldType={field.type}
 											workspace={that.props.params.workspace}
 											collection={that.props.params.collection}

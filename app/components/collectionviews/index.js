@@ -3,7 +3,7 @@ import CollectionBoard from './collectionboard.jsx';
 import CollectionCalendar from './collectioncalendar.jsx';
 
 module.exports = {
-	"Table": {
+	'Table': {
 		component: CollectionTable,
 		controls: {
 			hide: true,
@@ -12,7 +12,7 @@ module.exports = {
 			group: true
 		}
 	},
-	"Board": {
+	'Board': {
 		component: CollectionBoard,
 		controls: {
 			filter: true,
@@ -21,7 +21,7 @@ module.exports = {
 			swimlane: true
 		}
 	},
-	"Calendar": {
+	'Calendar': {
 		component: CollectionCalendar,
 		controls: {
 			filter: true,

@@ -1,39 +1,35 @@
 'use strict';
 
-module.exports = function(data, connection, hook) {
+module.exports = (data, connection, hook) => {
 	return new Promise((resolve, reject) => {
-		let userID = connection.user._id.toString();
+		const userID = connection.user._id.toString();
 		if (data.workspace) {
 			hook.app.service('workspaces').get(data.workspace).then(workspace => {
-				let owner = workspace.owner.toString(),
-					admins = workspace.admins.map((o) => o.toString()),
-					editors = workspace.editors.map((o) => o.toString()),
-					viewers = workspace.viewers.map((o) => o.toString());
-				if (userID != owner && admins.indexOf(userID) == -1 && editors.indexOf(userID) == -1 && viewers.indexOf(userID) == -1) {
+				const owner = workspace.owner.toString();
+				const admins = workspace.admins.map((o) => o.toString());
+				const editors = workspace.editors.map((o) => o.toString());
+				const viewers = workspace.viewers.map((o) => o.toString());
+				if (userID !== owner && admins.indexOf(userID) === -1 && editors.indexOf(userID) === -1 && viewers.indexOf(userID) === -1) {
 					reject();
-				}
-				else {
+				} else {
 					resolve(data);
 				}
 			}).catch(reject);
-		}
-		else if (data.coll) {
+		} else if (data.coll) {
 			hook.app.service('collections').get(data.coll).then(coll => {
 				hook.app.service('workspaces').get(coll.workspace).then(workspace => {
-					let owner = workspace.owner.toString(),
-						admins = workspace.admins.map((o) => o.toString()),
-						editors = workspace.editors.map((o) => o.toString()),
-						viewers = workspace.viewers.map((o) => o.toString());
-					if (userID != owner && admins.indexOf(userID) == -1 && editors.indexOf(userID) == -1 && viewers.indexOf(userID) == -1) {
+					const owner = workspace.owner.toString();
+					const admins = workspace.admins.map((o) => o.toString());
+					const editors = workspace.editors.map((o) => o.toString());
+					const viewers = workspace.viewers.map((o) => o.toString());
+					if (userID !== owner && admins.indexOf(userID) === -1 && editors.indexOf(userID) === -1 && viewers.indexOf(userID) === -1) {
 						reject();
-					}
-					else {
+					} else {
 						resolve(data);
 					}
 				}).catch(reject);
 			}).catch(reject);
-		}
-		else {
+		} else {
 			reject();
 		}
 	});

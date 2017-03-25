@@ -20,37 +20,36 @@ export default class Account extends React.Component {
 	}
 	updateUserName = (event)  => {
 		event.preventDefault();
-		if (this.refs.username.value == '') {
-			feathers_app.service('users').patch(feathers_app.get('user')._id, { $unset: { username: 1 } })
+		if (this.refs.username.value === '') {
+			feathersApp.service('users').patch(feathersApp.get('user')._id, { $unset: { username: 1 } })
 				.then(result => {
 					this.setState({ username: result.username, border: 'lightgrey' });
 					this.refs.messageBanner.clearMessage();
 				})
 				.catch(error => {
 					this.setState({ border: 'red' });
-					if (error.message.indexOf('duplicate') != -1) error.message = 'That username is taken'
-					this.refs.messageBanner.showMessage('Error: '+error.message);
+					if (error.message.indexOf('duplicate') !== -1) error.message = 'That username is taken';
+					this.refs.messageBanner.showMessage('Error: ' + error.message);
 				});
-		}
-		else {
-			feathers_app.service('users').patch(feathers_app.get('user')._id, { username: this.refs.username.value })
+		} else {
+			feathersApp.service('users').patch(feathersApp.get('user')._id, { username: this.refs.username.value })
 				.then(result => {
 					this.setState({ username: result.username, border: 'lightgreen' });
 					this.refs.messageBanner.clearMessage();
 				})
 				.catch(error => {
 					this.setState({ border: 'red' });
-					if (error.message.indexOf('duplicate') != -1) error.message = 'That username is taken'
-					this.refs.messageBanner.showMessage('Error: '+error.message);
+					if (error.message.indexOf('duplicate') !== -1) error.message = 'That username is taken';
+					this.refs.messageBanner.showMessage('Error: ' + error.message);
 				});
 		}
 	}
 	componentDidMount() {
-		feathers_app.service('users').get(feathers_app.get('user')._id)
+		feathersApp.service('users').get(feathersApp.get('user')._id)
 			.then(result => {
 				this.setState({
 					username: result.username,
-					border: (result.username == null)? 'lightgrey': 'lightgreen'
+					border: (result.username === null) ? 'lightgrey' : 'lightgreen'
 				});
 			})
 			.catch(console.error);
@@ -68,11 +67,11 @@ export default class Account extends React.Component {
 						<div className="pure-control-group">
 							<label htmlFor="username">Username</label>
 							<input ref="username" type="text" placeholder="Username"
-								style={{border:'1px solid '+this.state.border}}
+								style={{border: '1px solid ' + this.state.border}}
 								value={this.state.username}
 								onChange={this.handleUsernameChange} />
 						</div>
-						<div className="pure-controls" style={{marginTop:0}}>
+						<div className="pure-controls" style={{marginTop: 0}}>
 							<button type="submit" className="pure-button button-secondary">Set</button>
 						</div>
 					</fieldset>

@@ -2,9 +2,6 @@ import React from 'react';
 import { Link, withRouter } from 'react-router';
 import interact from 'interact.js';
 
-import fieldTypes from '../attributes/index.js';
-import StatusText from '../statustext.jsx';
-
 class CollectionBoard extends React.Component {
 	constructor(props) {
 		super(props);
@@ -22,10 +19,10 @@ class CollectionBoard extends React.Component {
 		};
 	}
 	addList = () => {
-		if (!this.state.boardField._id) return alert('Please select a field to list things by before trying to create a list.')
-		let name = prompt('Name?');
-		if (!name) return;
-		feathers_app.service('fields')
+		if (!this.state.boardField._id) return alert('Please select a field to list things by before trying to create a list.');
+		const name = prompt('Name?');
+		if (!name) return null;
+		return feathersApp.service('fields')
 			.patch(this.state.boardField._id, {options: this.state.boardField.options.concat(name)})
 			.catch(console.error);
 	}
@@ -64,107 +61,109 @@ class CollectionBoard extends React.Component {
 			ondragenter: this._handleCardOverCard.bind(this)
 		});
 	}
-	setListPositions = (props, things) => {
-		things = Object.assign(things);
-		let boardField = this.getField(props, props.view.boardField),
-			attributesObject = props.attributesObject,
-			needsUpdate = [];
-		let listMapping = {};
+	setListPositions = (props, thingsParam) => {
+		const things = Object.assign({}, thingsParam);
+		const boardField = this.getField(props, props.view.boardField);
+		const attributesObject = props.attributesObject;
+		const listMapping = {};
 		if (boardField) {
-			boardField.options.map(function(option) {
+			boardField.options.map(option => {
 				let i = 1;
-				things.map(function(thing) {
+				things.map(thing => {
 					if (!attributesObject[thing._id + boardField._id]) return;
-					if (attributesObject[thing._id + boardField._id].value == option) {
-						let nameIndex = thing._id + props.view.cardField,
-							cardName = (attributesObject[nameIndex])?
-								attributesObject[nameIndex].value:
+					if (attributesObject[thing._id + boardField._id].value === option) {
+						const nameIndex = thing._id + props.view.cardField;
+						const cardName = (attributesObject[nameIndex]) ?
+								attributesObject[nameIndex].value :
 								null;
 						if (!cardName) return;
-						let attributeIndex = thing._id + boardField._id,
-							attributeID = attributesObject[attributeIndex]._id;
+						const attributeIndex = thing._id + boardField._id;
+						const attributeID = attributesObject[attributeIndex]._id;
 						listMapping[thing._id] = i;
 						i += 1;
 					}
 				});
 			});
-			for (let id in listMapping) {
-				feathers_app.service('things').patch(id, {listPosition:listMapping[id]})
+			for (const id in listMapping) {
+				feathersApp.service('things').patch(id, {listPosition: listMapping[id]})
 					.catch(console.error);
 			}
 		}
 	}
 	addThing = (event) => {
-		let cardFieldName = '', fields = this.props.fields;
-		for (let i in fields) {
-			if (fields[i]._id == this.props.view.cardField) {
+		let cardFieldName = '';
+		const fields = this.props.fields;
+		for (const i in fields) {
+			if (fields[i]._id === this.props.view.cardField) {
 				cardFieldName = fields[i].name;
 			}
 		}
-		let s = prompt(cardFieldName+'?');
+		const s = prompt(cardFieldName + '?');
 		if (!s) return;
 
-		let listvalue = event.target.dataset.listvalue,
-			swimLane = event.target.dataset.swimlane,
-			thing = {
+		const listvalue = event.target.dataset.listvalue;
+		const swimLane = event.target.dataset.swimlane;
+		const thing = {
 			coll: this.props.collection._id,
 			listPosition: this.props.things.length
 		};
-		feathers_app.service('things').create(thing).then(newThing => {
-			let attr1 = {
+		feathersApp.service('things').create(thing).then(newThing => {
+			const attr1 = {
 				coll: this.props.collection._id,
 				thing: newThing._id,
 				field: this.props.view.cardField,
 				value: s
-			}, attr2 = {
+			};
+			const attr2 = {
 				coll: this.props.collection._id,
 				thing: newThing._id,
 				field: this.props.view.boardField,
 				value: listvalue
 			};
-			feathers_app.service('attributes').create(attr1).catch(console.error);
-			feathers_app.service('attributes').create(attr2).catch(console.error);
+			feathersApp.service('attributes').create(attr1).catch(console.error);
+			feathersApp.service('attributes').create(attr2).catch(console.error);
 			if (this.props.view.swimLane) {
-				let attr3 = {
+				const attr3 = {
 					coll: this.props.collection._id,
 					thing: newThing._id,
 					field: this.props.view.swimLane,
 					value: swimLane
-				}
-				feathers_app.service('attributes').create(attr3).catch(console.error);
+				};
+				feathersApp.service('attributes').create(attr3).catch(console.error);
 			}
 		}).catch(console.error);
 	}
 	getField = (props, id) => {
-		let field = null, sourceProp = 'fields';
-		for (let i in props[sourceProp]) {
-			if (props[sourceProp][i]._id == id) {
-				field = props[sourceProp][i];
+		let field = null;
+		for (const i in props.fields) {
+			if (props.fields[i]._id === id) {
+				field = props.fields[i];
+				break;
 			}
 		}
 		return field;
 	}
 	componentWillReceiveProps(nextProps) {
-		let things = nextProps.things;
-		things.sort(function(a,b) { return a.listPosition - b.listPosition; });
+		const things = nextProps.things;
+		things.sort((a, b) => { return a.listPosition - b.listPosition; });
 		this.setState({
 			attributesObject: nextProps.attributesObject,
-			boardField: this.getField(nextProps, this.props.view.boardField),
+			boardField: this.getField(nextProps, nextProps.view.boardField),
 			things: things,
-			swimLane: this.getField(nextProps, this.props.view.swimLane)
+			swimLane: this.getField(nextProps, nextProps.view.swimLane)
 		});
 	}
 	componentDidMount() {
 		this.setUpDragDrop();
 	}
 	render() {
-		let that = this,
-			boardField = this.state.boardField,
-			attributesObject = this.state.attributesObject,
-			things = this.state.things,
-			swimLane = this.state.swimLane;
+		const that = this;
+		const boardField = this.state.boardField;
+		const attributesObject = this.state.attributesObject;
+		const things = this.state.things;
+		const swimLane = this.state.swimLane;
 
-		let renderBoardNodes = (options = {}) => {
+		const renderBoardNodes = (options = {}) => {
 			return (option, index) => {
 				let i = -1;
 				return (
@@ -172,31 +171,32 @@ class CollectionBoard extends React.Component {
 						data-optionname={option}
 						data-optionindex={index}
 						className={'list listdropzone medium-dark pure-u-1 pure-u-sm-1-4 pure-u-md-1-5 pure-u-lg-1-6'
-							+(('option'+option == that.state.dragID)?' dragging':'')}>
-						
+							+ (('option' + option === that.state.dragID) ? ' dragging' : '')}>
+
 						<h4 className="listheader">{option}</h4>
 						<div data-option={option} data-swimlane={options.swimLaneOption} className="carddropzone">
-							{things.map(function(thing) {
-								if (!attributesObject[thing._id + boardField._id]) return;
-								if (attributesObject[thing._id + boardField._id].value == option &&
-								(!options.swimLane || attributesObject[thing._id + options.swimLane._id].value == options.swimLaneOption)) {
-									let nameIndex = thing._id + that.props.view.cardField,
-										cardName = (attributesObject[nameIndex])?
-											attributesObject[nameIndex].value:
+							{things.map(thing => {
+								if (!attributesObject[thing._id + boardField._id]) return null;
+								if (attributesObject[thing._id + boardField._id].value === option &&
+								(!options.swimLane || attributesObject[thing._id + options.swimLane._id].value === options.swimLaneOption)) {
+									const nameIndex = thing._id + that.props.view.cardField;
+									const cardName = (attributesObject[nameIndex]) ?
+											attributesObject[nameIndex].value :
 											null;
-									if (!cardName) return;
+									if (!cardName) return null;
 
-									let attributeIndex = thing._id + boardField._id,
-										attributeID = attributesObject[attributeIndex]._id;
-									
-									let SLattributeIndex = (!options.swimLane)? null: thing._id + options.swimLane._id,
-										SLattributeID = (!options.swimLane)? null: (attributesObject[SLattributeIndex])? attributesObject[SLattributeIndex]._id: null;
+									const attributeIndex = thing._id + boardField._id;
+									const attributeID = attributesObject[attributeIndex]._id;
+
+									const SLattributeIndex = (!options.swimLane) ? null : thing._id + options.swimLane._id;
+									const SLattributeID = (!options.swimLane) ? null : (attributesObject[SLattributeIndex]) ?
+										attributesObject[SLattributeIndex]._id : null;
 
 									i += 1;
 									return (
 										<div
 											className={'card withshadow hovershadow'
-												+((attributeID == that.state.dragID)?' dragging':'')}
+												+ ((attributeID === that.state.dragID) ? ' dragging' : '')}
 											data-attributeindex={attributeIndex}
 											data-attributeid={attributeID}
 											data-swimlaneattributeindex={SLattributeIndex}
@@ -206,8 +206,8 @@ class CollectionBoard extends React.Component {
 											data-listposition={thing.listPosition}
 											key={thing._id + that.props.view.cardField}>
 
-											<Link style={{float:'right'}}
-												to={'/workspace/'+that.props.collection.workspace+'/collection/'+that.props.collection._id+'/thing/'+thing._id}>
+											<Link style={{float: 'right'}}
+												to={'/workspace/' + that.props.collection.workspace + '/collection/' + that.props.collection._id + '/thing/' + thing._id}>
 												<i className="fa fa-expand" />
 											</Link>
 
@@ -216,18 +216,19 @@ class CollectionBoard extends React.Component {
 										</div>
 									);
 								}
+								return null;
 							})}
-							<div style={{padding:'2px 4px'}}>
+							<div style={{padding: '2px 4px'}}>
 								<button className="pure-button button-small button-secondary"
 									data-listvalue={option}
 									data-swimlane={options.swimLaneOption}
-									style={{width:'100%'}}
+									style={{width: '100%'}}
 									onClick={that.addThing}>
 									<i className="fa fa-plus" />
 								</button>
 							</div>
 						</div>
-						<div className="listfooter" style={{width:'100%', height:'24px'}} />
+						<div className="listfooter" style={{width: '100%', height: '24px'}} />
 					</div>
 				);
 			};
@@ -236,14 +237,14 @@ class CollectionBoard extends React.Component {
 		return (
 			<div id="board" ref="board">
 				<div ref="cardplaceholder"
-					style={{display:'none', fontFamily: "'Open Sans', sans-serif"}}
+					style={{display: 'none', fontFamily: "'Open Sans', sans-serif"}}
 					className="card withshadow hovershadow pure-u-1 pure-u-sm-1-4 pure-u-md-1-5 pure-u-lg-1-6" />
 				<div ref="listplaceholder"
-					style={{display:'none'}}
+					style={{display: 'none'}}
 					className="list medium-dark pure-u-1 pure-u-sm-1-4 pure-u-md-1-5 pure-u-lg-1-6">
-					<h4></h4>
+					<h4 />
 				</div>
-				{swimLane && swimLane.options.map(function(option, index) {
+				{swimLane && swimLane.options.map(option => {
 					return (
 						<div key={option} className="pure-g">
 							<div className="pure-u-1"><h4>{option}</h4></div>
@@ -264,52 +265,52 @@ class CollectionBoard extends React.Component {
 		);
 	}
 	_setThingPosition(thing, position) {
-		let things = Object.assign(this.state.thingsBeforeDragging);
-		for (let i in things) {
-			if (things[i]._id == thing) {
+		const things = Object.assign(this.state.thingsBeforeDragging);
+		for (const i in things) {
+			if (things[i]._id === thing) {
 				things[i].listPosition = position;
 			}
 		}
-		things.sort(function(a,b) { return a.listPosition - b.listPosition; });
-		this.setState({things:things});
+		things.sort((a, b) => { return a.listPosition - b.listPosition; });
+		this.setState({things: things});
 	}
 	_handleElementMove(event, placeholder, extraTransform) {
-		const x = event.clientX - this.state.dragStartX,
-			y = event.clientY - this.state.dragStartY,
-			draggedEl = placeholder;
+		const x = event.clientX - this.state.dragStartX;
+		const y = event.clientY - this.state.dragStartY;
+		const draggedEl = placeholder;
 		draggedEl.style.display = 'block';
 		draggedEl.style.position = 'absolute';
 		draggedEl.style.top = '0px';
 		draggedEl.style.left = '0px';
 		draggedEl.style.WebkitTransition = draggedEl.style.transition = 'transform 0.1s';
 		let transform = 'translate(' + x + 'px, ' + y + 'px) ';
-		if (extraTransform) transform += ' '+extraTransform;
+		if (extraTransform) transform += ' ' + extraTransform;
 		draggedEl.style.webkitTransform = draggedEl.style.transform =
 			draggedEl.style.msTransform = transform;
 	}
 	_handleListDragStart(event) {
-		this.setState({dragID:'option'+event.target.dataset.optionname});
+		this.setState({dragID: 'option' + event.target.dataset.optionname});
 		this.refs.listplaceholder.firstChild.innerHTML = event.target.firstChild.innerHTML;
 	}
 	_handleListMove(event) { this._handleElementMove(event, this.refs.listplaceholder); }
 	_handleListOverList(event) {
-		let bF = Object.assign(this.state.boardField);
-		let opt = bF.options.splice(parseInt(event.target.dataset.optionindex), 1);
-		bF.options.splice(event.relatedTarget.dataset.optionindex,0,opt[0]);
-		this.setState({boardField:bF});
+		const bF = Object.assign(this.state.boardField);
+		const opt = bF.options.splice(parseInt(event.target.dataset.optionindex, 10), 1);
+		bF.options.splice(event.relatedTarget.dataset.optionindex, 0, opt[0]);
+		this.setState({boardField: bF});
 	}
-	_handleListDroppedOnList(event) {
-		feathers_app.service('fields')
+	_handleListDroppedOnList() {
+		feathersApp.service('fields')
 			.patch(this.state.boardField._id, {options: this.state.boardField.options})
 			.catch(console.error);
 	}
-	_handleListDragEnd(event) {
-		this._handleDragEnd(event);
+	_handleListDragEnd() {
+		this._handleDragEnd();
 	}
 	_handleCardDragStart(event) {
-		let rect = event.target.getBoundingClientRect();
+		const rect = event.target.getBoundingClientRect();
 		this.setState({
-			dragID:event.target.dataset.attributeid,
+			dragID: event.target.dataset.attributeid,
 			thingsBeforeDragging: this.state.things,
 			dragStartX: event.pageX - rect.left,
 			dragStartY: event.pageY - rect.top
@@ -317,48 +318,49 @@ class CollectionBoard extends React.Component {
 		this.refs.cardplaceholder.innerHTML = event.target.innerHTML;
 	}
 	_handleCardMove(event) {
-		let rotate = 'rotate(' + event.dx*3 + 'deg)';
+		const rotate = 'rotate(' + (event.dx * 3) + 'deg)';
 		this._handleElementMove(event, this.refs.cardplaceholder, rotate);
 	}
 	_handleCardOverList(event) {
-		let aO = Object.assign(this.state.attributesObject), s = {};
+		const aO = Object.assign(this.state.attributesObject);
+		const s = {};
 		aO[event.relatedTarget.dataset.attributeindex].value = event.target.dataset.option;
 		s.dropAttribute = { id: event.relatedTarget.dataset.attributeid, value: event.target.dataset.option };
 		if (event.target.dataset.swimlane) {
 			aO[event.relatedTarget.dataset.swimlaneattributeindex].value = event.target.dataset.swimlane;
 			s.dropSwimlaneAttribute = { id: event.relatedTarget.dataset.swimlaneattributeid, value: event.target.dataset.swimlane };
-		}
-		else {
+		} else {
 			s.dropSwimlaneAttribute = null;
 		}
 		s.attributesObject = aO;
 		this.setState(s);
 	}
 	_handleCardOverListHeader(event) {
-		let dragged = event.relatedTarget;
+		const dragged = event.relatedTarget;
 		this._setThingPosition(dragged.dataset.thingid, 0);
 	}
 	_handleCardOverListFooter(event) {
-		let dragged = event.relatedTarget;
+		const dragged = event.relatedTarget;
 		this._setThingPosition(dragged.dataset.thingid, this.state.things.length);
 	}
 	_handleCardOverCard(event) {
-		let dragged = event.relatedTarget, dropzone = event.target;
-		if (dragged.dataset.thingid == dropzone.dataset.thingid) return;
-		this._setThingPosition(dragged.dataset.thingid, parseInt(dropzone.dataset.listposition) + 0.5);
+		const dragged = event.relatedTarget;
+		const dropzone = event.target;
+		if (dragged.dataset.thingid === dropzone.dataset.thingid) return;
+		this._setThingPosition(dragged.dataset.thingid, parseInt(dropzone.dataset.listposition, 10) + 0.5);
 	}
-	_handleCardDragEnd(event) {
-		feathers_app.service('attributes')
-			.patch(this.state.dropAttribute.id, {value:this.state.dropAttribute.value})
+	_handleCardDragEnd() {
+		feathersApp.service('attributes')
+			.patch(this.state.dropAttribute.id, {value: this.state.dropAttribute.value})
 			.catch(console.error);
 		if (this.state.dropSwimlaneAttribute) {
-			feathers_app.service('attributes')
-				.patch(this.state.dropSwimlaneAttribute.id, {value:this.state.dropSwimlaneAttribute.value})
+			feathersApp.service('attributes')
+				.patch(this.state.dropSwimlaneAttribute.id, {value: this.state.dropSwimlaneAttribute.value})
 				.catch(console.error);
 		}
-		this._handleDragEnd(event);
+		this._handleDragEnd();
 	}
-	_handleDragEnd(event) {
+	_handleDragEnd() {
 		this.setListPositions(this.props, this.state.things);
 		this.refs.cardplaceholder.style.display = 'none';
 		this.refs.listplaceholder.style.display = 'none';

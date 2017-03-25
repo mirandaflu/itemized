@@ -13,6 +13,10 @@ export default class CollectionSettingsShell extends React.Component {
 		cardField: null,
 		swimLane: null,
 		dateField: null,
+		tableView: {
+			name: 'Basic Table',
+			viewType: 'Table'
+		},
 		views: [],
 		preset: null,
 		hide: [],
@@ -27,36 +31,37 @@ export default class CollectionSettingsShell extends React.Component {
 	}
 	closeFilterModal = () => this.setState({filterModalOpen: false});
 	toggleAscDesc = () => {
-		let s = {asc: !this.state.asc};
+		const s = {asc: !this.state.asc};
 		this.setState(s);
 		this.updateStoredFilters(s);
 	}
 	toggleControls = () => this.setState({ controlsVisible: !this.state.controlsVisible });
 	moveCollection = (direction) => {
-		let move = (direction == 'right')? 1: -1;
-		feathers_app.service('collections').patch(null, {$inc: {position: -move}}, {query: {
-			workspace: this.state.id,
+		const move = (direction === 'right') ? 1 : -1;
+		feathersApp.service('collections').patch(null, {$inc: {position: -move}}, {query: {
+			workspace: this.props.collection.workspace,
 			position: this.props.collection.position + move
 		}}).then(result => {
-			feathers_app.service('collections').patch(this.props.collection._id, {$inc: {position: move}}).catch(console.error);
+			feathersApp.service('collections').patch(this.props.collection._id, {$inc: {position: move}}).catch(console.error);
 		}).catch(console.error);
 	}
 	handleFilterChange = (index, patch) => {
-		let filters = this.state.filters;
+		const filters = this.state.filters;
 		if (!filters[index]) filters[index] = {};
 		filters[index] = Object.assign(filters[index], patch);
-		let s = {filters: filters};
+		const s = {filters: filters};
 		this.setState(s);
 		this.updateStoredFilters(s);
 	}
 	handleFilterAnyAll = () => {
-		let s = {matchAll:!this.state.matchAll};
+		const s = {matchAll: !this.state.matchAll};
 		this.setState(s);
 		this.updateStoredFilters(s);
 	}
 	handleControlChange = (type, value) => {
-		let newFilter = false, s = {};
-		switch(type) {
+		let newFilter = false;
+		const s = {};
+		switch (type) {
 			case 'preset':
 				this.setState({
 					preset: value,
@@ -72,23 +77,23 @@ export default class CollectionSettingsShell extends React.Component {
 			case 'cardField':
 			case 'dateField':
 				s[type] = value.value;
+				s.preset = null;
 				this.setState(s);
-				feathers_app.service('views').patch(this.state.preset.value._id, s).catch(console.error);
 				break;
 			case 'swimLane':
-				s[type] = (value == null)? null: value.value;
+				s[type] = (value === null) ? null : value.value;
+				s.preset = null;
 				this.setState(s);
-				feathers_app.service('views').patch(this.state.preset.value._id, s).catch(console.error);
 				break;
 			case 'filters':
-				for (let i in value) {
-					if (value[i].value == 'new') {
+				for (const i in value) {
+					if (value[i].value === 'new') {
 						s.filterModalOpen = true;
 						newFilter = true;
 					}
 				}
 				if (!newFilter) {
-					s[type] = value.map(function(filterOption) {
+					s[type] = value.map(filterOption => {
 						return filterOption.value;
 					});
 				}
@@ -101,11 +106,10 @@ export default class CollectionSettingsShell extends React.Component {
 				this.updateStoredFilters(s);
 				break;
 		}
-		
 	}
 	updateStoredFilters = (stateUpdate) => {
-		let id = 'filtersortgroup' + this.props.collection._id;
-		let record = {
+		const id = 'filtersortgroup' + this.props.collection._id;
+		const record = {
 			data: {
 				hide: stateUpdate.hide || this.state.hide,
 				sort: stateUpdate.sort || this.state.sort,
@@ -115,17 +119,17 @@ export default class CollectionSettingsShell extends React.Component {
 				matchAll: stateUpdate.matchAll || this.state.matchAll
 			}
 		};
-		feathers_app.service('localdata').patch(id, record).catch(console.error);
+		feathersApp.service('localdata').patch(id, record).catch(console.error);
 	}
 	getPresets = (props) => {
 		if (!props.collection._id) return;
-		feathers_app.service('views').find({query:{ coll: props.collection._id }}).then(views => {
-			let s = {};
+		feathersApp.service('views').find({query: { coll: props.collection._id }}).then(views => {
+			const s = {};
 			s.views = views;
-			let defaultView = views.filter(view => { return view.default == true })[0];
+			const defaultView = views.filter(view => { return view.default === true; })[0];
 			if (defaultView) {
 				s.preset = { value: defaultView, label: defaultView.name };
-				['viewType','boardField','cardField','swimLane','dateField'].map(p => {
+				['viewType', 'boardField', 'cardField', 'swimLane', 'dateField'].map(p => {
 					s[p] = defaultView[p];
 				});
 			}
@@ -133,18 +137,18 @@ export default class CollectionSettingsShell extends React.Component {
 		}).catch(console.error);
 	}
 	savePreset = () => {
-		let name = prompt('Name?');
+		const name = prompt('Name?');
 		if (!name) return;
-		let preset = { name: name, coll: this.props.collection._id };
-		['viewType','boardField','cardField','swimLane','dateField'].map(p => {
+		const preset = { name: name, coll: this.props.collection._id };
+		['viewType', 'boardField', 'cardField', 'swimLane', 'dateField'].map(p => {
 			if (this.state[p]) preset[p] = this.state[p];
 		});
-		feathers_app.service('views').create(preset).catch(console.error);
+		feathersApp.service('views').create(preset).catch(console.error);
 	}
 	getStoredFilters = (props) => {
 		if (!props.collection._id) return;
-		let id = 'filtersortgroup' + props.collection._id;
-		feathers_app.service('localdata').get(id).then(result => {
+		const id = 'filtersortgroup' + props.collection._id;
+		feathersApp.service('localdata').get(id).then(result => {
 			this.setState({
 				hide: result.data.hide,
 				sort: result.data.sort,
@@ -154,7 +158,7 @@ export default class CollectionSettingsShell extends React.Component {
 				matchAll: result.data.matchAll
 			});
 		}).catch(error => {
-			feathers_app.service('localdata').create({id:id}).catch(console.error);
+			feathersApp.service('localdata').create({id: id}).catch(console.error);
 			this.setState({
 				hide: null,
 				sort: [],
@@ -166,13 +170,13 @@ export default class CollectionSettingsShell extends React.Component {
 		});
 	}
 	handleCreatedView = (view) => {
-		if (view.coll != this.props.collection._id) return;
+		if (view.coll !== this.props.collection._id) return;
 		this.setState({ views: this.state.views.concat(view) });
 	}
 	handlePatchedView = (view) => {
-		for (let i in this.state.views) {
-			if (this.state.views[i]._id == view._id) {
-				let newViews = this.state.views;
+		for (const i in this.state.views) {
+			if (this.state.views[i]._id === view._id) {
+				const newViews = this.state.views;
 				newViews[i] = Object.assign({}, view);
 				this.setState({ views: newViews });
 				break;
@@ -180,9 +184,9 @@ export default class CollectionSettingsShell extends React.Component {
 		}
 	}
 	handleRemovedView = (view) => {
-		for (let i in this.state.views) {
-			if (this.state.views[i]._id == view._id) {
-				let newViews = this.state.views;
+		for (const i in this.state.views) {
+			if (this.state.views[i]._id === view._id) {
+				const newViews = this.state.views;
 				newViews.splice(i, 1);
 				this.setState({ views: newViews });
 				break;
@@ -192,39 +196,39 @@ export default class CollectionSettingsShell extends React.Component {
 	componentDidMount() {
 		this.getPresets(this.props);
 		this.getStoredFilters(this.props);
-		feathers_app.service('views').on('created', this.handleCreatedView);
-		feathers_app.service('views').on('patched', this.handlePatchedView);
-		feathers_app.service('views').on('removed', this.handleRemovedView);
+		feathersApp.service('views').on('created', this.handleCreatedView);
+		feathersApp.service('views').on('patched', this.handlePatchedView);
+		feathersApp.service('views').on('removed', this.handleRemovedView);
 	}
 	componentWillReceiveProps(nextProps) {
 		this.getPresets(nextProps);
 		this.getStoredFilters(nextProps);
 	}
 	componentWillUnmount() {
-		feathers_app.service('views').removeListener('created', this.handleCreatedView);
-		feathers_app.service('views').removeListener('patched', this.handlePatchedView);
-		feathers_app.service('views').removeListener('removed', this.handleRemovedView);
+		feathersApp.service('views').removeListener('created', this.handleCreatedView);
+		feathersApp.service('views').removeListener('patched', this.handlePatchedView);
+		feathersApp.service('views').removeListener('removed', this.handleRemovedView);
 	}
 	render() {
-		let CollectionComponent = (collectionViews[this.state.viewType])?
-			collectionViews[this.state.viewType].component:
-			collectionViews['Table'].component;
-		let CollectionControls = (collectionViews[this.state.viewType])?
-			collectionViews[this.state.viewType].controls:
-			collectionViews['Table'].controls;
+		const CollectionComponent = (collectionViews[this.state.viewType]) ?
+			collectionViews[this.state.viewType].component :
+			collectionViews.Table.component;
+		const CollectionControls = (collectionViews[this.state.viewType]) ?
+			collectionViews[this.state.viewType].controls :
+			collectionViews.Table.controls;
 
-		let that = this;
-		let things = this.props.things,
-			fields = this.props.fields,
-			attributes = this.props.attributesObject,
-			filters = this.state.filters;
+		const that = this;
+		let things = this.props.things;
+		let fields = this.props.fields;
+		const attributes = this.props.attributesObject;
+		const filters = this.state.filters;
 
-		let displayFilters = filters.map(function(filter){
-			let field = (filter.field)? filter.field.label: '',
-				operator = (filter.operator)? filter.operator.label: '',
-				value = (filter.value)? filter.value.label: ''; 
-			return { 
-				label: field +' '+ operator +' '+ value, 
+		const displayFilters = filters.map(filter => {
+			const field = (filter.field) ? filter.field.label : '';
+			const operator = (filter.operator) ? filter.operator.label : '';
+			const value = (filter.value) ? filter.value.label : '';
+			return {
+				label: field + ' ' + operator + ' ' + value,
 				value: filter
 			};
 		});
@@ -234,17 +238,19 @@ export default class CollectionSettingsShell extends React.Component {
 		if (this.state.sort) {
 			activeFilterCount += this.state.sort.length;
 			for (let i = this.state.sort.length - 1; i >= 0; i -= 1) {
-				let sort = this.state.sort[i];
-				things = things.sort(function(a,b) {
-					let A = (attributes[a._id+sort.value])? attributes[a._id+sort.value].value: '',
-						B = (attributes[b._id+sort.value])? attributes[b._id+sort.value].value: '';
-					
-					switch(typeof A) {
+				const sort = this.state.sort[i];
+				things = things.sort((a, b) => {
+					const A = (attributes[a._id + sort.value]) ? attributes[a._id + sort.value].value : '';
+					const B = (attributes[b._id + sort.value]) ? attributes[b._id + sort.value].value : '';
+
+					switch (typeof A) {
 						case 'number':
 							return A - B;
 						case 'string':
 							if (A < B) return -1;
 							if (A > B) return 1;
+							return 0;
+						default:
 							return 0;
 					}
 				});
@@ -255,17 +261,18 @@ export default class CollectionSettingsShell extends React.Component {
 		}
 		if (filters.length > 0) {
 			activeFilterCount += filters.length;
-			let filteredThings = [], filteredThingIDs = [];
-			for (let filter of filters) {
-				let operator = filter.operator.value,
-					value = (filter.value)? filter.value.value: '',
-					fieldID = (filter.field)? filter.field.value._id: null;
+			let filteredThings = [];
+			let filteredThingIDs = [];
+			for (const filter of filters) {
+				const operator = filter.operator.value;
+				const value = (filter.value) ? filter.value.value : '';
+				const fieldID = (filter.field) ? filter.field.value._id : null;
 				if (operator && value && fieldID) {
-					for (let thing of things) {
-						let testAttribute = (attributes[thing._id+fieldID])? attributes[thing._id+fieldID]: null;
-						let testValue = (testAttribute)? testAttribute.value: null;
-						let comparison = operator.comparison || filterTypes[filter.operator.label].comparison;
-						if (comparison(testValue, value) && filteredThingIDs.indexOf(thing._id) == -1) {
+					for (const thing of things) {
+						const testAttribute = (attributes[thing._id + fieldID]) ? attributes[thing._id + fieldID] : null;
+						const testValue = (testAttribute) ? testAttribute.value : null;
+						const comparison = operator.comparison || filterTypes[filter.operator.label].comparison;
+						if (comparison(testValue, value) && filteredThingIDs.indexOf(thing._id) === -1) {
 							filteredThings.push(thing);
 							filteredThingIDs.push(thing._id);
 						}
@@ -281,33 +288,33 @@ export default class CollectionSettingsShell extends React.Component {
 		}
 		if (this.state.group) {
 			activeFilterCount += 1;
-			things = things.sort(function(a,b) {
-				let A = (attributes[a._id+that.state.group.value])? attributes[a._id+that.state.group.value].value: '',
-					B = (attributes[b._id+that.state.group.value])? attributes[b._id+that.state.group.value].value: '';
-				
-				switch(typeof A) {
+			things = things.sort((a, b) => {
+				const A = (attributes[a._id + that.state.group.value]) ? attributes[a._id + that.state.group.value].value : '';
+				const B = (attributes[b._id + that.state.group.value]) ? attributes[b._id + that.state.group.value].value : '';
+
+				switch (typeof A) {
 					case 'number':
 						return A - B;
 					case 'string':
 						if (A < B) return -1;
 						if (A > B) return 1;
 						return 0;
+					default:
+						return 0;
 				}
 			});
 			let currentGroupRow = things[0];
 			currentGroupRow.rowSpan = 1;
 			for (let i = 1; i < things.length; i++) {
-				if (attributes[things[i]._id+that.state.group.value] && attributes[currentGroupRow._id+that.state.group.value] &&
-				attributes[things[i]._id+that.state.group.value].value == attributes[currentGroupRow._id+that.state.group.value].value) {
+				if (attributes[things[i]._id + that.state.group.value] && attributes[currentGroupRow._id + that.state.group.value] &&
+				attributes[things[i]._id + that.state.group.value].value === attributes[currentGroupRow._id + that.state.group.value].value) {
 					currentGroupRow.rowSpan += 1;
 					things[i].rowSpan = 0;
-				}
-				else if ((!attributes[things[i]._id+that.state.group.value] || attributes[things[i]._id+that.state.group.value].value == '') &&
-				(!attributes[currentGroupRow._id+that.state.group.value] || attributes[currentGroupRow._id+that.state.group.value].value == '')) {
+				} else if ((!attributes[things[i]._id + that.state.group.value] || attributes[things[i]._id + that.state.group.value].value === '') &&
+				(!attributes[currentGroupRow._id + that.state.group.value] || attributes[currentGroupRow._id + that.state.group.value].value === '')) {
 					currentGroupRow.rowSpan += 1;
 					things[i].rowSpan = 0;
-				}
-				else {
+				} else {
 					currentGroupRow = things[i];
 					currentGroupRow.rowSpan = 1;
 				}
@@ -315,53 +322,53 @@ export default class CollectionSettingsShell extends React.Component {
 		}
 		if (this.state.hide) {
 			activeFilterCount += this.state.hide.length;
-			fields = fields.filter(function(field) {
-				for (let h of that.state.hide) {
-					if (h.value == field._id) return false;
+			fields = fields.filter(field => {
+				for (const h of that.state.hide) {
+					if (h.value === field._id) return false;
 				}
 				return true;
 			});
 		}
 
-		let viewOptions = [];
-		for (let o in collectionViews) {
-			viewOptions.push({'value':o, 'label':o});
+		const viewOptions = [];
+		for (const o in collectionViews) {
+			viewOptions.push({'value': o, 'label': o});
 		}
-		let boardOptions = this.props.fields
-			.filter(field => { return field.type == 'Single Select'; })
+		const boardOptions = this.props.fields
+			.filter(field => { return field.type === 'Single Select'; })
 			.map(field => { return {value: field._id, label: field.name}; });
-		let cardOptions = this.props.fields
+		const cardOptions = this.props.fields
 			.map(field => { return {value: field._id, label: field.name}; });
-		let swimLaneOptions = boardOptions;
-		let dateFieldOptions = this.props.fields
-			.filter(field => { return field.type.indexOf('Date') != -1; })
+		const swimLaneOptions = boardOptions;
+		const dateFieldOptions = this.props.fields
+			.filter(field => { return field.type.indexOf('Date') !== -1; })
 			.map(field => { return {value: field._id, label: field.name}; });
-		let presetOptions = this.state.views
+		const presetOptions = [this.state.tableView].concat(this.state.views)
 			.map(view => { return {value: view, label: view.name}; });
 
 		return (
 			<div>
 				<div className="sortfiltergroup pure-g"
-					style={{display:(this.state.controlsVisible)?'inherit':'none'}}>
+					style={{display: (this.state.controlsVisible) ? 'inherit' : 'none'}}>
 					{!this.props.readOnly &&
-						<div className={this.state.controlDivClassName} style={{textAlign:'center'}}>
+						<div className={this.state.controlDivClassName} style={{textAlign: 'center'}}>
 							<button className="pure-button button-small"
-								disabled={this.props.collection.position == 0}
+								disabled={this.props.collection.position === 0}
 								onClick={this.moveCollection.bind(this, 'left')}>
 								<i className="fa fa-arrow-left" />
 							</button>
 							<button className="pure-button button-small" disabled="true">Reorder</button>
 							<button className="pure-button button-small"
-								disabled={this.props.collection.position == this.props.collectionsLength - 1}
+								disabled={this.props.collection.position === this.props.collectionsLength - 1}
 								onClick={this.moveCollection.bind(this, 'right')}>
 								<i className="fa fa-arrow-right" />
 							</button>
 						</div>
 					}
 					{!this.props.readOnly &&
-						<div className={this.state.controlDivClassName} style={{textAlign:'center'}}>
+						<div className={this.state.controlDivClassName} style={{textAlign: 'center'}}>
 							<Link className="pure-button button-small"
-								to={'/workspace/'+this.props.collection.workspace+'/collection/'+this.props.collection._id+'/configure'}>
+								to={'/workspace/' + this.props.collection.workspace + '/collection/' + this.props.collection._id + '/configure'}>
 								Edit Collection
 							</Link>
 						</div>
@@ -409,10 +416,10 @@ export default class CollectionSettingsShell extends React.Component {
 					{CollectionControls.swimlane &&
 						<div className={this.state.controlDivClassName}>
 							<Select
+								clearable
 								placeholder="Swim lane"
 								value={this.state.swimLane}
 								options={swimLaneOptions}
-								clearable={true}
 								onChange={this.handleControlChange.bind(this, 'swimLane')} />
 							<i className="fa fa-tasks" />
 						</div>
@@ -429,7 +436,7 @@ export default class CollectionSettingsShell extends React.Component {
 						</div>
 					}
 					{!this.props.readOnly &&
-						<div className={this.state.controlDivClassName} style={{textAlign:'center'}}>
+						<div className={this.state.controlDivClassName} style={{textAlign: 'center'}}>
 							<button className="pure-button button-small" onClick={this.savePreset}>
 								Save Preset
 							</button>
@@ -440,11 +447,11 @@ export default class CollectionSettingsShell extends React.Component {
 					{CollectionControls.hide &&
 						<div className={this.state.controlDivClassName}>
 							<Select
+								multi
 								placeholder="Hide"
-								multi={true}
 								searchable={false}
 								value={this.state.hide}
-								options={fields.map(function(field){ return { value: field._id, label: field.name }; })}
+								options={fields.map(field => { return { value: field._id, label: field.name }; })}
 								onChange={this.handleControlChange.bind(this, 'hide')} />
 							<i className="fa fa-eye-slash" />
 						</div>
@@ -452,20 +459,20 @@ export default class CollectionSettingsShell extends React.Component {
 					{CollectionControls.sort &&
 						<div className={this.state.controlDivClassName}>
 							<Select
+								multi
 								placeholder="Sort"
-								multi={true}
 								value={this.state.sort}
-								options={this.props.fields.map(function(field){ return { value: field._id, label: field.name }; })}
+								options={this.props.fields.map(field => { return { value: field._id, label: field.name }; })}
 								onChange={this.handleControlChange.bind(this, 'sort')} />
 							<i className="fa fa-sort" onClick={this.toggleAscDesc} />
 						</div>
 					}
 					<div className={this.state.controlDivClassName}>
 						<Select
+							multi
 							placeholder="Filter"
-							multi={true}
 							value={displayFilters}
-							options={[{value:'new', label:'Edit Filters'}]}
+							options={[{value: 'new', label: 'Edit Filters'}]}
 							onChange={this.handleControlChange.bind(this, 'filters')} />
 						<i className="fa fa-filter" />
 						<FilterMaker
@@ -483,7 +490,7 @@ export default class CollectionSettingsShell extends React.Component {
 							<Select
 								placeholder="Group"
 								value={this.state.group}
-								options={this.props.fields.map(function(field){ return { value:field._id, label:field.name }; })}
+								options={this.props.fields.map(field => { return { value: field._id, label: field.name }; })}
 								onChange={this.handleControlChange.bind(this, 'group')} />
 							<i className="fa fa-object-group" />
 						</div>
@@ -492,7 +499,7 @@ export default class CollectionSettingsShell extends React.Component {
 				<div className="pure-g">
 					<div className="pure-u-1">
 						<button
-							style={{float:'right'}}
+							style={{float: 'right'}}
 							className="pure-button button-small"
 							onClick={this.toggleControls}>
 							{this.state.controlsVisible &&
@@ -501,8 +508,8 @@ export default class CollectionSettingsShell extends React.Component {
 								</div>
 							}
 							{!this.state.controlsVisible &&
-								<div title={activeFilterCount+' active filter(s)'}>
-									{(activeFilterCount > 0)?activeFilterCount+' ':''}
+								<div title={activeFilterCount + ' active filter(s)'}>
+									{(activeFilterCount > 0) ? activeFilterCount + ' ' : ''}
 									<i className="fa fa-gear" /> <i className="fa fa-caret-down" />
 								</div>
 							}

@@ -4,10 +4,10 @@ const service = require('feathers-mongoose');
 const user = require('./user-model');
 const hooks = require('./hooks');
 
-module.exports = function(){
+module.exports = function exports() {
 	const app = this;
 
-	let options = {
+	const options = {
 		Model: user,
 		paginate: {
 			default: 5,
@@ -28,12 +28,10 @@ module.exports = function(){
 	userService.after(hooks.after);
 
 	// Filter socket events: only the user sees their own changes
-	userService.filter(function(data, connection, hook) {
-		if (data._id.toString() == connection.user._id.toString()) {
+	userService.filter((data, connection, hook) => {
+		if (data._id.toString() === connection.user._id.toString()) {
 			return data;
 		}
-		else {
-			return false;
-		}
+		return false;
 	});
 };

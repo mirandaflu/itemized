@@ -14,7 +14,7 @@ class ConfigureField extends React.Component {
 		collection: {}
 	}
 	loadField = () => {
-		feathers_app.service('fields').get(this.props.params.field)
+		feathersApp.service('fields').get(this.props.params.field)
 			.then(result => {
 				this.setState(result);
 				if (result.collectionReference) this.loadFields(result.collectionReference);
@@ -22,7 +22,7 @@ class ConfigureField extends React.Component {
 			.catch(console.error);
 	}
 	loadCollections = () => {
-		feathers_app.service('collections').find({query:{workspace:this.props.params.workspace}})
+		feathersApp.service('collections').find({query: {workspace: this.props.params.workspace}})
 			.then(collections => {
 				this.setState({ collectionOptions: collections.map(collection => {
 					return {
@@ -33,102 +33,102 @@ class ConfigureField extends React.Component {
 			}).catch(console.error);
 	}
 	loadFields = (collection) => {
-		feathers_app.service('fields').find({query:{coll:collection}})
+		feathersApp.service('fields').find({query: {coll: collection}})
 			.then(fields => {
-				this.setState({fieldOptions:fields.map(field => {
+				this.setState({fieldOptions: fields.map(field => {
 					return {
 						label: field.name,
 						value: field._id
 					};
 				})});
-			})
+			});
 	}
 	handleOptionsSelectChange = (property, values) => {
 		let value = values.value;
-		if (values.length) value = values.map(function(v) { return v.value; });
-		let s = {};
+		if (values.length) value = values.map(v => { return v.value; });
+		const s = {};
 		s[property] = value;
 		this.setState(s);
-		feathers_app.service('fields').patch(this.props.params.field, s).catch(console.error);
+		feathersApp.service('fields').patch(this.props.params.field, s).catch(console.error);
 	}
 	handleSelectCollection = (value) => {
 		this.setState({ collection: value });
-		feathers_app.service('fields').patch(this.props.params.field, {collectionReference:value.value}).catch(console.error);
+		feathersApp.service('fields').patch(this.props.params.field, {collectionReference: value.value}).catch(console.error);
 		this.loadFields(value.value);
 	}
 	handleSelectChange = (property, value) => {
-		let s = {};
-		if (value != null) s[property] = value.value;
+		const s = {};
+		if (value !== null) s[property] = value.value;
 		else s[property] = value;
 		this.setState(s);
-		feathers_app.service('fields').patch(this.props.params.field, s).catch(console.error);
+		feathersApp.service('fields').patch(this.props.params.field, s).catch(console.error);
 	}
 	handleDefaultChange = (event) => {
-		let s = { default: event.target.value };
-		feathers_app.service('fields').patch(this.props.params.field, s).catch(console.error);
+		const s = { default: event.target.value };
+		feathersApp.service('fields').patch(this.props.params.field, s).catch(console.error);
 	}
 	handleChange = (event) => {
-		let s = {};
+		const s = {};
 		s[event.target.id] = event.target.value;
 		this.setState(s);
 	}
 	commitChange = (event) => {
-		let s = {};
+		const s = {};
 		s[event.target.id] = event.target.value;
-		feathers_app.service('fields').patch(this.props.params.field, s).catch(console.error);
+		feathersApp.service('fields').patch(this.props.params.field, s).catch(console.error);
 	}
 	handleDeleteClick = () => {
 		if (!confirm('Are you sure?')) return;
-		feathers_app.service('fields').remove(this.props.params.field).catch(console.error);
+		feathersApp.service('fields').remove(this.props.params.field).catch(console.error);
 		this.returnToCollection();
 	}
 	handlePatchedField = (field) => {
-		if (field._id == this.state._id) {
+		if (field._id === this.state._id) {
 			this.setState(field);
 		}
 	}
 	returnToCollection = (event) => {
 		if (event) event.preventDefault();
-		this.props.router.push('/workspace/'+this.props.params.workspace+'/collection/'+this.props.params.collection);
+		this.props.router.push('/workspace/' + this.props.params.workspace + '/collection/' + this.props.params.collection);
 	}
 	componentDidMount() {
 		this.loadField();
 		this.loadCollections();
-		feathers_app.service('fields').on('patched', this.handlePatchedField);
+		feathersApp.service('fields').on('patched', this.handlePatchedField);
 	}
 	componentWillUnmount() {
-		feathers_app.service('fields').removeListener('patched', this.handlePatchedField);
+		feathersApp.service('fields').removeListener('patched', this.handlePatchedField);
 	}
 	render() {
-		let that = this,
-			field = this.state,
-			typeOptions = [], optionOptions = [];
-		for (let t in fieldTypes) {
-			typeOptions.push({value:t, label:t});
+		const field = this.state;
+		const typeOptions = [];
+		const optionOptions = [];
+		for (const t in fieldTypes) {
+			typeOptions.push({value: t, label: t});
 		}
-		for (let o of field.options) {
-			optionOptions.push({value:o, label:o});
+		for (const o of field.options) {
+			optionOptions.push({value: o, label: o});
 		}
-		let FieldComponent = (field.type)?
-			fieldTypes[field.type].component: fieldTypes['Static'].component;
+		const FieldComponent = (field.type) ?
+			fieldTypes[field.type].component : fieldTypes.Static.component;
 
 		let collectionReferenceOption;
-		for (let o of this.state.collectionOptions) {
-			if (o.value == field.collectionReference) {
+		for (const o of this.state.collectionOptions) {
+			if (o.value === field.collectionReference) {
 				collectionReferenceOption = o;
 				break;
 			}
 		}
 		let fieldReferenceOption;
-		for (let o of this.state.fieldOptions) {
-			if (o.value == field.fieldReference) {
+		for (const o of this.state.fieldOptions) {
+			if (o.value === field.fieldReference) {
 				fieldReferenceOption = o;
 				break;
 			}
 		}
 
 		return (
-			<Modal isOpen={true} contentLabel="configurefield">
+			<Modal isOpen contentLabel="configurefield">
 				<div className="modalContent">
 					<MessageBanner ref="messageBanner" />
 					<button
@@ -155,18 +155,18 @@ class ConfigureField extends React.Component {
 									clearable={false}
 									onChange={this.handleSelectChange.bind(this, 'type')} />
 							</div>
-							{field.type && field.type.indexOf('Select') != -1 &&
+							{field.type && field.type.indexOf('Select') !== -1 &&
 								<div className="pure-control-group">
 									<label htmlFor="options">Options</label>
 									<Select.Creatable
 										id="options"
 										value={optionOptions}
 										options={[]}
-										multi={true}
+										multi
 										onChange={this.handleOptionsSelectChange.bind(this, 'options')} />
 								</div>
 							}
-							{field.type && field.type.indexOf('Field Reference') != -1 &&
+							{field.type && field.type.indexOf('Field Reference') !== -1 &&
 								<div>
 									<div className="pure-control-group">
 										<label htmlFor="collection">Collection</label>
@@ -184,11 +184,11 @@ class ConfigureField extends React.Component {
 									</div>
 								</div>
 							}
-							{field.type && field.type.indexOf('Reference') == -1 &&
+							{field.type && field.type.indexOf('Reference') === -1 &&
 								<div className="pure-control-group">
 									<label htmlFor="default">Default Value</label>
 									<FieldComponent
-										clearable={true}
+										clearable
 										fieldType={field.type}
 										value={field.default}
 										options={field.options}

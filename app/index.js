@@ -6,7 +6,7 @@ import feathers from 'feathers-client';
 import io from 'socket.io-client';
 import localstorage from 'feathers-localstorage';
 
-import { base, buttons, forms, grids, menus, tables } from 'pure-css';
+import 'pure-css';
 import 'react-select/dist/react-select.css';
 import 'animate.css/animate.min.css';
 import './css/react-contextmenu.css';
@@ -40,7 +40,7 @@ if (module.hot) {
 
 // init feathers client
 const socket = io();
-window.feathers_app = feathers()
+window.feathersApp = feathers()
 	.configure(feathers.socketio(socket))
 	.configure(feathers.hooks())
 	.configure(feathers.authentication({ storage: window.localStorage }))
@@ -48,19 +48,15 @@ window.feathers_app = feathers()
 
 // handle auth and redirect after auth
 function requireAuth(nextState, replace, callback) {
-
 	// if not logged in, redirect to login and store redirect
-	if (!feathers_app.get('user')) {
-		feathers_app.service('localdata').create({'id':'redirectAfterLogin', 'data':nextState});
+	if (!feathersApp.get('user')) {
+		feathersApp.service('localdata').create({'id': 'redirectAfterLogin', 'data': nextState});
 		replace('/login');
 		callback();
-	}
-
-	// if just logged in and redirect is stored, go there
-	else {
-		feathers_app.service('localdata').get('redirectAfterLogin').then(result => {
+	} else { // if just logged in and redirect is stored, go there
+		feathersApp.service('localdata').get('redirectAfterLogin').then(result => {
 			replace(result.data.location.pathname + result.data.location.search);
-			feathers_app.service('localdata').remove('redirectAfterLogin').then(result => {
+			feathersApp.service('localdata').remove('redirectAfterLogin').then(() => {
 				callback();
 			});
 		}).catch(error => {
@@ -89,7 +85,7 @@ class Root extends React.Component {
 					<Route path="account" component={Account} onEnter={requireAuth} />
 					<Route path="login" component={Login} />
 					<Route path="signup" component={Signup} />
-					<Route path="logout" component={Logout} onEnter={feathers_app.logout} />
+					<Route path="logout" component={Logout} onEnter={feathersApp.logout} />
 					<Route path="*" component={Error} />
 				</Route>
 			</Router>
@@ -98,14 +94,13 @@ class Root extends React.Component {
 }
 
 // authenticate user and start the app
-feathers_app.authenticate().catch(error => {
+feathersApp.authenticate().catch(error => {
 	console.error('Error authenticating!', error);
 }).then(result => {
 	ReactDOM.render( <Root />, document.getElementById('app') );
-	feathers_app.service('users').on('patched', function(user) {
-		if (user._id == feathers_app.get('user')._id) {
-			feathers_app.set('user', user);
+	feathersApp.service('users').on('patched', user => {
+		if (user._id === feathersApp.get('user')._id) {
+			feathersApp.set('user', user);
 		}
 	});
 });
-

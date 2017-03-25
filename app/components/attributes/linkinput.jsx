@@ -6,7 +6,7 @@ export default class LinkInput extends React.Component {
 		editVisible: false
 	}
 	toggleEditMode = () => this.setState({ editVisible: !this.state.editVisible });
-	handleEditStart = (event) => this.setState({ editVisible: true });
+	handleEditStart = () => this.setState({ editVisible: true });
 	handleKeyDown = (event) => {
 		if (event.key === 'Enter') {
 			this.handleCommitChange(event);
@@ -22,17 +22,17 @@ export default class LinkInput extends React.Component {
 	}
 	render() {
 		let actualLink = this.state.value;
-		if (actualLink != '' && actualLink != null) {
-			if (this.props.fieldType == 'URL' && actualLink.slice(0,4) != 'http') {
-				actualLink = 'http://'+actualLink;
+		if (actualLink !== '' && actualLink !== null) {
+			if (this.props.fieldType === 'URL' && actualLink.slice(0, 4) !== 'http') {
+				actualLink = 'http://' + actualLink;
 			}
-			if (this.props.fieldType == 'Email Address' && actualLink.slice(0,6) != 'mailto') {
-				actualLink = 'mailto:'+actualLink;
+			if (this.props.fieldType === 'Email Address' && actualLink.slice(0, 6) !== 'mailto') {
+				actualLink = 'mailto:' + actualLink;
 			}
 		}
 		return (
 			<div>
-				{(!this.state.editVisible && this.state.value != '') &&
+				{(!this.state.editVisible && this.state.value !== '') &&
 					<div>
 						<a target="_blank" href={actualLink}>{this.state.value}</a>
 						<button className="pure-button button-xsmall"
@@ -41,7 +41,7 @@ export default class LinkInput extends React.Component {
 						</button>
 					</div>
 				}
-				{(this.state.editVisible || this.state.value == '') &&
+				{(this.state.editVisible || this.state.value === '') &&
 					<input type="text"
 						value={this.state.value}
 						onFocus={this.handleEditStart}

@@ -5,7 +5,7 @@ const thing = require('./thing-model');
 const hooks = require('./hooks');
 const byCheckingWorkspace = require('../../filters/bycheckingworkspace.js');
 
-module.exports = function() {
+module.exports = function exports() {
 	const app = this;
 
 	const options = {

@@ -16,7 +16,7 @@ const services = require('./services');
 
 const app = feathers();
 
-if (process.env.NODE_ENV != 'production') {
+if (process.env.NODE_ENV !== 'production') {
 	const config = require('../webpack.dev.config.js');
 	const webpack = require('webpack');
 	const compiler = webpack(config);
@@ -42,6 +42,6 @@ app.use(compress())
 	.configure(socketio())
 	.configure(services)
 	.configure(middleware)
-	.enable("trust proxy");
+	.enable('trust proxy');
 
 module.exports = app;
