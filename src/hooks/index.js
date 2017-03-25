@@ -40,7 +40,7 @@ exports.allowWorkspaceEditorOrHigher = options => {
 							};
 						})
 						.then(allowEditBasedOnWorkspace)
-						.then(result => { resolve(hook); })
+						.then(() => { resolve(hook); })
 						.catch(reject);
 				} else if (hook.id) {
 					return hook.service.get(hook.id).then(collection => {
@@ -54,9 +54,19 @@ exports.allowWorkspaceEditorOrHigher = options => {
 								};
 							})
 							.then(allowEditBasedOnWorkspace)
-							.then(result => { resolve(hook); })
+							.then(() => { resolve(hook); })
 							.catch(reject);
 					}).catch(reject);
+				} else if (hook.method === 'patch' && hook.service.Model.modelName === 'collection') {
+					console.log(hook.data);
+					const keys = Object.keys(hook.data);
+					if (keys.length === 1 && keys[0] === '$inc') {
+						const incs = Object.keys(hook.data.$inc);
+						if (incs.length === 1 && incs[0] === 'position') {
+							return resolve(hook);
+						}
+					}
+					return reject();
 				}
 				return reject(new Error('Unknown error occurred while checking permissions 1'));
 			} else if (['attribute', 'field', 'thing', 'view'].indexOf(hook.service.Model.modelName) !== -1) {
@@ -72,7 +82,7 @@ exports.allowWorkspaceEditorOrHigher = options => {
 								};
 							})
 							.then(allowEditBasedOnWorkspace)
-							.then(result => { resolve(hook); })
+							.then(() => { resolve(hook); })
 							.catch(reject);
 					}).catch(reject);
 				} else if (hook.id) {

@@ -35,7 +35,7 @@ export default class CollectionSettingsShell extends React.Component {
 	moveCollection = (direction) => {
 		const move = (direction === 'right') ? 1 : -1;
 		feathersApp.service('collections').patch(null, {$inc: {position: -move}}, {query: {
-			workspace: this.state.id,
+			workspace: this.props.collection.workspace,
 			position: this.props.collection.position + move
 		}}).then(result => {
 			feathersApp.service('collections').patch(this.props.collection._id, {$inc: {position: move}}).catch(console.error);
