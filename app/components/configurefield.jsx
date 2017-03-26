@@ -44,7 +44,7 @@ class ConfigureField extends React.Component {
 			});
 	}
 	handleOptionsSelectChange = (property, values) => {
-		let value = values.value;
+		let value = [];
 		if (values.length) value = values.map(v => { return v.value; });
 		const s = {};
 		s[property] = value;
@@ -106,9 +106,6 @@ class ConfigureField extends React.Component {
 		for (const t in fieldTypes) {
 			typeOptions.push({value: t, label: t});
 		}
-		for (const o of field.options) {
-			optionOptions.push({value: o, label: o});
-		}
 		const FieldComponent = (field.type) ?
 			fieldTypes[field.type].component : fieldTypes.Static.component;
 
@@ -160,7 +157,12 @@ class ConfigureField extends React.Component {
 									<label htmlFor="options">Options</label>
 									<Select.Creatable
 										id="options"
-										value={optionOptions}
+										value={field.options.map(option => {
+											return {
+												label: option,
+												value: option
+											};
+										})}
 										options={[]}
 										multi
 										onChange={this.handleOptionsSelectChange.bind(this, 'options')} />
