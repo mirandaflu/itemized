@@ -18,7 +18,9 @@ class Workspace extends React.Component {
 		feathersApp.service('workspaces').get(this.state.id).then(result => {
 			document.title = result.name + ' | Itemized';
 			this.setState({workspace: result});
-		}).catch(console.error);
+		}).catch(error => {
+			this.refs.messageBanner.showMessage(error.message);
+		});
 		feathersApp.service('collections').find({query: {workspace: this.state.id, $sort: {position: 1}}}).then(result => {
 			this.setState({
 				collectionsLoaded: true,
