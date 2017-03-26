@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router';
 
-import GoogleButton from '../components/googlebutton.jsx';
-import MessageBanner from '../components/messagebanner.jsx';
+import GoogleButton from 'components/googlebutton';
+import MessageBanner from 'components/messagebanner';
 
 class Login extends React.Component {
 	state = {

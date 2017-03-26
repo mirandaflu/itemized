@@ -2,7 +2,7 @@ import React from 'react';
 import Modal from 'react-modal';
 import { Link } from 'react-router';
 
-import MessageBanner from '../components/messagebanner.jsx';
+import MessageBanner from 'components/messagebanner';
 
 export default class Account extends React.Component {
 	state = {

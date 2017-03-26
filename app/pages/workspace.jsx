@@ -2,9 +2,9 @@ import React from 'react';
 import { withRouter } from 'react-router';
 import Select from 'react-select';
 
-import CollectionTab from '../components/collectiontab.jsx';
-import MessageBanner from '../components/messagebanner.jsx';
-import StatusText from '../components/statustext.jsx';
+import CollectionTab from 'components/collectiontab';
+import MessageBanner from 'components/messagebanner';
+import StatusText from 'components/statustext';
 
 class Workspace extends React.Component {
 	state = {

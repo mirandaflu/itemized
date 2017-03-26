@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router';
 
-import fieldTypes from '../attributes/index.js';
+import fieldTypes from 'components/attributes/';
 
 export default class CollectionTable extends React.Component {
 	state = { clickedAttribute: this.props.clickedAttribute }

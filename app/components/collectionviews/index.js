@@ -1,6 +1,6 @@
-import CollectionTable from './collectiontable.jsx';
-import CollectionBoard from './collectionboard.jsx';
-import CollectionCalendar from './collectioncalendar.jsx';
+import CollectionTable from './collectiontable';
+import CollectionBoard from './collectionboard';
+import CollectionCalendar from './collectioncalendar';
 
 module.exports = {
 	'Table': {

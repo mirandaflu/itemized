@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router';
 
-import collectionViews from '../components/collectionviews/index.js';
+import collectionViews from 'components/collectionviews/';
 
 export default class CollectionTab extends React.Component {
 	render() {

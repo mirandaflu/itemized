@@ -1,8 +1,8 @@
 import React from 'react';
 import { withRouter } from 'react-router';
 
-import fieldTypes from './attributes/index.js';
-import CollectionSettingsShell from './collectionviews/collectionsettings.jsx';
+import fieldTypes from 'components/attributes/';
+import CollectionSettingsShell from 'components/collectionviews/collectionsettings';
 
 class CollectionContainer extends React.Component {
 	state = {

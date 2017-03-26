@@ -2,8 +2,8 @@ import React from 'react';
 import Modal from 'react-modal';
 import { Link, withRouter } from 'react-router';
 
-import UserSelect from './userselect.jsx';
-import MessageBanner from './messagebanner.jsx';
+import UserSelect from 'components/userselect';
+import MessageBanner from 'components/messagebanner';
 
 class ConfigureWorkspace extends React.Component {
 	state = {

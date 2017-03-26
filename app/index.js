@@ -18,21 +18,21 @@ import './css/colors.css';
 
 import './rollbar.js';
 
-import CollectionContainer from './components/collectioncontainer.jsx';
-import ConfigureWorkspace from './components/configureworkspace.jsx';
-import ConfigureCollection from './components/configurecollection.jsx';
-import ConfigureThing from './components/configurething.jsx';
-import ConfigureField from './components/configurefield.jsx';
-import ConfigureReference from './components/configurereference.jsx';
+import CollectionContainer from 'components/collectioncontainer';
+import ConfigureWorkspace from 'components/configureworkspace';
+import ConfigureCollection from 'components/configurecollection';
+import ConfigureThing from 'components/configurething';
+import ConfigureField from 'components/configurefield';
+import ConfigureReference from 'components/configurereference';
+import Skeleton from 'components/skeleton';
 
-import Skeleton from './components/skeleton.jsx';
-import Signup from './pages/signup.jsx';
-import Login from './pages/login.jsx';
-import Account from './pages/account.jsx';
-import Logout from './pages/logout.jsx';
-import Home from './pages/home.jsx';
-import Workspace from './pages/workspace.jsx';
-import Error from './pages/error.jsx';
+import Signup from 'pages/signup';
+import Login from 'pages/login';
+import Account from 'pages/account';
+import Logout from 'pages/logout';
+import Home from 'pages/home';
+import Workspace from 'pages/workspace';
+import Error from 'pages/error';
 
 if (module.hot) {
 	module.hot.accept();

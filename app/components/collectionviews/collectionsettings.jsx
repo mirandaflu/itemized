@@ -2,9 +2,9 @@ import React from 'react';
 import Select from 'react-select';
 import { Link } from 'react-router';
 
-import collectionViews from './index.js';
-import filterTypes from './filterTypes.js';
-import FilterMaker from './filtermaker.jsx';
+import collectionViews from 'components/collectionviews/';
+import filterTypes from 'components/collectionviews/filterTypes';
+import FilterMaker from 'components/collectionviews/filtermaker';
 
 export default class CollectionSettingsShell extends React.Component {
 	state = {

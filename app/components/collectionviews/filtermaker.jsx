@@ -2,7 +2,7 @@ import React from 'react';
 import Modal from 'react-modal';
 import Select from 'react-select';
 
-import filterTypes from './filterTypes.js';
+import filterTypes from 'components/collectionviews/filterTypes';
 
 class FilterRow extends React.Component {
 	constructor(props) {
