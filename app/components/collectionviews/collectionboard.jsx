@@ -62,7 +62,7 @@ class CollectionBoard extends React.Component {
 		});
 	}
 	setListPositions = (props, thingsParam) => {
-		const things = Object.assign({}, thingsParam);
+		const things = thingsParam;
 		const boardField = this.getField(props, props.view.boardField);
 		const attributesObject = props.attributesObject;
 		const listMapping = {};
