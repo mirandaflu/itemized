@@ -1,10 +1,10 @@
-import StaticText from './statictext.jsx';
-import TextInput from './textinput.jsx';
-import NumberInput from './numberinput.jsx';
-import CheckboxInput from './checkboxinput.jsx';
-import SelectInput from './selectinput.jsx';
-import DateInput from './dateinput.jsx';
-import LinkInput from './linkinput.jsx';
+import StaticText from './statictext';
+import TextInput from './textinput';
+import NumberInput from './numberinput';
+import CheckboxInput from './checkboxinput';
+import SelectInput from './selectinput';
+import DateInput from './dateinput';
+import LinkInput from './linkinput';
 
 module.exports = {
 	'Static': {

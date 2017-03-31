@@ -2,7 +2,7 @@ import React from 'react';
 import Modal from 'react-modal';
 import { Link, withRouter } from 'react-router';
 
-import MessageBanner from './messagebanner.jsx';
+import MessageBanner from 'components/messagebanner';
 
 class ConfigureCollection extends React.Component {
 	state = {

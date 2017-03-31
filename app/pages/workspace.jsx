@@ -2,9 +2,9 @@ import React from 'react';
 import { withRouter } from 'react-router';
 import Select from 'react-select';
 
-import CollectionTab from '../components/collectiontab.jsx';
-import MessageBanner from '../components/messagebanner.jsx';
-import StatusText from '../components/statustext.jsx';
+import CollectionTab from 'components/collectiontab';
+import MessageBanner from 'components/messagebanner';
+import StatusText from 'components/statustext';
 
 class Workspace extends React.Component {
 	state = {
@@ -18,7 +18,9 @@ class Workspace extends React.Component {
 		feathersApp.service('workspaces').get(this.state.id).then(result => {
 			document.title = result.name + ' | Itemized';
 			this.setState({workspace: result});
-		}).catch(console.error);
+		}).catch(error => {
+			this.refs.messageBanner.showMessage(error.message);
+		});
 		feathersApp.service('collections').find({query: {workspace: this.state.id, $sort: {position: 1}}}).then(result => {
 			this.setState({
 				collectionsLoaded: true,

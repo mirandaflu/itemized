@@ -1,5 +1,5 @@
 import React from 'react';
-import Navbar from './navbar.jsx';
+import Navbar from 'components/navbar';
 
 export default class Skeleton extends React.Component {
 	componentWillUpdate() {

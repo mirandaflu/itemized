@@ -1,8 +1,8 @@
 import React from 'react';
-import { Link, withRouter } from 'react-router';
+import { withRouter } from 'react-router';
 
-import WorkspaceItem from './workspaceitem.jsx';
-import StatusText from './statustext.jsx';
+import WorkspaceItem from 'components/workspaceitem';
+import StatusText from 'components/statustext';
 
 class WorkspaceList extends React.Component {
 	state = {

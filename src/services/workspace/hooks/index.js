@@ -33,7 +33,9 @@ exports.before = {
 exports.after = {
 	all: [],
 	find: [],
-	get: [],
+	get: [
+		localHooks.onlyReturnIfUserHasRole()
+	],
 	create: [],
 	update: [],
 	patch: [],

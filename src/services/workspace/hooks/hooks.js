@@ -67,3 +67,21 @@ exports.restrictToAdminOrHigher = options => {
 		});
 	};
 };
+
+exports.onlyReturnIfUserHasRole = options => {
+	return hook => {
+		return new Promise((resolve, reject) => {
+			if (!hook.params.provider) return resolve(hook);
+			const workspace = hook.result;
+			const userID = hook.params.user._id.toString();
+			const owner = workspace.owner.toString();
+			const admins = workspace.admins.map((o) => o.toString());
+			const editors = workspace.editors.map((o) => o.toString());
+			const viewers = workspace.viewers.map((o) => o.toString());
+			if (userID !== owner && admins.indexOf(userID) === -1 && editors.indexOf(userID) === -1 && viewers.indexOf(userID)) {
+				return reject(new Error('You are not allowed to view this workspace.'));
+			}
+			return resolve(hook);
+		});
+	};
+};

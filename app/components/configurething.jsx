@@ -2,8 +2,8 @@ import React from 'react';
 import Modal from 'react-modal';
 import { withRouter } from 'react-router';
 
-import fieldTypes from './attributes/index.js';
-import MessageBanner from './messagebanner.jsx';
+import fieldTypes from 'components/attributes/';
+import MessageBanner from 'components/messagebanner';
 
 class ConfigureThing extends React.Component {
 	state = {

@@ -1,11 +1,20 @@
 var webpack = require('webpack');
 var HTMLWebpackPlugin = require('html-webpack-plugin');
+var path = require('path');
 
 module.exports = {
   devtool: 'source-map',
   entry: [
     __dirname + '/app/index.js'
   ],
+  resolve: {
+    root: path.resolve('./'),
+    alias: {
+      components: path.resolve(__dirname, 'app/components'),
+      pages: path.resolve(__dirname, 'app/pages')
+    },
+    extensions: ['', '.js', '.jsx']
+  },
   output: {
     path: __dirname + '/dist',
     filename: "index_bundle.js",

@@ -1,7 +1,7 @@
 import React from 'react';
 import { withRouter } from 'react-router';
 
-import WorkspaceList from '../components/workspacelist.jsx';
+import WorkspaceList from 'components/workspacelist';
 
 class Home extends React.Component {
 	componentDidMount() {

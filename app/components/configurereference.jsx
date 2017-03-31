@@ -3,8 +3,8 @@ import Modal from 'react-modal';
 import Select from 'react-select';
 import { withRouter } from 'react-router';
 
-import MessageBanner from './messagebanner.jsx';
-import CollectionTable from './collectionviews/collectiontable.jsx';
+import MessageBanner from 'components/messagebanner';
+import CollectionTable from 'components/collectionviews/collectiontable';
 
 class ConfigureReference extends React.Component {
 	state = {
